@@ -14,7 +14,6 @@
 
     <modules>
         <module>tenacity-core</module>
-        <module>tenacity-core</module>
     </modules>
 
     <scm>
