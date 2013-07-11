@@ -2,25 +2,17 @@ package com.yammer.tenacity.core;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.netflix.hystrix.contrib.yammermetricspublisher.HystrixYammerMetricsPublisher;
-import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
 import com.yammer.tenacity.core.properties.TenacityCommandProperties;
-import com.yammer.tenacity.core.properties.TenacityHystrixPropertiesStrategy;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityThreadPoolProperties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TenacityPropertyStore {
-    static {
-        HystrixPlugins.getInstance().registerPropertiesStrategy(new TenacityHystrixPropertiesStrategy());
-        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
-    }
-
     protected volatile ImmutableMap<TenacityPropertyKey, TenacityCommandProperties.Setter> commandProperties;
     protected volatile ImmutableMap<TenacityPropertyKey, TenacityThreadPoolProperties.Setter> threadpoolProperties;
 
