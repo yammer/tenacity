@@ -38,4 +38,26 @@ public class TenacityConfiguration {
     public int getExecutionIsolationThreadTimeoutInMillis() {
         return executionIsolationThreadTimeoutInMillis;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TenacityConfiguration that = (TenacityConfiguration) o;
+
+        if (executionIsolationThreadTimeoutInMillis != that.executionIsolationThreadTimeoutInMillis) return false;
+        if (!circuitBreaker.equals(that.circuitBreaker)) return false;
+        if (!threadpool.equals(that.threadpool)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = threadpool.hashCode();
+        result = 31 * result + circuitBreaker.hashCode();
+        result = 31 * result + executionIsolationThreadTimeoutInMillis;
+        return result;
+    }
 }
