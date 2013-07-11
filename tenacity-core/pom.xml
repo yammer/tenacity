@@ -27,5 +27,16 @@
             <artifactId>hystrix-yammer-metrics-publisher</artifactId>
             <version>${hystrix.version}</version>
          </dependency>
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-metrics-event-stream</artifactId>
+            <version>${hystrix.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-testing</artifactId>
+            <version>${dropwizard.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
