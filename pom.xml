@@ -14,6 +14,7 @@
 
     <modules>
         <module>tenacity-core</module>
+        <module>tenacity-dashboard</module>
     </modules>
 
     <scm>
@@ -31,6 +32,7 @@
     <properties>
         <dropwizard.version>0.6.2</dropwizard.version>
         <hystrix.version>1.2.17</hystrix.version>
+        <httpcomponents.version>4.2.5</httpcomponents.version>
     </properties>
 
     <developers>
@@ -63,15 +65,6 @@
             <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots</url>
         </repository>
     </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.yammer.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
-            <version>${dropwizard.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
