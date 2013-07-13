@@ -39,7 +39,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
+            <artifactId>httpcomponents-client</artifactId>
             <version>${httpcomponents.version}</version>
         </dependency>
         <dependency>
