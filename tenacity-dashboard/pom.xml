@@ -39,8 +39,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcomponents-client</artifactId>
-            <version>${httpcomponents.version}</version>
+            <artifactId>httpclient</artifactId>
+            <version>4.2.5</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
