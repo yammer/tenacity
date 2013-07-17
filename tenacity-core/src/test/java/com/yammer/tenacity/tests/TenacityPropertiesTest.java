@@ -1,5 +1,7 @@
 package com.yammer.tenacity.tests;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.netflix.hystrix.*;
@@ -100,42 +102,46 @@ public class TenacityPropertiesTest extends TenacityTest {
         assertEquals(threadPoolProperties.queueSizeRejectionThreshold().get().intValue(), threadPoolConfiguration.getQueueSizeRejectionThreshold());
     }
 
-    private static class SleepCommand extends TenacityCommand<String> {
-        private SleepCommand(TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
-            super("Test", "Sleep", tenacityPropertyStore, tenacityPropertyKey);
+    private static class SleepCommand extends TenacityCommand<Optional<String>> {
+        private SleepCommand(String commandGroupKey, String commandKey, TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
+            super(commandGroupKey, commandKey, tenacityPropertyStore, tenacityPropertyKey);
         }
 
         @Override
-        protected String run() throws Exception {
+        protected Optional<String> run() throws Exception {
             Thread.sleep(500);
-            return "sleep";
+            return Optional.of("sleep");
         }
 
         @Override
-        protected String getFallback() {
-            return "fallback";
+        protected Optional<String> getFallback() {
+            return Optional.absent();
         }
     }
 
     @Test
-    public void queueRejection() throws Exception {
+    public void queueRejectionWithBlockingQueue() throws Exception {
         final int queueMaxSize = 5;
         final OverrideConfiguration exampleConfiguration = new OverrideConfiguration(
-
                 new TenacityConfiguration(
                         new ThreadPoolConfiguration(1, 1, 10, queueMaxSize, 10000, 10),
                         new CircuitBreakerConfiguration(20, 5000, 50),
                         5000));
         tenacityPropertyStore = new TenacityPropertyStore(new OverridePropertiesBuilder(DependencyKey.SLEEP, exampleConfiguration));
 
-        final ImmutableList.Builder<Future<String>> sleepCommands = ImmutableList.builder();
+        final ImmutableList.Builder<Future<Optional<String>>> sleepCommands = ImmutableList.builder();
         for (int i = 0; i < queueMaxSize * 2; i++) {
-            sleepCommands.add(new SleepCommand(tenacityPropertyStore, DependencyKey.SLEEP).queue());
+            sleepCommands.add(new SleepCommand("queueRejectionWithBlockingQueue", "Sleep", tenacityPropertyStore, DependencyKey.SLEEP).queue());
         }
 
-        for (Future<String> future : sleepCommands.build()) {
+        for (Future<Optional<String>> future : sleepCommands.build()) {
             assertFalse(future.isCancelled());
-            assertThat(future.get()).isInstanceOf(String.class);
+            final Optional<String> result = future.get();
+            if (result.isPresent()) {
+                assertThat(result.get()).isEqualTo("sleep");
+            } else {
+                assertThat(result).isEqualTo(Optional.<String>absent());
+            }
         }
 
         final HystrixCommandMetrics sleepCommandMetrics = HystrixCommandMetrics
@@ -159,5 +165,45 @@ public class TenacityPropertiesTest extends TenacityTest {
         final ThreadPoolConfiguration threadPoolConfiguration = exampleConfiguration.getTenacityConfiguration().getThreadpool();
         assertEquals(threadPoolProperties.queueSizeRejectionThreshold().get().intValue(), threadPoolConfiguration.getQueueSizeRejectionThreshold());
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), threadPoolConfiguration.getMaxQueueSize());
+    }
+
+    @Test
+    public void queueRejectionWithSynchronousQueue() throws Exception {
+        final ImmutableCollection.Builder<Future<Optional<String>>> futures = ImmutableList.builder();
+        for (int i = 0; i < 50; i++) {
+            futures.add(new SleepCommand("queueRejectionWithSynchronousQueue", "syncQueue",
+                    tenacityPropertyStore, DependencyKey.EXAMPLE).queue());
+        }
+
+        for (Future<Optional<String>> future : futures.build()) {
+            assertFalse(future.isCancelled());
+            final Optional<String> result = future.get();
+            if (result.isPresent()) {
+                assertThat(result.get()).isEqualTo("sleep");
+            } else {
+                assertThat(result).isEqualTo(Optional.<String>absent());
+            }
+        }
+
+        final HystrixCommandMetrics sleepCommandMetrics = HystrixCommandMetrics
+                .getInstance(HystrixCommandKey.Factory.asKey("syncQueue"));
+        assertThat(sleepCommandMetrics
+                .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
+                .isEqualTo(40);
+        assertThat(sleepCommandMetrics
+                .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
+                .isEqualTo(0);
+        assertThat(sleepCommandMetrics
+                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
+                .isEqualTo(40);
+        assertThat(sleepCommandMetrics
+                .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
+                .isEqualTo(0);
+
+        final HystrixThreadPoolProperties threadPoolProperties = HystrixPropertiesFactory
+                .getThreadPoolProperties(HystrixThreadPoolKey.Factory.asKey(DependencyKey.EXAMPLE.toString()), null);
+
+        //-1 means no limit on the number of items in the queue, which uses the SynchronousBlockingQueue
+        assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), -1);
     }
 }
