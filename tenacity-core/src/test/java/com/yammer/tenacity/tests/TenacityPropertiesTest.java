@@ -4,7 +4,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.netflix.hystrix.*;
+import com.netflix.hystrix.HystrixCommandMetrics;
+import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.HystrixThreadPoolKey;
+import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
 import com.yammer.dropwizard.config.Configuration;
@@ -145,7 +148,7 @@ public class TenacityPropertiesTest extends TenacityTest {
         }
 
         final HystrixCommandMetrics sleepCommandMetrics = HystrixCommandMetrics
-                .getInstance(HystrixCommandKey.Factory.asKey("Sleep"));
+                .getInstance(new SleepCommand("queueRejectionWithBlockingQueue", "Sleep", tenacityPropertyStore, DependencyKey.SLEEP).getCommandKey());
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
                 .isEqualTo(4);
@@ -186,7 +189,8 @@ public class TenacityPropertiesTest extends TenacityTest {
         }
 
         final HystrixCommandMetrics sleepCommandMetrics = HystrixCommandMetrics
-                .getInstance(HystrixCommandKey.Factory.asKey("syncQueue"));
+                .getInstance(new SleepCommand("queueRejectionWithSynchronousQueue", "syncQueue",
+                        tenacityPropertyStore, DependencyKey.EXAMPLE).getCommandKey());
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
                 .isEqualTo(40);
