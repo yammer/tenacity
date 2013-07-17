@@ -31,7 +31,7 @@ public class TenacityCircuitBreakerTest extends TenacityTest {
                 .isEqualTo(500);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
-                .isGreaterThan(300);
+                .isGreaterThan(50);
         assertFalse("Allow request should be false", HystrixCircuitBreaker.Factory.getInstance(new TenacityFailingCommand(tenacityPropertyStore).getCommandKey()).allowRequest());
         assertTrue("Circuit Breaker should be open", new TenacityFailingCommand(tenacityPropertyStore).isCircuitBreakerOpen());
     }
