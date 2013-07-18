@@ -17,6 +17,7 @@ import com.yammer.tenacity.core.TenacityPropertyStoreBuilder;
 import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
+import com.yammer.tenacity.core.metrics.TenacityMetrics;
 import com.yammer.tenacity.core.properties.TenacityCommandProperties;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityThreadPoolProperties;
@@ -147,8 +148,7 @@ public class TenacityPropertiesTest extends TenacityTest {
             }
         }
 
-        final HystrixCommandMetrics sleepCommandMetrics = HystrixCommandMetrics
-                .getInstance(new SleepCommand("queueRejectionWithBlockingQueue", "Sleep", tenacityPropertyStore, DependencyKey.SLEEP).getCommandKey());
+        final HystrixCommandMetrics sleepCommandMetrics = TenacityMetrics.getCommandMetrics(new SleepCommand("queueRejectionWithBlockingQueue", "Sleep", tenacityPropertyStore, DependencyKey.SLEEP));
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
                 .isEqualTo(4);
@@ -188,9 +188,8 @@ public class TenacityPropertiesTest extends TenacityTest {
             }
         }
 
-        final HystrixCommandMetrics sleepCommandMetrics = HystrixCommandMetrics
-                .getInstance(new SleepCommand("queueRejectionWithSynchronousQueue", "syncQueue",
-                        tenacityPropertyStore, DependencyKey.EXAMPLE).getCommandKey());
+        final HystrixCommandMetrics sleepCommandMetrics = TenacityMetrics.getCommandMetrics(new SleepCommand("queueRejectionWithSynchronousQueue", "syncQueue",
+                tenacityPropertyStore, DependencyKey.EXAMPLE));
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
                 .isEqualTo(40);
