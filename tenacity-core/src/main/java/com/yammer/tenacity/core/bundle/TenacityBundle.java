@@ -8,7 +8,7 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.tenacity.core.properties.TenacityHystrixPropertiesStrategy;
 
-public class TenacityMetricsBundle implements Bundle {
+public class TenacityBundle implements Bundle {
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         HystrixPlugins.getInstance().registerPropertiesStrategy(new TenacityHystrixPropertiesStrategy());
