@@ -8,11 +8,24 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.tenacity.dashboard.resources.IndexResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TenacityBundle implements ConfiguredBundle<Configuration> {
+public class TenacityDashboardBundle implements ConfiguredBundle<Configuration> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TenacityDashboardBundle.class);
+
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         bootstrap.addBundle(new AssetsBundle());
+    }
+
+    private static void gzipWarning() {
+        LOGGER.warn("\n" +
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
+                "!    GZIP HAS BEEN DISABLED FOR THE TENACITY DASHBOARD                         !\n" +
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
+                "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 
     @Override
@@ -21,6 +34,8 @@ public class TenacityBundle implements ConfiguredBundle<Configuration> {
                 .getHttpConfiguration()
                 .getGzipConfiguration()
                 .setEnabled(false);
+
+        gzipWarning();
 
         environment.addServlet(new MockStreamServlet(), "/tenacity/mock.stream");
         environment.addServlet(new ProxyStreamServlet(), "/tenacity/proxy.stream");

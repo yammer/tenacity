@@ -4,7 +4,7 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.tenacity.dashboard.bundle.TenacityBundle;
+import com.yammer.tenacity.dashboard.bundle.TenacityDashboardBundle;
 
 public class TenacityDashboardService extends Service<Configuration> {
     private TenacityDashboardService() {}
@@ -14,7 +14,7 @@ public class TenacityDashboardService extends Service<Configuration> {
     }
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
-        bootstrap.addBundle(new TenacityBundle());
+        bootstrap.addBundle(new TenacityDashboardBundle());
     }
 
     @Override
