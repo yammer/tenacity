@@ -16,6 +16,8 @@
         <module>tenacity-core</module>
         <module>tenacity-dashboard</module>
         <module>tenacity-turbine</module>
+        <module>tenacity-core-legacy</module>
+        <module>tenacity-dashboard-legacy</module>
     </modules>
 
     <scm>
