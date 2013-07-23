@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tenacity-legacy</artifactId>
+    <artifactId>tenacity-core-legacy</artifactId>
 
     <dependencies>
         <dependency>
