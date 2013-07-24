@@ -7,6 +7,7 @@ import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.views.ViewBundle;
 import com.yammer.tenacity.dashboard.resources.IndexResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ public class TenacityDashboardBundle implements ConfiguredBundle<Configuration> 
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         bootstrap.addBundle(new AssetsBundle());
+        bootstrap.addBundle(new ViewBundle());
     }
 
     private static void gzipWarning() {

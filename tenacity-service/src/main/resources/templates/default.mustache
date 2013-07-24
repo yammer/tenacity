@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Tenacity</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <link href="/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+        <style type="text/css">
+            body {
+                padding-top: 60px;
+                padding-bottom: 40px;
+            }
+            .sidebar-nav {
+                padding: 9px 0;
+            }
+        </style>
+        <script type="text/javascript" src="/assets/js/jquery-2.0.3.min.js"></script>
+    </head>
+    <body>
+        {{$navbar}}{{>/templates/navbar}}{{/navbar}}
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span2">
+                    {{$sidebar}}{{>/templates/sidebar}}{{/sidebar}}
+                </div>
+                <div class="span10">
+                    {{$content}}default content{{/content}}
+                </div>
+            </div>
+        </div>
+    </body>
+    {{>/templates/scripts}}
+    {{$moreScripts}}{{/moreScripts}}
+</html>
