@@ -11,7 +11,7 @@ public abstract class TenacityAuthenticatorOperation<Payload,Response> extends T
     protected final Authenticator<Payload, Response> authenticator;
     protected final Payload payload;
 
-    protected TenacityAuthenticatorOperation(Authenticator<Payload,Response> authenticator, Payload payload, String commandGroupKey, TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
+    public TenacityAuthenticatorOperation(Authenticator<Payload,Response> authenticator, Payload payload, String commandGroupKey, TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
         super(commandGroupKey, tenacityPropertyKey.toString(), tenacityPropertyStore, tenacityPropertyKey);
         this.authenticator = authenticator;
         this.payload = payload;
