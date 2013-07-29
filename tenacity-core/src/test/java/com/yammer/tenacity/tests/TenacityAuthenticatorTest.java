@@ -19,7 +19,7 @@ public class TenacityAuthenticatorTest extends TenacityTest {
     public static final class MockAuthenticatorOperation extends TenacityAuthenticatorOperation<String, Boolean> {
 
         protected MockAuthenticatorOperation(Authenticator<String, Boolean> authenticator, String authString, String commandGroupKey, TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
-            super(authenticator, authString, commandGroupKey, tenacityPropertyStore, tenacityPropertyKey);
+            super(authenticator, authString, commandGroupKey,tenacityPropertyKey.toString(), tenacityPropertyStore, tenacityPropertyKey);
         }
 
         @Override
