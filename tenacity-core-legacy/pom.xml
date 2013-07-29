@@ -19,12 +19,31 @@
                     <groupId>com.yammer.dropwizard</groupId>
                     <artifactId>dropwizard-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.yammer.dropwizard</groupId>
+                    <artifactId>dropwizard-auth</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.yammer.dropwizard</groupId>
+                    <artifactId>dropwizard-testing</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>0.5.1</version>
+            <version>${legacy.dropwizard.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-auth</artifactId>
+            <version>${legacy.dropwizard.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-testing</artifactId>
+            <version>${legacy.dropwizard.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
