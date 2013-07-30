@@ -7,7 +7,7 @@ and take the `max` of a particular metric.
 1. Tenacity
   -   executionIsolationThreadTimeoutInMillis = `ceil(1.1 * (max(p99) + max(median)))`
   -   threadpool
-      *   size = `(p99) * (m1 rate (in sec))` [minimum of 2, anything over 20 should be discussed]
+      *   size = `(p99 in seconds) * (m1 rate req/sec)` [minimum of 2, anything over 20 should be discussed]
 
 2. HTTP client
   -   connectTimeout = `33% of executionIsolationThreadTimeoutInMillis`
