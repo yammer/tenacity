@@ -13,22 +13,17 @@
                 padding-top: 60px;
                 padding-bottom: 40px;
             }
-            .sidebar-nav {
-                padding: 9px 0;
-            }
         </style>
         <script type="text/javascript" src="/assets/js/jquery-2.0.3.min.js"></script>
     </head>
     <body>
         {{$navbar}}{{>/templates/navbar}}{{/navbar}}
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span2">
-                    {{$sidebar}}{{>/templates/sidebar}}{{/sidebar}}
-                </div>
-                <div class="span10">
-                    {{$content}}default content{{/content}}
-                </div>
+        <div class="row">
+            <div class="col-lg-2">
+                {{$sidebar}}{{>/templates/sidebar}}{{/sidebar}}
+            </div>
+            <div class="col-lg-10">
+                {{$content}}default content{{/content}}
             </div>
         </div>
     </body>
