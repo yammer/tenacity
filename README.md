@@ -77,6 +77,16 @@ Here is a sample `TenacityCommand` that always succeeds:
         }
     }
 
+There are two ways to use a constructed `TenacityCommand`.
+
+    AlwaysSucceed command = new AlwaysSucceed(...);
+    String result = command.execute();
+
+This executes the command synchronously but through the protection of a `Future.get(configurableTimeout)`. The other way to invoke
+a `TenacityCommand` is asynchronously.
+
+    Future<String> futureResult = command.queue();
+
 There are two methods that must be overriden, `run()` and `getFallback()`. `getFallback()` is *always* invoked. It can be invoked one of four different ways:
 
 1. `run()` throws an exception.
