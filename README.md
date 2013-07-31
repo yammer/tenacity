@@ -4,12 +4,19 @@ Tenacity
 What is it?
 -----------
 
-Tenacity is a Dropwizard module that incorporates Hystrix. Hystrix is a resiliency library from Netflix. It's goals are to:
+Tenacity is a Dropwizard module that incorporates Hystrix. Hystrix is a resiliency library from Netflix. Hystrix goals are to:
 
 1. Stop cascading failures.
 2. Fail-fast and rapidly recover.
 3. Reduce mean-time-to-discovery (with dashboards)
 4. Reduce mean-time-to-recovery (with dynamic configuration)
+
+Tenacity aids at making Hystrix dropwizard-friendly and constructing an ecosystem for developers to quickly leverage the benefits of Hystrix.
+
+1. Bundles setup necessary property strategies, metrics, dynamic configuration, and some resource endpoints (e.g. for dashboards).
+2. Dropwizard-configuration style (YAML) for dependencies.
+3. Building blocks to inject different configuration dependencies into your dependency wrappers (`TenacityCommand<ReturnType>`).
+4. Ability to unit test Hystrix. We have tried to mitigate a lot of the problems because Hystrix relies heavily on static state.
 
 Modules
 -------
@@ -22,6 +29,25 @@ Modules
 
 How To Use
 ==========
+
+Here is a sample `TenacityCommand` that always succeeds:
+
+            public class AlwaysSucceed extends TenacityCommand<String> {
+                public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
+                    super("Example", "AlwaysSucceed", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
+                }
+
+                @Override
+                protected String run() throws Exception {
+                    return "value";
+                }
+
+                @Override
+                protected String getFallback() {
+                    return "fallback";
+                }
+            }
+
 
 
 
