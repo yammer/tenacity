@@ -100,6 +100,38 @@ Caveats:
 
 1. `getFallback()` should not be a latent or blocking call.
 
+Recommended Use
+---------------
+
+An example service called `A` depends on `B` for some functionality. This may appear as a single dependency, but that may
+not necessarily be true. What if `A` made 5 different invocations on `B` to satisfy one requirement that `A`
+needed to accomplish in order to meet a functional need. Then another requirement only required 1 invocation. In practice,
+these two different uses might have much different throughput and invocation rates. Thus, you should treat these two different
+usages of `B` as two separate dependencies of `A`. This allows for finer configuration of the two dependencies, but also helps
+isolate resources and circuit-breakers to a well defined scope.
+
+Dropwizard
+----------
+
+1. To leverage within dropwizard first at the following to your `pom.xml`:
+
+    <dependency>
+        <groupId>com.yammer.tenacity</groupId>
+        <artifactId>tenacity-core</artifactId>
+        <version>0.0.6</version>
+    </dependency>
+
+2. Then make sure you add the bundle in your `Service`.
+
+    @Override
+    public void initialize(Bootstrap<Configuration> bootstrap) {
+        ...
+        bootstrap.addBundle(new TenacityBundle());
+        ...
+    }
+
+3. Define
+
 Configuration
 =============
 
