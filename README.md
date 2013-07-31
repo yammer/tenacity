@@ -115,22 +115,31 @@ Dropwizard
 
 1. To leverage within dropwizard first at the following to your `pom.xml`:
 
-    <dependency>
-        <groupId>com.yammer.tenacity</groupId>
-        <artifactId>tenacity-core</artifactId>
-        <version>0.0.6</version>
-    </dependency>
+        <dependency>
+            <groupId>com.yammer.tenacity</groupId>
+            <artifactId>tenacity-core</artifactId>
+            <version>0.0.6</version>
+        </dependency>
 
 2. Then make sure you add the bundle in your `Service`.
 
-    @Override
-    public void initialize(Bootstrap<Configuration> bootstrap) {
-        ...
-        bootstrap.addBundle(new TenacityBundle());
-        ...
-    }
+        @Override
+        public void initialize(Bootstrap<Configuration> bootstrap) {
+            ...
+            bootstrap.addBundle(new TenacityBundle());
+            ...
+        }
 
-3. Define
+3. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best
+when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
+shave down some characters to save on space, again for UI purposes.
+
+            public enum MyDependencyKeys implements TenacityPropertyKey {
+                CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
+                CMPLT_TOKIE_AUTH,
+                CMPLT_TYRANT_AUTH,
+                CMPLT_WHVLL_PRESENCE
+            }
 
 Configuration
 =============
