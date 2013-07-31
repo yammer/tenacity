@@ -14,16 +14,11 @@ Tenacity is a Dropwizard module that incorporates Hystrix. Hystrix is a resilien
 Modules
 -------
 
-    -   tenacity-core
-        *   The building blocks to quickly use Hystrix within the context of Dropwizard.
-    -   tenacity-dashboard
-        *   Adds the Hystrix dashboard accessiable at `/tenacity`. *Warning: this disables gzip encoding to support text/event-streams*
-    -   tenacity-service
-        *   Utilizes the tenacity-dashboard to view different configurable clusters. Currently this is hosted at:
-        http://tenacity.int.yammer.com
-    -   tenacity-*-legacy
-        *   Support for legacy versions of Dropwizard. Currently there is a conflict with <0.6.0 versions (around Bundles).
-        Use these instead of their non-legacy counterparts.
+-   `tenacity-core`:        The building blocks to quickly use Hystrix within the context of Dropwizard.
+-   `tenacity-dashboard`:       Adds the Hystrix dashboard accessiable at `/tenacity`. *Warning: this disables gzip encoding to support text/event-streams*
+-   `tenacity-service`:       Utilizes the tenacity-dashboard to view different configurable clusters. Currently this is hosted at http://tenacity.int.yammer.com
+-   `tenacity-*-legacy`:        Support for legacy versions of Dropwizard. Currently there is a conflict with <0.6.0 versions (around Bundles).
+    Use these instead of their non-legacy counterparts.
 
 How To Use
 ==========
