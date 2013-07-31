@@ -18,6 +18,9 @@ Tenacity aids at making Hystrix dropwizard-friendly and constructing an ecosyste
 3. Building blocks to inject different configuration dependencies into your dependency wrappers (`TenacityCommand<ReturnType>`).
 4. Ability to unit test Hystrix. We have tried to mitigate a lot of the problems because Hystrix relies heavily on static state.
 
+Why?
+----
+
 Modules
 -------
 
@@ -27,26 +30,41 @@ Modules
 -   `tenacity-*-legacy`:        Support for legacy versions of Dropwizard. Currently there is a conflict with <0.6.0 versions (around Bundles).
     Use these instead of their non-legacy counterparts.
 
+Philosophy
+----------
+
+Tenacity in a nutshell protects services from it's dependencies. It this through a couple of different mechanisms. All dependent commands should be wrapped with
+the `TenacityCommand`. This isolates the application code from it's dependencies through the JVM's threadpools and `Future`s. It then forces
+the developer to consider how much resources to allocate and to constrain how long dependencies should take for the application to be able to continue successfully.
+Later Tenacity tries to provide you with equations to aid in how to determine how many resources and how long dependencies should take based on data we collect
+through `metrics`.
+
+Lastly, it provides circuit-breakers. Circuit-breakers allow for any `TenacityCommand` that is currently experiencing a high number of failures to
+short-circuit the invocation of `run()` and instead immediately use the `getFallback()`. This has two benefits. First it allows the
+ application to shed load and fail-fast instead of queueing. This is configurable, but
+ has reasonable defaults. Secondly, if the reason for `run()` taking longer then expected is due to server-side performance degradation
+ this allows for the client to reduce it's traffic to the server, assuming it may be part of the problem.
+
 How To Use
 ==========
 
 Here is a sample `TenacityCommand` that always succeeds:
 
-        public class AlwaysSucceed extends TenacityCommand<String> {
-            public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
-                super("Example", "AlwaysSucceed", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
-            }
-
-            @Override
-            protected String run() throws Exception {
-                return "value";
-            }
-
-            @Override
-            protected String getFallback() {
-                return "fallback";
-            }
+    public class AlwaysSucceed extends TenacityCommand<String> {
+        public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
+            super("Example", "AlwaysSucceed", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
         }
+
+        @Override
+        protected String run() throws Exception {
+            return "value";
+        }
+
+        @Override
+        protected String getFallback() {
+            return "fallback";
+        }
+    }
 
 There are two methods that must be overriden, `run()` and `getFallback()`. `getFallback()` is *always* invoked. It can be invoked one of four different ways:
 
@@ -57,7 +75,9 @@ There are two methods that must be overriden, `run()` and `getFallback()`. `getF
 
 ![Alt text](https://raw.github.com/wiki/Netflix/Hystrix/images/hystrix-flow-chart-original.png)
 
+Caveats:
 
+1. `getFallback()` should not be a latent or blocking call.
 
 Configuration
 =============
