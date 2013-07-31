@@ -23,9 +23,18 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
                               TenacityPropertyStore tenacityPropertyStore,
                               TenacityPropertyKey tenacityPropertyKey) {
         this(commandGroupKeyFrom(commandGroupKey),
-             commandKeyFrom(commandKey),
-             tenacityPropertyStore,
-             tenacityPropertyKey);
+                commandKeyFrom(commandKey),
+                tenacityPropertyStore,
+                tenacityPropertyKey);
+    }
+
+    protected TenacityCommand(String commandGroupKey,
+                              TenacityPropertyStore tenacityPropertyStore,
+                              TenacityPropertyKey tenacityPropertyKey) {
+        this(commandGroupKeyFrom(commandGroupKey),
+                commandKeyFrom(tenacityPropertyKey.toString()),
+                tenacityPropertyStore,
+                tenacityPropertyKey);
     }
 
     public static HystrixCommandGroupKey commandGroupKeyFrom(String key) {

@@ -63,7 +63,7 @@ Here is a sample `TenacityCommand` that always succeeds:
 
     public class AlwaysSucceed extends TenacityCommand<String> {
         public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
-            super("Example", "AlwaysSucceed", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
+            super("ExampleGroup", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
         }
 
         @Override
@@ -100,6 +100,29 @@ Caveats:
 
 1. `getFallback()` should not be a latent or blocking call.
 
+TenacityCommand Constructor Arguments
+-------------------------------------
+
+Earlier we saw:
+
+    public class AlwaysSucceed extends TenacityCommand<String> {
+        public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
+            super("ExampleGroup", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
+        }
+        ...
+    }
+
+The arguments are:
+
+1. `commandGroupKey`: This allows for a grouping mechanism for `commandKey`s.
+2. `tenacityPropertyStore`: this is used internally to select which configuration to use based off the 3rd argument.
+3. `commandKey`: This creates a circuit-breaker, threadpool, and also the identifier that will be used in dashboards.
+This should be your implementation of the `TenacityProperyKey` interface.
+
+It is possible to create multiple circuit-breakers that leverage a single threadpool, but for brevity and simplicity that is left out of the documentation.
+There is another constructor that allows for separate `commandKey` and `threadpoolKey` for that functionality. We have not found the
+need for this case with our use cases with Tenacity so far.
+
 Recommended Use
 ---------------
 
@@ -134,13 +157,59 @@ Dropwizard
 when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
 shave down some characters to save on space, again for UI purposes.
 
-            public enum MyDependencyKeys implements TenacityPropertyKey {
+            public enum CompletieDependencyKeys implements TenacityPropertyKey {
                 CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
                 CMPLT_TOKIE_AUTH,
                 CMPLT_TYRANT_AUTH,
                 CMPLT_WHVLL_PRESENCE
             }
 
+4. Create a concrete implementation of the `TenacityPropertyStoreBuilder<? extends Configuration>` as this is used to create
+the `TenacityPropertyStore`. The store is then injected into all `TenacityCommand`s to tie together configurations and dependencies.
+Here is `completie`'s:
+
+            public class CompletiePropertiesBuilder extends TenacityPropertyStoreBuilder<CompletieConfiguration> {
+                public CompletiePropertiesBuilder(CompletieConfiguration configuration) {
+                    super(configuration);
+                }
+
+                @Override
+                public ImmutableMap<TenacityPropertyKey, HystrixCommandProperties.Setter> buildCommandProperties() {
+                    final ImmutableMap.Builder<TenacityPropertyKey, TenacityCommandProperties.Setter> builder = ImmutableMap.builder();
+
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, TenacityCommandProperties.build(configuration.getRanking().getHystrixUserConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, TenacityCommandProperties.build(configuration.getRanking().getHystrixGroupConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, TenacityCommandProperties.build(configuration.getRanking().getHystrixSecondOrderConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, TenacityCommandProperties.build(configuration.getRanking().getHystrixNetworkConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, TenacityCommandProperties.build(configuration.getAuthentication().getHystrixConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, TenacityCommandProperties.build(configuration.getPresence().getHystrixConfig()));
+
+                    return builder.build();
+                }
+
+                @Override
+                public ImmutableMap<TenacityPropertyKey, HystrixThreadPoolProperties.Setter> buildThreadpoolProperties() {
+                    final ImmutableMap.Builder<TenacityPropertyKey, TenacityThreadPoolProperties.Setter> builder = ImmutableMap.builder();
+
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, TenacityThreadPoolProperties.build(configuration.getRanking().getHystrixUserConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, TenacityThreadPoolProperties.build(configuration.getRanking().getHystrixGroupConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, TenacityThreadPoolProperties.build(configuration.getRanking().getHystrixSecondOrderConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, TenacityThreadPoolProperties.build(configuration.getRanking().getHystrixNetworkConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, TenacityThreadPoolProperties.build(configuration.getAuthentication().getHystrixConfig()));
+                    builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, TenacityThreadPoolProperties.build(configuration.getPresence().getHystrixConfig()));
+
+                    return builder.build();
+                }
+            }
+
+5. In your `Service`'s initialization phase construct your `TenacityPropertyStore`. Then inject it to your abstractions which handle functionality
+where dependencies are utilized.
+
+            TenacityPropertyStore tenacityPropertyStore = new TenacityPropertyStore(new CompletiePropertiesBuilder(configuration));
+
+            SomeDependency someDependency = new SomeDependency(tenacityPropertyStore, ...);
+
+6. Next is to actually configure your dependencies once they are wrapped with `TenacityCommand`s.
 Configuration
 =============
 
