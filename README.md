@@ -32,22 +32,30 @@ How To Use
 
 Here is a sample `TenacityCommand` that always succeeds:
 
-            public class AlwaysSucceed extends TenacityCommand<String> {
-                public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
-                    super("Example", "AlwaysSucceed", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
-                }
-
-                @Override
-                protected String run() throws Exception {
-                    return "value";
-                }
-
-                @Override
-                protected String getFallback() {
-                    return "fallback";
-                }
+        public class AlwaysSucceed extends TenacityCommand<String> {
+            public AlwaysSucceed(TenacityPropertyStore tenacityPropertyStore) {
+                super("Example", "AlwaysSucceed", tenacityPropertyStore, DependencyKey.ALWAYS_SUCCEED);
             }
 
+            @Override
+            protected String run() throws Exception {
+                return "value";
+            }
+
+            @Override
+            protected String getFallback() {
+                return "fallback";
+            }
+        }
+
+There are two methods that must be overriden, `run()` and `getFallback()`. `getFallback()` is *always* invoked. It can be invoked one of four different ways:
+
+1. `run()` throws an exception.
+2. `run()` is never executed due to an open circuit.
+3. `run()` is never executed due a queue-rejection. This can be because there aren't enough threads or queue space available.
+4. `run()` takes too long to return a result. The thread waiting for the result will not receive the result from the invocation of `getFallback()` instead.
+
+![Alt text](https://raw.github.com/wiki/Netflix/Hystrix/images/hystrix-flow-chart-original.png)
 
 
 
