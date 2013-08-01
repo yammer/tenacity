@@ -114,7 +114,7 @@ Earlier we saw:
 
 The arguments are:
 
-1. `commandGroupKey`: This allows for a grouping mechanism for `commandKey`s.
+1. `commandGroupKey`: This allows for a grouping mechanism for `commandKey`. At the moment this is not used, but it might have future uses, so don't completely ignore it.
 2. `tenacityPropertyStore`: this is used internally to select which configuration to use based off the 3rd argument.
 3. `commandKey`: This creates a circuit-breaker, threadpool, and also the identifier that will be used in dashboards.
 This should be your implementation of the `TenacityProperyKey` interface.
@@ -209,9 +209,53 @@ where dependencies are utilized.
 
             SomeDependency someDependency = new SomeDependency(tenacityPropertyStore, ...);
 
-6. Next is to actually configure your dependencies once they are wrapped with `TenacityCommand`s.
+6. Next is to actually configure your dependencies once they are wrapped with `TenacityCommand`.
+
+
 Configuration
 =============
+
+Once you have identified your dependencies you need to configure them appropriately. Here is the basic structure of a single
+`TenacityConfiguration` that may be leverage multiple times through your service configuration:
+
+        executionIsolationThreadTimeoutInMillis: 1000
+        threadpool:
+            threadPoolCoreSize: 10
+            keepAliveTimeMinutes: 1
+            maxQueueSize: -1
+            queueSizeRejectionThreshold: 5
+            metricsRollingStatisticalWindowInMilliseconds: 10000
+            metricsRollingStatisticalWindowBuckets: 10
+        circuitBreaker:
+            requestVolumeThreshold: 20
+            errorThresholdPercentage: 50
+            sleepWindowInMillis: 5000
+
+The following two are the most important and you can probably get by just fine by defining just these two and leveraging the
+defaults.
+
+-   `executionIsolationThreadTimeoutInMillis`: How long the entire dependency command should take.
+-   `threadPoolCoreSize`: Self explanatory.
+
+Here are the rest of the descriptions:
+
+-   `keepAliveTimeMinutes`: Self explanatory.
+-   `maxQueueSize`: -1 uses a `SynchronousQueue`. Anything >0 leverages a `BlockingQueue` and enables the `queueSizeRejectionThreshold` variable.
+-   `queueSizeRejectionThreshold`: Disabled when using -1 for `maxQueueSize` otherwise self explanatory.
+-   `requestVolumeThreshold`: The minimum number of requests that need to be received within the `metricsRollingStatisticalWindowInMilliseconds` in order to open a circuit breaker.
+-   `errorThresholdPercentage`: The percentage of errors needed to trip a circuit breaker. In order for this to take effect the `requestVolumeThreshold` must first be satisfied.
+-   `sleepWindowInMillis`: How long to keep the circuit breaker open, before trying again.
+
+These are recommended to be left alone unless you know what you're doing:
+
+-   `metricsRollingStatisticalWindowInMilliseconds`: How long to keep around metrics for calculating rates.
+-   `metricsRollingStatisticalWindowBuckets`: How many different metric windows to keep in memory.
+
+Once you are done configuring your Tenacity dependencies. Don't forget to tweak the necessary connect/read timeouts on HTTP clients.
+We have some suggestions for how you go about this in the Equations section.
+
+Equations
+---------
 
 When any percentile data is needed this should be calculated using historical data. Look somewhere between a week to a month
 and take the `max` of a particular metric.
