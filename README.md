@@ -271,6 +271,12 @@ and take the `max` of a particular metric.
   -   -   there is a good chance that a single client may use multiple commandKeys that might warrant a range of different connectionTimeouts and read timeouts. 
   -   In this case the current approach is to take the max value across all specific timeouts (alternatively the clients could be split into multiple clients on the service level)
 
+Service Dashboards
+==================
+
+One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery for issues. These are available at:
+
+http://tenacity.int.yammer.com
 
 Hystrix Documentation
 =====================
