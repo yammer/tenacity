@@ -30,7 +30,7 @@ public class ThreadPoolConfiguration {
     @Max(Integer.MAX_VALUE)
     private int metricsRollingStatisticalWindowBuckets = 10;
 
-    ThreadPoolConfiguration() {}
+    public ThreadPoolConfiguration() {}
 
     public ThreadPoolConfiguration(int threadPoolCoreSize,
                                    int keepAliveTimeMinutes,

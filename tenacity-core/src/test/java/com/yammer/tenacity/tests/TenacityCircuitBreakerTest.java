@@ -2,6 +2,7 @@ package com.yammer.tenacity.tests;
 
 import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
+import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
 import java.net.URISyntaxException;

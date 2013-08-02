@@ -1,25 +1,20 @@
-package com.yammer.tenacity.tests;
+package com.yammer.tenacity.testing;
 
 import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.Hystrix;
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.tenacity.core.bundle.TenacityBundle;
+import com.netflix.hystrix.contrib.yammermetricspublisher.HystrixYammerMetricsPublisher;
+import com.netflix.hystrix.strategy.HystrixPlugins;
 import org.junit.After;
 
 import java.util.concurrent.TimeUnit;
-
-import static org.mockito.Mockito.mock;
 
 public abstract class TenacityTest {
     static {
         initialization();
     }
 
-    @SuppressWarnings("unchecked")
     private static void initialization() {
-        new TenacityBundle().initialize(new Bootstrap<Configuration>(mock(Service.class)));
+        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
         ConfigurationManager
                 .getConfigInstance()
                 .setProperty("hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds", "1");

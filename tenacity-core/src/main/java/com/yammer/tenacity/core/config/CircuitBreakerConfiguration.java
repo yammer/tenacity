@@ -24,7 +24,7 @@ public class CircuitBreakerConfiguration {
     @Max(Integer.MAX_VALUE)
     private int metricsRollingStatisticalWindowBuckets = 10;
 
-    CircuitBreakerConfiguration() {}
+    public CircuitBreakerConfiguration() {}
 
     public CircuitBreakerConfiguration(int requestVolumeThreshold,
                                        int sleepWindowInMillis,

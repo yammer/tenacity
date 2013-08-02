@@ -15,6 +15,7 @@ import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
+import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
 import java.util.concurrent.Future;
