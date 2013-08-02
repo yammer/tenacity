@@ -35,6 +35,10 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
         return HystrixThreadPoolMetrics.getInstance(getThreadPoolKey());
     }
 
+    public HystrixCircuitBreaker getCircuitBreaker() {
+        return HystrixCircuitBreaker.Factory.getInstance(getCommandKey());
+    }
+
     @Override
     protected abstract ReturnType run() throws Exception;
 
