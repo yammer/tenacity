@@ -1,5 +1,6 @@
 package com.yammer.tenacity.core.legacy.tests;
 
+import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.Hystrix;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
@@ -19,6 +20,9 @@ public abstract class TenacityTest {
     @SuppressWarnings("unchecked")
     private static void initialization() {
         new TenacityBundle().initialize(new Environment(mock(Service.class), mock(Configuration.class)));
+        ConfigurationManager
+                .getConfigInstance()
+                .setProperty("hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds", "1");
     }
 
     @After
