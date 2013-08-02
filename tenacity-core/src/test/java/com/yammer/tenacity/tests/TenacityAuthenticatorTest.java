@@ -5,7 +5,6 @@ import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
-import com.yammer.tenacity.core.TenacityPropertyStore;
 import com.yammer.tenacity.core.dropwizard.TenacityAuthenticatorOperation;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import org.junit.Test;
@@ -15,11 +14,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class TenacityAuthenticatorTest extends TenacityTest {
-
     public static final class MockAuthenticatorOperation extends TenacityAuthenticatorOperation<String, Boolean> {
 
-        protected MockAuthenticatorOperation(Authenticator<String, Boolean> authenticator, String authString, String commandGroupKey, TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
-            super(authenticator, authString, commandGroupKey,tenacityPropertyKey.toString(), tenacityPropertyStore, tenacityPropertyKey);
+        protected MockAuthenticatorOperation(Authenticator<String, Boolean> authenticator, String authString, TenacityPropertyKey tenacityPropertyKey) {
+            super(authenticator, authString, tenacityPropertyKey);
         }
 
         @Override
@@ -29,12 +27,9 @@ public class TenacityAuthenticatorTest extends TenacityTest {
     }
 
     public static final class MockAuthenticator implements Authenticator<String, Boolean>{
-
-        private final TenacityPropertyStore propertyStore;
         private final TenacityPropertyKey propertyKey;
 
-        public MockAuthenticator(TenacityPropertyStore propertyStore, TenacityPropertyKey propertyKey) {
-            this.propertyStore = propertyStore;
+        public MockAuthenticator(TenacityPropertyKey propertyKey) {
             this.propertyKey = propertyKey;
         }
 
@@ -52,18 +47,14 @@ public class TenacityAuthenticatorTest extends TenacityTest {
                 }
             },
                     authString,
-                    "MockAuth",
-                    propertyStore,
                     propertyKey
             ).execute();
         }
     }
 
-    private final TenacityPropertyStore tenacityPropertyStore = new TenacityPropertyStore();
-
     @Test
     public void testRun() throws AuthenticationException {
-        MockAuthenticator authenticator = new MockAuthenticator(tenacityPropertyStore, DependencyKey.EXAMPLE);
+        MockAuthenticator authenticator = new MockAuthenticator(DependencyKey.EXAMPLE);
 
         Optional<Boolean> invalidAuth = authenticator.authenticate("INVALID");
         assertTrue(invalidAuth.isPresent());
@@ -76,7 +67,7 @@ public class TenacityAuthenticatorTest extends TenacityTest {
 
     @Test
     public void testFallback() throws AuthenticationException {
-        MockAuthenticator authenticator = new MockAuthenticator(tenacityPropertyStore, DependencyKey.EXAMPLE);
+        MockAuthenticator authenticator = new MockAuthenticator(DependencyKey.EXAMPLE);
 
         Optional<Boolean> noAuth = authenticator.authenticate("noauth");
 
@@ -84,10 +75,9 @@ public class TenacityAuthenticatorTest extends TenacityTest {
         assertFalse(noAuth.get());
 
         final HystrixCommandMetrics authCommandMetrics = HystrixCommandMetrics
-                .getInstance(new MockAuthenticatorOperation(null,"STRING", "MockAuth", tenacityPropertyStore, DependencyKey.EXAMPLE).getCommandKey());
+                .getInstance(new MockAuthenticatorOperation(null, "MockAuth", DependencyKey.EXAMPLE).getCommandKey());
         assertThat(authCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
                 .isEqualTo(1);
     }
-
 }

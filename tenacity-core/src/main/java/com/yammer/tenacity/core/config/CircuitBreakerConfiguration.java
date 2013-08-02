@@ -16,14 +16,26 @@ public class CircuitBreakerConfiguration {
     @Max(Integer.MAX_VALUE)
     private int errorThresholdPercentage = 50;
 
-    public CircuitBreakerConfiguration() {}
+    @Min(0)
+    @Max(Integer.MAX_VALUE)
+    private int metricsRollingStatisticalWindowInMilliseconds = 10000;
+
+    @Min(0)
+    @Max(Integer.MAX_VALUE)
+    private int metricsRollingStatisticalWindowBuckets = 10;
+
+    CircuitBreakerConfiguration() {}
 
     public CircuitBreakerConfiguration(int requestVolumeThreshold,
                                        int sleepWindowInMillis,
-                                       int errorThresholdPercentage) {
+                                       int errorThresholdPercentage,
+                                       int metricsRollingStatisticalWindowInMilliseconds,
+                                       int metricsRollingStatisticalWindowBuckets) {
         this.requestVolumeThreshold = requestVolumeThreshold;
         this.sleepWindowInMillis = sleepWindowInMillis;
         this.errorThresholdPercentage = errorThresholdPercentage;
+        this.metricsRollingStatisticalWindowInMilliseconds = metricsRollingStatisticalWindowInMilliseconds;
+        this.metricsRollingStatisticalWindowBuckets = metricsRollingStatisticalWindowBuckets;
     }
 
     public int getRequestVolumeThreshold() {
@@ -38,6 +50,14 @@ public class CircuitBreakerConfiguration {
         return errorThresholdPercentage;
     }
 
+    public int getMetricsRollingStatisticalWindowInMilliseconds() {
+        return metricsRollingStatisticalWindowInMilliseconds;
+    }
+
+    public int getMetricsRollingStatisticalWindowBuckets() {
+        return metricsRollingStatisticalWindowBuckets;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -46,6 +66,9 @@ public class CircuitBreakerConfiguration {
         CircuitBreakerConfiguration that = (CircuitBreakerConfiguration) o;
 
         if (errorThresholdPercentage != that.errorThresholdPercentage) return false;
+        if (metricsRollingStatisticalWindowBuckets != that.metricsRollingStatisticalWindowBuckets) return false;
+        if (metricsRollingStatisticalWindowInMilliseconds != that.metricsRollingStatisticalWindowInMilliseconds)
+            return false;
         if (requestVolumeThreshold != that.requestVolumeThreshold) return false;
         if (sleepWindowInMillis != that.sleepWindowInMillis) return false;
 
@@ -57,6 +80,8 @@ public class CircuitBreakerConfiguration {
         int result = requestVolumeThreshold;
         result = 31 * result + sleepWindowInMillis;
         result = 31 * result + errorThresholdPercentage;
+        result = 31 * result + metricsRollingStatisticalWindowInMilliseconds;
+        result = 31 * result + metricsRollingStatisticalWindowBuckets;
         return result;
     }
 }

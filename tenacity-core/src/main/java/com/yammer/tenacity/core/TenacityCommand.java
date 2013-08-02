@@ -1,40 +1,14 @@
 package com.yammer.tenacity.core;
 
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixThreadPoolKey;
+import com.netflix.hystrix.*;
+import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnType> {
-    protected TenacityCommand(HystrixCommandGroupKey hystrixCommandGroupKey,
-                              HystrixCommandKey hystrixCommandKey,
-                              TenacityPropertyStore tenacityPropertyStore,
-                              TenacityPropertyKey tenacityPropertyKey) {
-        super(HystrixCommand.Setter.withGroupKey(hystrixCommandGroupKey)
-                .andCommandKey(hystrixCommandKey)
-                .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(tenacityPropertyKey.toString()))
-                .andThreadPoolPropertiesDefaults(tenacityPropertyStore.getThreadpoolProperties().get(tenacityPropertyKey))
-                .andCommandPropertiesDefaults(tenacityPropertyStore.getCommandProperties().get(tenacityPropertyKey)));
-    }
-
-    protected TenacityCommand(String commandGroupKey,
-                              String commandKey,
-                              TenacityPropertyStore tenacityPropertyStore,
-                              TenacityPropertyKey tenacityPropertyKey) {
-        this(commandGroupKeyFrom(commandGroupKey),
-                commandKeyFrom(commandKey),
-                tenacityPropertyStore,
-                tenacityPropertyKey);
-    }
-
-    protected TenacityCommand(String commandGroupKey,
-                              TenacityPropertyStore tenacityPropertyStore,
-                              TenacityPropertyKey tenacityPropertyKey) {
-        this(commandGroupKeyFrom(commandGroupKey),
-                commandKeyFrom(tenacityPropertyKey.toString()),
-                tenacityPropertyStore,
-                tenacityPropertyKey);
+    protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
+        super(HystrixCommand.Setter.withGroupKey(commandGroupKeyFrom("TENACITY"))
+                .andCommandKey(commandKeyFrom(tenacityPropertyKey.toString()))
+                .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey(tenacityPropertyKey.toString())));
     }
 
     public static HystrixCommandGroupKey commandGroupKeyFrom(String key) {
@@ -43,6 +17,22 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
 
     public static HystrixCommandKey commandKeyFrom(String key) {
         return HystrixCommandKey.Factory.asKey(key);
+    }
+
+    public HystrixCommandProperties getCommandProperties() {
+        return HystrixPropertiesFactory.getCommandProperties(getCommandKey(), null);
+    }
+
+    public HystrixThreadPoolProperties getThreadpoolProperties() {
+        return HystrixPropertiesFactory.getThreadPoolProperties(getThreadPoolKey(), null);
+    }
+
+    public HystrixCommandMetrics getCommandMetrics() {
+        return HystrixCommandMetrics.getInstance(getCommandKey());
+    }
+
+    public HystrixThreadPoolMetrics getThreadpoolMetrics() {
+        return HystrixThreadPoolMetrics.getInstance(getThreadPoolKey());
     }
 
     @Override

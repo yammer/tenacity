@@ -4,100 +4,94 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.HystrixCommandProperties;
-import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
-import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
-import com.yammer.dropwizard.config.Configuration;
 import com.yammer.tenacity.core.TenacityCommand;
-import com.yammer.tenacity.core.TenacityPropertyStore;
-import com.yammer.tenacity.core.TenacityPropertyStoreBuilder;
 import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
-import com.yammer.tenacity.core.metrics.TenacityMetrics;
-import com.yammer.tenacity.core.properties.TenacityCommandProperties;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
-import com.yammer.tenacity.core.properties.TenacityThreadPoolProperties;
-import org.junit.Before;
+import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import org.junit.Test;
 
 import java.util.concurrent.Future;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 public class TenacityPropertiesTest extends TenacityTest {
-    private TenacityPropertyStore tenacityPropertyStore;
-
-    @Before
-    public void setup() {
-        tenacityPropertyStore = new TenacityPropertyStore();
-    }
-
     @Test
     public void executeCorrectly() throws Exception {
-        assertThat(new TenacitySuccessCommand(tenacityPropertyStore).execute()).isEqualTo("value");
-        assertThat(new TenacitySuccessCommand(tenacityPropertyStore).queue().get()).isEqualTo("value");
+        assertThat(new TenacitySuccessCommand().execute()).isEqualTo("value");
+        assertThat(new TenacitySuccessCommand().queue().get()).isEqualTo("value");
     }
 
     @Test
     public void fallbackCorrectly() throws Exception {
-        assertThat(new TenacityFailingCommand(tenacityPropertyStore).execute()).isEqualTo("fallback");
-        assertThat(new TenacityFailingCommand(tenacityPropertyStore).queue().get()).isEqualTo("fallback");
+        assertThat(new TenacityFailingCommand().execute()).isEqualTo("fallback");
+        assertThat(new TenacityFailingCommand().queue().get()).isEqualTo("fallback");
     }
 
-    private static class OverridePropertiesBuilder extends TenacityPropertyStoreBuilder<OverrideConfiguration> {
-        private final DependencyKey key;
-        private OverridePropertiesBuilder(DependencyKey key,
-                                          OverrideConfiguration configuration) {
-            super(configuration);
-            this.key = key;
+    @Test
+    public void overrideThreadIsolationTimeout() {
+        ConfigurationManager.getConfigInstance().setProperty("hystrix.command.THREAD_ISOLATION_TIMEOUT.execution.isolation.thread.timeoutInMilliseconds", "987");
+        class ThreadIsolationCommand extends TenacityCommand<String> {
+            private ThreadIsolationCommand() {
+                super(DependencyKey.THREAD_ISOLATION_TIMEOUT);
+            }
+
+            @Override
+            protected String run() throws Exception {
+                return "value";
+            }
+
+            @Override
+            protected String getFallback() {
+                return "fallback";
+            }
         }
 
-        @Override
-        public ImmutableMap<TenacityPropertyKey, HystrixCommandProperties.Setter> buildCommandProperties() {
+        final ThreadIsolationCommand threadIsolationCommand = new ThreadIsolationCommand();
 
-            return ImmutableMap.<TenacityPropertyKey, TenacityCommandProperties.Setter>of(key, TenacityCommandProperties.build(configuration.getTenacityConfiguration()));
-        }
+        assertEquals(threadIsolationCommand.execute(), "value");
 
-        @Override
-        public ImmutableMap<TenacityPropertyKey, HystrixThreadPoolProperties.Setter> buildThreadpoolProperties() {
-            return ImmutableMap.<TenacityPropertyKey, TenacityThreadPoolProperties.Setter>of(key, TenacityThreadPoolProperties.build(configuration.getTenacityConfiguration()));
-        }
-    }
-
-    private static class OverrideConfiguration extends Configuration {
-        private final TenacityConfiguration tenacityConfiguration;
-
-        private OverrideConfiguration(TenacityConfiguration tenacityConfiguration) {
-            this.tenacityConfiguration = tenacityConfiguration;
-        }
-
-        private TenacityConfiguration getTenacityConfiguration() {
-            return tenacityConfiguration;
-        }
+        final HystrixCommandProperties commandProperties = threadIsolationCommand.getCommandProperties();
+        assertEquals(commandProperties.executionIsolationThreadTimeoutInMilliseconds().get().intValue(), 987);
     }
 
     @Test
     public void overriddenProperties() throws Exception {
-        final OverrideConfiguration exampleConfiguration = new OverrideConfiguration(
-                new TenacityConfiguration(
+        final TenacityConfiguration overrideConfiguration = new TenacityConfiguration(
                 new ThreadPoolConfiguration(50, 3, 27, 57, 2000, 20),
-                new CircuitBreakerConfiguration(1, 2, 3),
-                982));
-        tenacityPropertyStore = new TenacityPropertyStore(new OverridePropertiesBuilder(DependencyKey.OVERRIDE, exampleConfiguration));
+                new CircuitBreakerConfiguration(1, 2, 3, 2000, 20),
+                982);
 
-        assertThat(new TenacitySuccessCommand(tenacityPropertyStore, DependencyKey.OVERRIDE).execute()).isEqualTo("value");
-        assertThat(new TenacitySuccessCommand(tenacityPropertyStore, DependencyKey.OVERRIDE).queue().get()).isEqualTo("value");
+        final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
+                ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OVERRIDE, overrideConfiguration));
 
-        final HystrixThreadPoolProperties threadPoolProperties = HystrixPropertiesFactory
-                .getThreadPoolProperties(HystrixThreadPoolKey.Factory.asKey(DependencyKey.OVERRIDE.toString()), null);
+        tenacityPropertyRegister.register();
 
-        final ThreadPoolConfiguration threadPoolConfiguration = exampleConfiguration.getTenacityConfiguration().getThreadpool();
+        assertEquals(new TenacitySuccessCommand(DependencyKey.OVERRIDE).execute(), "value");
+        assertEquals(new TenacitySuccessCommand(DependencyKey.OVERRIDE).queue().get(), "value");
+
+        final TenacitySuccessCommand successCommand = new TenacitySuccessCommand(DependencyKey.OVERRIDE);
+
+        assertNotEquals(new TenacitySuccessCommand().getCommandProperties().executionIsolationThreadTimeoutInMilliseconds(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+
+        final HystrixCommandProperties commandProperties = successCommand.getCommandProperties();
+        assertEquals(commandProperties.executionIsolationThreadTimeoutInMilliseconds().get().intValue(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+        assertEquals(commandProperties.circuitBreakerErrorThresholdPercentage().get().intValue(), overrideConfiguration.getCircuitBreaker().getErrorThresholdPercentage());
+        assertEquals(commandProperties.circuitBreakerRequestVolumeThreshold().get().intValue(), overrideConfiguration.getCircuitBreaker().getRequestVolumeThreshold());
+        assertEquals(commandProperties.circuitBreakerSleepWindowInMilliseconds().get().intValue(), overrideConfiguration.getCircuitBreaker().getSleepWindowInMillis());
+        assertEquals(commandProperties.metricsRollingStatisticalWindowBuckets().get().intValue(), overrideConfiguration.getCircuitBreaker().getMetricsRollingStatisticalWindowBuckets());
+        assertEquals(commandProperties.metricsRollingStatisticalWindowInMilliseconds().get().intValue(), overrideConfiguration.getCircuitBreaker().getMetricsRollingStatisticalWindowInMilliseconds());
+
+
+        final HystrixThreadPoolProperties threadPoolProperties = successCommand.getThreadpoolProperties();
+        final ThreadPoolConfiguration threadPoolConfiguration = overrideConfiguration.getThreadpool();
         assertEquals(threadPoolProperties.coreSize().get().intValue(), threadPoolConfiguration.getThreadPoolCoreSize());
         assertEquals(threadPoolProperties.keepAliveTimeMinutes().get().intValue(), threadPoolConfiguration.getKeepAliveTimeMinutes());
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), threadPoolConfiguration.getMaxQueueSize());
@@ -106,9 +100,10 @@ public class TenacityPropertiesTest extends TenacityTest {
         assertEquals(threadPoolProperties.queueSizeRejectionThreshold().get().intValue(), threadPoolConfiguration.getQueueSizeRejectionThreshold());
     }
 
+
     private static class SleepCommand extends TenacityCommand<Optional<String>> {
-        private SleepCommand(String commandGroupKey, String commandKey, TenacityPropertyStore tenacityPropertyStore, TenacityPropertyKey tenacityPropertyKey) {
-            super(commandGroupKey, commandKey, tenacityPropertyStore, tenacityPropertyKey);
+        private SleepCommand(TenacityPropertyKey tenacityPropertyKey) {
+            super(tenacityPropertyKey);
         }
 
         @Override
@@ -126,16 +121,19 @@ public class TenacityPropertiesTest extends TenacityTest {
     @Test
     public void queueRejectionWithBlockingQueue() throws Exception {
         final int queueMaxSize = 5;
-        final OverrideConfiguration exampleConfiguration = new OverrideConfiguration(
-                new TenacityConfiguration(
-                        new ThreadPoolConfiguration(1, 1, 10, queueMaxSize, 10000, 10),
-                        new CircuitBreakerConfiguration(20, 5000, 50),
-                        5000));
-        tenacityPropertyStore = new TenacityPropertyStore(new OverridePropertiesBuilder(DependencyKey.SLEEP, exampleConfiguration));
+        final TenacityConfiguration exampleConfiguration = new TenacityConfiguration(
+                new ThreadPoolConfiguration(1, 1, 10, queueMaxSize, 10000, 10),
+                new CircuitBreakerConfiguration(20, 5000, 50, 10000, 10),
+                5000);
+
+        final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
+                ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.SLEEP, exampleConfiguration));
+
+        tenacityPropertyRegister.register();
 
         final ImmutableList.Builder<Future<Optional<String>>> sleepCommands = ImmutableList.builder();
         for (int i = 0; i < queueMaxSize * 2; i++) {
-            sleepCommands.add(new SleepCommand("queueRejectionWithBlockingQueue", "Sleep", tenacityPropertyStore, DependencyKey.SLEEP).queue());
+            sleepCommands.add(new SleepCommand(DependencyKey.SLEEP).queue());
         }
 
         for (Future<Optional<String>> future : sleepCommands.build()) {
@@ -148,7 +146,7 @@ public class TenacityPropertiesTest extends TenacityTest {
             }
         }
 
-        final HystrixCommandMetrics sleepCommandMetrics = TenacityMetrics.getCommandMetrics(new SleepCommand("queueRejectionWithBlockingQueue", "Sleep", tenacityPropertyStore, DependencyKey.SLEEP));
+        final HystrixCommandMetrics sleepCommandMetrics = new SleepCommand(DependencyKey.SLEEP).getCommandMetrics();
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
                 .isEqualTo(4);
@@ -162,10 +160,9 @@ public class TenacityPropertiesTest extends TenacityTest {
                 .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
                 .isEqualTo(0);
 
-        final HystrixThreadPoolProperties threadPoolProperties = HystrixPropertiesFactory
-                .getThreadPoolProperties(HystrixThreadPoolKey.Factory.asKey(DependencyKey.SLEEP.toString()), null);
+        final HystrixThreadPoolProperties threadPoolProperties = new SleepCommand(DependencyKey.SLEEP).getThreadpoolProperties();
 
-        final ThreadPoolConfiguration threadPoolConfiguration = exampleConfiguration.getTenacityConfiguration().getThreadpool();
+        final ThreadPoolConfiguration threadPoolConfiguration = exampleConfiguration.getThreadpool();
         assertEquals(threadPoolProperties.queueSizeRejectionThreshold().get().intValue(), threadPoolConfiguration.getQueueSizeRejectionThreshold());
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), threadPoolConfiguration.getMaxQueueSize());
     }
@@ -174,8 +171,7 @@ public class TenacityPropertiesTest extends TenacityTest {
     public void queueRejectionWithSynchronousQueue() throws Exception {
         final ImmutableCollection.Builder<Future<Optional<String>>> futures = ImmutableList.builder();
         for (int i = 0; i < 50; i++) {
-            futures.add(new SleepCommand("queueRejectionWithSynchronousQueue", "syncQueue",
-                    tenacityPropertyStore, DependencyKey.EXAMPLE).queue());
+            futures.add(new SleepCommand(DependencyKey.EXAMPLE).queue());
         }
 
         for (Future<Optional<String>> future : futures.build()) {
@@ -188,11 +184,10 @@ public class TenacityPropertiesTest extends TenacityTest {
             }
         }
 
-        final HystrixCommandMetrics sleepCommandMetrics = TenacityMetrics.getCommandMetrics(new SleepCommand("queueRejectionWithSynchronousQueue", "syncQueue",
-                tenacityPropertyStore, DependencyKey.EXAMPLE));
+        final HystrixCommandMetrics sleepCommandMetrics = new SleepCommand(DependencyKey.EXAMPLE).getCommandMetrics();
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
-                .isEqualTo(40);
+                .isGreaterThan(15);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
                 .isEqualTo(0);
@@ -200,11 +195,17 @@ public class TenacityPropertiesTest extends TenacityTest {
                 .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
                 .isEqualTo(40);
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
+                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_FAILURE))
                 .isEqualTo(0);
+        assertThat(sleepCommandMetrics
+                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_REJECTION))
+                .isEqualTo(0);
+        assertThat(sleepCommandMetrics
+                .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
+                .isEqualTo(sleepCommandMetrics.getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS) -
+                           sleepCommandMetrics.getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED));
 
-        final HystrixThreadPoolProperties threadPoolProperties = HystrixPropertiesFactory
-                .getThreadPoolProperties(HystrixThreadPoolKey.Factory.asKey(DependencyKey.EXAMPLE.toString()), null);
+        final HystrixThreadPoolProperties threadPoolProperties = new SleepCommand(DependencyKey.EXAMPLE).getThreadpoolProperties();
 
         //-1 means no limit on the number of items in the queue, which uses the SynchronousBlockingQueue
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), -1);
