@@ -1,9 +1,5 @@
 package com.yammer.tenacity.core.helper;
 
-import com.google.common.base.Optional;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * This compound object can be created either with the Result value see {@link #create(Object)}
  * or with a Fallback value see {@link #failedCommand(Object)}
@@ -15,12 +11,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ResultWithFallback<Result, Fallback> {
 
-    private final Optional<Result> result;
-    private final Optional<Fallback> fallback;
+    private final Result result;
+    private final Fallback fallback;
+    private final boolean successful;
 
-    private ResultWithFallback(Optional<Result> result, Optional<Fallback> fallback){
+    private ResultWithFallback(Result result, Fallback fallback, boolean successful){
         this.result = result;
         this.fallback = fallback;
+        this.successful = successful;
     }
 
     /**
@@ -30,7 +28,7 @@ public class ResultWithFallback<Result, Fallback> {
      * @return A composite object holding only the fallback value
      */
     public static <Result,Fallback> ResultWithFallback<Result,Fallback> failedCommand(Fallback fallback){
-        return new ResultWithFallback<>(Optional.<Result>absent(), Optional.of(checkNotNull(fallback)));
+        return new ResultWithFallback<>(null, fallback, false);
     }
 
     /**
@@ -41,7 +39,7 @@ public class ResultWithFallback<Result, Fallback> {
      * @return A composite object holding only the result value
      */
     public static <Result,Fallback> ResultWithFallback<Result,Fallback> create(Result result){
-        return new ResultWithFallback<>(Optional.of(checkNotNull(result)), Optional.<Fallback>absent());
+        return new ResultWithFallback<>(result, null, true);
     }
 
     /**
@@ -49,7 +47,7 @@ public class ResultWithFallback<Result, Fallback> {
      * @return true if the Result value is present, false if only the Fallback value is available.
      */
     public boolean isPresent(){
-        return result.isPresent();
+        return successful;
     }
 
     /**
@@ -57,7 +55,7 @@ public class ResultWithFallback<Result, Fallback> {
      * @return The expected Result value on success;
      */
     public Result getResult(){
-        return result.get();
+        return result;
     }
 
 
@@ -66,7 +64,7 @@ public class ResultWithFallback<Result, Fallback> {
      * @return true if the fallback value is present.
      */
     public boolean hasFallback(){
-        return fallback.isPresent();
+        return !successful;
     }
 
     /**
@@ -74,7 +72,7 @@ public class ResultWithFallback<Result, Fallback> {
      * @return The expected Fallback value on failure;
      */
     public Fallback getFallback(){
-        return fallback.get();
+        return fallback;
     }
 }
 
