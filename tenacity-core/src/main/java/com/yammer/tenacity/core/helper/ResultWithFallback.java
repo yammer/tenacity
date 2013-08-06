@@ -46,7 +46,7 @@ public class ResultWithFallback<Result, Fallback> {
      *
      * @return true if the Result value is present, false if only the Fallback value is available.
      */
-    public boolean isPresent(){
+    public boolean isSuccess(){
         return successful;
     }
 
@@ -56,15 +56,6 @@ public class ResultWithFallback<Result, Fallback> {
      */
     public Result getResult(){
         return result;
-    }
-
-
-    /**
-     *
-     * @return true if the fallback value is present.
-     */
-    public boolean hasFallback(){
-        return !successful;
     }
 
     /**
