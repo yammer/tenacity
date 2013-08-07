@@ -16,7 +16,8 @@ public class ClientResponseResultTest {
         ClientResponseResult<String> successfullResult = ClientResponseResult.create("Hello");
 
         assertThat(successfullResult.isSuccess(), is(true));
-        assertThat(successfullResult.getResult(), is("Hello"));
+        assertThat(successfullResult.getResult().isPresent(), is(true));
+        assertThat(successfullResult.getResult().get(), is("Hello"));
     }
 
     @Test
