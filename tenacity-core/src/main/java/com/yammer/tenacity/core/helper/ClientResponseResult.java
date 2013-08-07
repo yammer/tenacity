@@ -1,34 +1,34 @@
 package com.yammer.tenacity.core.helper;
 
+import com.google.common.base.Optional;
+import com.sun.jersey.api.client.UniformInterfaceException;
+
 /**
  * This compound object can be created either with the Result value see {@link #create(Object)}
- * or with a Fallback value see {@link #failedCommand(Object)}
+ * or with a fallback UniformInterfaceException see {@link #clientFailure(com.sun.jersey.api.client.UniformInterfaceException)}
  * It behaves similar to Google Guava's Optional, throwing an IllegalStateException when
  * an absent value is queried.
  *
  * @param <Result> The generic type of the Object returned when creating a successful instance
- * @param <Fallback> The generic type of the Object returned when creating a failed instance
  */
-public class ResultWithFallback<Result, Fallback> {
+public class ClientResponseResult<Result> {
 
-    private final Result result;
-    private final Fallback fallback;
+    private final Optional<Result> result;
+    private final Optional<UniformInterfaceException> fallback;
     private final boolean successful;
 
-    private ResultWithFallback(Result result, Fallback fallback, boolean successful){
+    private ClientResponseResult(Optional<Result> result, Optional<UniformInterfaceException> fallbackException){
         this.result = result;
-        this.fallback = fallback;
-        this.successful = successful;
+        this.fallback = fallbackException;
+        this.successful = result.isPresent();
     }
 
     /**
-     * @param fallback The value of the fallback object
      * @param <Result> The expected type of the operation if successful
-     * @param <Fallback> The expected type used as the fallback
-     * @return A composite object holding only the fallback value
+     * @return A composite object holding only the exception thrown by a client
      */
-    public static <Result,Fallback> ResultWithFallback<Result,Fallback> failedCommand(Fallback fallback){
-        return new ResultWithFallback<>(null, fallback, false);
+    public static <Result> ClientResponseResult<Result> clientFailure(UniformInterfaceException exception){
+        return new ClientResponseResult<>(Optional.<Result>absent(),Optional.of(exception));
     }
 
     /**
@@ -38,8 +38,8 @@ public class ResultWithFallback<Result, Fallback> {
      * @param <Fallback> The expected type of the fallback
      * @return A composite object holding only the result value
      */
-    public static <Result,Fallback> ResultWithFallback<Result,Fallback> create(Result result){
-        return new ResultWithFallback<>(result, null, true);
+    public static <Result,Fallback> ClientResponseResult<Result> create(Result result){
+        return new ClientResponseResult<>(Optional.fromNullable(result), Optional.<UniformInterfaceException>absent());
     }
 
     /**
@@ -55,15 +55,15 @@ public class ResultWithFallback<Result, Fallback> {
      * @return The expected Result value on success;
      */
     public Result getResult(){
-        return result;
+        return result.get();
     }
 
     /**
      *
      * @return The expected Fallback value on failure;
      */
-    public Fallback getFallback(){
-        return fallback;
+    public UniformInterfaceException getFallbackException(){
+        return fallback.get();
     }
 }
 
