@@ -17,10 +17,10 @@ public class ClientResponseResult<Result> {
     private final Optional<UniformInterfaceException> fallback;
     private final boolean successful;
 
-    private ClientResponseResult(Optional<Result> result, Optional<UniformInterfaceException> fallbackException){
+    private ClientResponseResult(Optional<Result> result, Optional<UniformInterfaceException> fallbackException, boolean successful){
         this.result = result;
         this.fallback = fallbackException;
-        this.successful = result.isPresent();
+        this.successful = successful;
     }
 
     /**
@@ -28,18 +28,17 @@ public class ClientResponseResult<Result> {
      * @return A composite object holding only the exception thrown by a client
      */
     public static <Result> ClientResponseResult<Result> clientFailure(UniformInterfaceException exception){
-        return new ClientResponseResult<>(Optional.<Result>absent(),Optional.of(exception));
+        return new ClientResponseResult<>(Optional.<Result>absent(),Optional.of(exception), false);
     }
 
     /**
      *
      * @param result The expected value of a successful operation
      * @param <Result> The expected type of the operation
-     * @param <Fallback> The expected type of the fallback
      * @return A composite object holding only the result value
      */
-    public static <Result,Fallback> ClientResponseResult<Result> create(Result result){
-        return new ClientResponseResult<>(Optional.fromNullable(result), Optional.<UniformInterfaceException>absent());
+    public static <Result> ClientResponseResult<Result> create(Result result){
+        return new ClientResponseResult<>(Optional.fromNullable(result), Optional.<UniformInterfaceException>absent(), true);
     }
 
     /**
