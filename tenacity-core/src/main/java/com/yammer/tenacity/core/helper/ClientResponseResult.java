@@ -1,6 +1,7 @@
 package com.yammer.tenacity.core.helper;
 
 import com.google.common.base.Optional;
+import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * This compound object can be created either with the Result value see {@link #create(Object)}
@@ -28,6 +29,14 @@ public class ClientResponseResult<Result> {
      */
     public static <Result> ClientResponseResult<Result> clientFailure(ClientException exception){
         return new ClientResponseResult<>(Optional.<Result>absent(),Optional.of(exception), false);
+    }
+
+    /**
+     * @param <Result> The expected type of the operation if successful
+     * @return A composite object holding only the exception thrown by a client
+     */
+    public static <Result> ClientResponseResult<Result> clientFailure(UniformInterfaceException ex){
+        return new ClientResponseResult<>(Optional.<Result>absent(), Optional.of(new ClientException(ex)), false);
     }
 
     /**

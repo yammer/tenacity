@@ -30,5 +30,11 @@ public class ClientResponseResultTest {
         assertThat(failedResult.isSuccess(), is(false));
         assertThat(failedResult.getFallbackException(), is(clientException));
         assertThat(failedResult.getFallbackException().getCause().getMessage(), is("failed request"));
+
+        ClientResponseResult<String> alternateConstructor = ClientResponseResult.clientFailure(exception);
+
+        assertThat(alternateConstructor.isSuccess(), is(false));
+        assertThat(alternateConstructor.getFallbackException(), is(clientException));
+        assertThat(alternateConstructor.getFallbackException().getCause().getMessage(), is("failed request"));
     }
 }
