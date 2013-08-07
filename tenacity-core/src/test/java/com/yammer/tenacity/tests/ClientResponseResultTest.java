@@ -2,8 +2,8 @@ package com.yammer.tenacity.tests;
 
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.yammer.tenacity.core.helper.ClientException;
 import com.yammer.tenacity.core.helper.ClientResponseResult;
-import com.yammer.tenacity.core.helper.HttpException;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -24,12 +24,11 @@ public class ClientResponseResultTest {
     @Test
     public void testFallback(){
         UniformInterfaceException exception = new UniformInterfaceException("failed request", mock(ClientResponse.class));
-        HttpException httpException = new HttpException(exception.getMessage(), 404, exception);
-        ClientResponseResult<String> failedResult = ClientResponseResult.clientFailure(httpException);
+        ClientException clientException = new ClientException(exception);
+        ClientResponseResult<String> failedResult = ClientResponseResult.clientFailure(clientException);
 
         assertThat(failedResult.isSuccess(), is(false));
-        assertThat(failedResult.getFallbackException(), is(httpException));
-        assertThat(failedResult.getFallbackException().getMessage(), is("failed request"));
-        assertThat(failedResult.getFallbackException().getStatus(), is(404));
+        assertThat(failedResult.getFallbackException(), is(clientException));
+        assertThat(failedResult.getFallbackException().getCause().getMessage(), is("failed request"));
     }
 }

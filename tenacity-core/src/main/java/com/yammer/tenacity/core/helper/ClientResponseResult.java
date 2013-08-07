@@ -1,7 +1,6 @@
 package com.yammer.tenacity.core.helper;
 
 import com.google.common.base.Optional;
-import com.sun.jersey.api.client.UniformInterfaceException;
 
 /**
  * This compound object can be created either with the Result value see {@link #create(Object)}
@@ -14,10 +13,10 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 public class ClientResponseResult<Result> {
 
     private final Optional<Result> result;
-    private final Optional<HttpException> fallback;
+    private final Optional<ClientException> fallback;
     private final boolean successful;
 
-    private ClientResponseResult(Optional<Result> result, Optional<HttpException> fallbackException, boolean successful){
+    private ClientResponseResult(Optional<Result> result, Optional<ClientException> fallbackException, boolean successful){
         this.result = result;
         this.fallback = fallbackException;
         this.successful = successful;
@@ -27,7 +26,7 @@ public class ClientResponseResult<Result> {
      * @param <Result> The expected type of the operation if successful
      * @return A composite object holding only the exception thrown by a client
      */
-    public static <Result> ClientResponseResult<Result> clientFailure(HttpException exception){
+    public static <Result> ClientResponseResult<Result> clientFailure(ClientException exception){
         return new ClientResponseResult<>(Optional.<Result>absent(),Optional.of(exception), false);
     }
 
@@ -38,7 +37,7 @@ public class ClientResponseResult<Result> {
      * @return A composite object holding only the result value
      */
     public static <Result> ClientResponseResult<Result> create(Result result){
-        return new ClientResponseResult<>(Optional.fromNullable(result), Optional.<HttpException>absent(), true);
+        return new ClientResponseResult<>(Optional.fromNullable(result), Optional.<ClientException>absent(), true);
     }
 
     /**
@@ -61,7 +60,7 @@ public class ClientResponseResult<Result> {
      *
      * @return The expected Fallback value on failure;
      */
-    public HttpException getFallbackException(){
+    public ClientException getFallbackException(){
         return fallback.get();
     }
 }

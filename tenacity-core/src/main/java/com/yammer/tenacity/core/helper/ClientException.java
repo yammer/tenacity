@@ -4,18 +4,18 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 
 import java.util.Objects;
 
-public class HttpException extends RuntimeException{
+public class ClientException extends RuntimeException{
 
     private final int statusCode;
 
-    public HttpException(String message, int statusCode) {
+    public ClientException(String message, int statusCode) {
         super(message);
         this.statusCode = statusCode;
     }
 
-    public HttpException(String message, int statusCode, UniformInterfaceException cause) {
-        super(message, cause);
-        this.statusCode = statusCode;
+    public ClientException(UniformInterfaceException cause) {
+        super(cause);
+        this.statusCode = cause.getResponse().getStatus();
     }
 
     public int getStatus(){
@@ -27,7 +27,7 @@ public class HttpException extends RuntimeException{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        HttpException that = (HttpException) o;
+        ClientException that = (ClientException) o;
 
         return Objects.equals(this.statusCode, that.statusCode) && Objects.equals(this.getMessage(), that.getMessage());
     }
