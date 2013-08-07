@@ -53,8 +53,8 @@ public class ClientResponseResult<Result> {
      *
      * @return The expected Result value on success;
      */
-    public Result getResult(){
-        return result.get();
+    public Optional<Result> getResult(){
+        return result;
     }
 
     /**
