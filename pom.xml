@@ -19,6 +19,7 @@
         <module>tenacity-core-legacy</module>
         <module>tenacity-dashboard-legacy</module>
         <module>tenacity-testing</module>
+        <module>tenacity-client</module>
     </modules>
 
     <scm>
