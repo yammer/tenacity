@@ -9,6 +9,7 @@ import java.net.URI;
 
 public class TenacityClient {
     private final Client client;
+    public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/propertykeys";
 
     public TenacityClient(Client client) {
         this.client = client;
@@ -16,7 +17,7 @@ public class TenacityClient {
 
     public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
         return Optional.of(ImmutableList.copyOf(client.resource(root)
-                .path("/tenacity/propertykeys")
+                .path(TENACITY_PROPERTYKEYS_PATH)
                 .accept(MediaType.APPLICATION_JSON_TYPE)
                 .get(String[].class)));
     }
