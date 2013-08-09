@@ -40,6 +40,14 @@ public class ClientResponseResult<Result> {
     }
 
     /**
+     * @param <Result> The expected type of the operation if successful
+     * @return A composite object holding only the exception thrown by a client
+     */
+    public static <Result> ClientResponseResult<Result> clientFailure(String message, int statusCode){
+        return new ClientResponseResult<>(Optional.<Result>absent(), Optional.of(new ClientException(message,statusCode)), false);
+    }
+
+    /**
      *
      * @param result The expected value of a successful operation
      * @param <Result> The expected type of the operation
