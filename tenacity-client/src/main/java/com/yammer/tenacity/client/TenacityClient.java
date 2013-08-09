@@ -9,14 +9,12 @@ import java.net.URI;
 
 public class TenacityClient {
     private final Client client;
-    private final URI root;
 
-    public TenacityClient(Client client, URI root) {
+    public TenacityClient(Client client) {
         this.client = client;
-        this.root = root;
     }
 
-    public Optional<ImmutableList<String>> getTenacityPropertyKeys() {
+    public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
         return Optional.of(ImmutableList.copyOf(client.resource(root)
                 .path("/tenacity/propertykeys")
                 .accept(MediaType.APPLICATION_JSON_TYPE)
@@ -31,15 +29,12 @@ public class TenacityClient {
         TenacityClient that = (TenacityClient) o;
 
         if (!client.equals(that.client)) return false;
-        if (!root.equals(that.root)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = client.hashCode();
-        result = 31 * result + root.hashCode();
-        return result;
+        return client.hashCode();
     }
 }
