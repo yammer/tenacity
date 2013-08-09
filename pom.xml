@@ -4,7 +4,7 @@
 
     <groupId>com.yammer.tenacity</groupId>
     <artifactId>tenacity-parent</artifactId>
-    <version>0.0.9-SNAPSHOT</version>
+    <version>0.0.10-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>tenacity Project</name>
 
@@ -19,6 +19,7 @@
         <module>tenacity-core-legacy</module>
         <module>tenacity-dashboard-legacy</module>
         <module>tenacity-testing</module>
+        <module>tenacity-client</module>
     </modules>
 
     <scm>
