@@ -73,51 +73,51 @@ public class TenacityPropertyRegister {
                 configuration.getThreadpool().getMetricsRollingStatisticalWindowInMilliseconds());
     }
 
-    protected static String executionIsolationThreadTimeoutInMilliseconds(TenacityPropertyKey key) {
+    public static String executionIsolationThreadTimeoutInMilliseconds(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.execution.isolation.thread.timeoutInMilliseconds", key);
     }
 
-    protected static String circuitBreakerRequestVolumeThreshold(TenacityPropertyKey key) {
+    public static String circuitBreakerRequestVolumeThreshold(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.circuitBreaker.requestVolumeThreshold", key);
     }
 
-    protected static String circuitBreakerSleepWindowInMilliseconds(TenacityPropertyKey key) {
+    public static String circuitBreakerSleepWindowInMilliseconds(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.circuitBreaker.sleepWindowInMilliseconds", key);
     }
 
-    protected static String circuitBreakerErrorThresholdPercentage(TenacityPropertyKey key) {
+    public static String circuitBreakerErrorThresholdPercentage(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.circuitBreaker.errorThresholdPercentage", key);
     }
 
-    protected static String circuitBreakermetricsRollingStatsTimeInMilliseconds(TenacityPropertyKey key) {
+    public static String circuitBreakermetricsRollingStatsTimeInMilliseconds(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.metrics.rollingStats.timeInMilliseconds", key);
     }
 
-    protected static String circuitBreakermetricsRollingStatsNumBuckets(TenacityPropertyKey key) {
+    public static String circuitBreakermetricsRollingStatsNumBuckets(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.metrics.rollingStats.numBuckets", key);
     }
 
-    protected static String threadpoolMetricsRollingStatsTimeInMilliseconds(TenacityPropertyKey key) {
+    public static String threadpoolMetricsRollingStatsTimeInMilliseconds(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.metrics.rollingStats.timeInMilliseconds", key);
     }
 
-    protected static String threadpoolMetricsRollingStatsNumBuckets(TenacityPropertyKey key) {
+    public static String threadpoolMetricsRollingStatsNumBuckets(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.metrics.rollingStats.numBuckets", key);
     }
 
-    protected static String threadpoolCoreSize(TenacityPropertyKey key) {
+    public static String threadpoolCoreSize(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.coreSize", key);
     }
 
-    protected static String threadpoolKeepAliveTimeMinutes(TenacityPropertyKey key) {
+    public static String threadpoolKeepAliveTimeMinutes(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.keepAliveTimeMinutes", key);
     }
 
-    protected static String threadpoolQueueSizeRejectionThreshold(TenacityPropertyKey key) {
+    public static String threadpoolQueueSizeRejectionThreshold(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.queueSizeRejectionThreshold", key);
     }
 
-    protected static String threadpoolMaxQueueSize(TenacityPropertyKey key) {
+    public static String threadpoolMaxQueueSize(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.maxQueueSize", key);
     }
 }
