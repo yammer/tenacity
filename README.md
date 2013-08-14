@@ -268,13 +268,14 @@ and take the `max` of a particular metric.
 1. Tenacity
   -   executionIsolationThreadTimeoutInMillis = `ceil(1.1 * (max(p99) + max(median)))`
   -   threadpool
-      *   size = `(p99 in seconds) * (m1 rate req/sec)` [minimum of 2, anything over 20 should be discussed]
+      *   size = `(p99 in seconds) * (m1 rate req/sec)` [minimum of 4, anything over 20 should be discussed]
 
 2. HTTP client
+  -   Where `executionIsolationThreadTimeoutInMillis` is the max value of `executionIsolationThreadTimeoutInMillis` over the relevant calls:
+  -   *   Usually this is all the calls to a dependent service, unless there are multiple HTTP clients on the service level
   -   connectTimeout = `33% of executionIsolationThreadTimeoutInMillis`
-  -   timeout (readTimeout) = `66% of executionIsolationThreadTimeoutInMillis`
-  -   -   there is a good chance that a single client may use multiple commandKeys that might warrant a range of different connectionTimeouts and read timeouts. 
-  -   In this case the current approach is to take the max value across all specific timeouts (alternatively the clients could be split into multiple clients on the service level)
+  -   timeout (readTimeout) = `100% of executionIsolationThreadTimeoutInMillis`
+  -   *   Integrating tenacity offers a greater deal of control and feedback around failures and latent calls; setting the read timeout to the tenacity timeout ensures resource cleanup.
 
 Service Dashboards
 ==================
