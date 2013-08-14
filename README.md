@@ -274,10 +274,10 @@ and take the `max` of a particular metric.
 
 2. HTTP client
   -   Where `executionIsolationThreadTimeoutInMillis` is the max value of `executionIsolationThreadTimeoutInMillis` over the relevant calls:
-  -   *   Usually this is all the calls to a dependent service, unless there are multiple HTTP clients on the service level
+      *   Usually this is all the calls to a dependent service, unless there are multiple HTTP clients on the service level
   -   connectTimeout = `33% of executionIsolationThreadTimeoutInMillis`
   -   timeout (readTimeout) = `100% of executionIsolationThreadTimeoutInMillis`
-  -   *   Integrating tenacity offers a greater deal of control and feedback around failures and latent calls; setting the read timeout to the tenacity timeout ensures resource cleanup.
+      *   Integrating tenacity offers a greater deal of control and feedback around failures and latent calls; setting the read timeout to the tenacity timeout ensures resource cleanup.
 
 Service Dashboards
 ==================
