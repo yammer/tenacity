@@ -30,7 +30,7 @@ public class ArchaiusPropertyRegister {
     public void register(BreakerboxConfiguration breakerboxConfiguration) {
         ConfigurationManager.install(
                 new DynamicConfiguration(
-                    new URLConfigurationSource(breakerboxConfiguration.getUrls()),
+                    new URLConfigurationSource(breakerboxConfiguration.getUrls().split(",")),
                     new TenacityPollingScheduler(
                             breakerboxConfiguration.getInitialDelay(),
                             breakerboxConfiguration.getDelay(),
