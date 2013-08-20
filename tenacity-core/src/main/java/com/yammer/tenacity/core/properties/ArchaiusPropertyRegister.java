@@ -18,9 +18,6 @@ public class ArchaiusPropertyRegister {
             super(initialDelayMillis, delayMillis, ignoreDeletesFromSource);
         }
 
-        public TenacityPollingScheduler() {
-        }
-
         @Override
         protected synchronized void initialLoad(PolledConfigurationSource source, Configuration config) {
             try {
