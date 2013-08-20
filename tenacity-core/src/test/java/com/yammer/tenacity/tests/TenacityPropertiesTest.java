@@ -14,6 +14,7 @@ import com.yammer.tenacity.core.config.BreakerboxConfiguration;
 import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
+import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.testing.TenacityTest;
@@ -23,6 +24,7 @@ import java.util.concurrent.Future;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
 
 public class TenacityPropertiesTest extends TenacityTest {
     @Test
@@ -73,7 +75,8 @@ public class TenacityPropertiesTest extends TenacityTest {
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OVERRIDE, overrideConfiguration),
-                new BreakerboxConfiguration("", 0, 60000));
+                new BreakerboxConfiguration("http://localhost", 10000, 60000),
+                mock(ArchaiusPropertyRegister.class));
 
         tenacityPropertyRegister.register();
 
@@ -131,7 +134,8 @@ public class TenacityPropertiesTest extends TenacityTest {
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.SLEEP, exampleConfiguration),
-                new BreakerboxConfiguration("", 0, 60000));
+                new BreakerboxConfiguration("http://localhost", 10000, 60000),
+                mock(ArchaiusPropertyRegister.class));
 
         tenacityPropertyRegister.register();
 

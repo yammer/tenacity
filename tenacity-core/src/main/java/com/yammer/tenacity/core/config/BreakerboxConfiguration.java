@@ -20,12 +20,11 @@ public class BreakerboxConfiguration {
     private final int delay;
 
     @JsonCreator
-
     public BreakerboxConfiguration(@JsonProperty("urls") String urls,
                                    @JsonProperty("initialDelay") Integer initialDelay,
                                    @JsonProperty("delay") Integer delay) {
         this.urls = urls;
-        this.initialDelay = Optional.fromNullable(initialDelay).or(0);
+        this.initialDelay = Optional.fromNullable(initialDelay).or(10000);
         this.delay = Optional.fromNullable(delay).or(60000);
     }
 

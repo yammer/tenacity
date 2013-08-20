@@ -11,19 +11,22 @@ import java.util.Map;
 public class TenacityPropertyRegister {
     protected final ImmutableMap<TenacityPropertyKey, TenacityConfiguration> configurations;
     protected final BreakerboxConfiguration breakerboxConfiguration;
+    protected final ArchaiusPropertyRegister archaiusPropertyRegister;
 
     public TenacityPropertyRegister(ImmutableMap<TenacityPropertyKey, TenacityConfiguration> configurations,
-                                    BreakerboxConfiguration breakerboxConfiguration) {
+                                    BreakerboxConfiguration breakerboxConfiguration,
+                                    ArchaiusPropertyRegister archaiusPropertyRegister) {
         this.configurations = configurations;
         this.breakerboxConfiguration = breakerboxConfiguration;
+        this.archaiusPropertyRegister = archaiusPropertyRegister;
     }
 
     public void register() {
+        archaiusPropertyRegister.register(breakerboxConfiguration);
         final AbstractConfiguration configInstance = ConfigurationManager.getConfigInstance();
         for (Map.Entry<TenacityPropertyKey, TenacityConfiguration> entry : configurations.entrySet()) {
             registerConfiguration(entry.getKey(), entry.getValue(), configInstance);
         }
-        ArchaiusPropertyRegister.register(breakerboxConfiguration);
     }
 
     private void registerConfiguration(TenacityPropertyKey key,
