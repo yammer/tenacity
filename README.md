@@ -137,7 +137,7 @@ Dropwizard
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.10</version>
         </dependency>
 
 
@@ -160,7 +160,7 @@ such as application and testing code. Note the helper class makes use the `Tenac
         @Override
         public void initialize(Bootstrap<Configuration> bootstrap) {
             ...
-            bootstrap.addBundle(new TenacityBundle());
+            bootstrap.addBundle(new TenacityBundle(CompletieDependencyKeys.values()));
             ...
         }
 
@@ -188,7 +188,7 @@ such as application and testing code. Note the helper class makes use the `Tenac
                 builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
                 builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
 
-                new TenacityPropertyRegister(builder.build()).register();
+                new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
             }
         }
 
@@ -207,7 +207,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.0.8</version>
+            <version>0.0.10</version>
             <scope>test</scope>
         </dependency>
 
@@ -283,7 +283,7 @@ Service Dashboards
 
 One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery for issues. These are available at:
 
-http://tenacity.int.yammer.com
+http://breakerbox.int.yammer.com
 
 Hystrix Documentation
 =====================

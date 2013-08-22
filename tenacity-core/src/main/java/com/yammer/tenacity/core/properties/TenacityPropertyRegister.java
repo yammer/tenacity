@@ -14,6 +14,11 @@ public class TenacityPropertyRegister {
     protected final ArchaiusPropertyRegister archaiusPropertyRegister;
 
     public TenacityPropertyRegister(ImmutableMap<TenacityPropertyKey, TenacityConfiguration> configurations,
+                                    BreakerboxConfiguration breakerboxConfiguration) {
+        this(configurations, breakerboxConfiguration, new ArchaiusPropertyRegister());
+    }
+
+    public TenacityPropertyRegister(ImmutableMap<TenacityPropertyKey, TenacityConfiguration> configurations,
                                     BreakerboxConfiguration breakerboxConfiguration,
                                     ArchaiusPropertyRegister archaiusPropertyRegister) {
         this.configurations = configurations;
