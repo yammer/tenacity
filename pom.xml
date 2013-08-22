@@ -15,7 +15,6 @@
     <modules>
         <module>tenacity-core</module>
         <module>tenacity-dashboard</module>
-        <module>tenacity-service</module>
         <module>tenacity-core-legacy</module>
         <module>tenacity-dashboard-legacy</module>
         <module>tenacity-testing</module>
