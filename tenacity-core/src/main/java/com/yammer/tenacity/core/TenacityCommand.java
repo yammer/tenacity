@@ -19,8 +19,20 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
         return HystrixCommandKey.Factory.asKey(key);
     }
 
+    public static HystrixThreadPoolKey threadpoolKeyFrom(String key) {
+        return HystrixThreadPoolKey.Factory.asKey(key);
+    }
+
+    public static HystrixCommandProperties getCommandProperties(TenacityPropertyKey key) {
+        return HystrixPropertiesFactory.getCommandProperties(commandKeyFrom(key.toString()), null);
+    }
+
     public HystrixCommandProperties getCommandProperties() {
         return HystrixPropertiesFactory.getCommandProperties(getCommandKey(), null);
+    }
+
+    public static HystrixThreadPoolProperties getThreadpoolProperties(TenacityPropertyKey key) {
+        return HystrixPropertiesFactory.getThreadPoolProperties(threadpoolKeyFrom(key.toString()), null);
     }
 
     public HystrixThreadPoolProperties getThreadpoolProperties() {

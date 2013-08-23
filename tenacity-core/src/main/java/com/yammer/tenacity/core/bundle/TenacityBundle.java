@@ -7,24 +7,24 @@ import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
+import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 
 import java.util.Iterator;
 
 public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bundle {
-    public TenacityBundle(Iterable<TenacityPropertyKey> keys) {
-        super(keys);
+    public TenacityBundle(TenacityPropertyKeyFactory keyFactory, Iterable<TenacityPropertyKey> keys) {
+        super(keyFactory, keys);
     }
 
-    public TenacityBundle(Iterator<TenacityPropertyKey> keys) {
-        super(keys);
+    public TenacityBundle(TenacityPropertyKeyFactory keyFactory, Iterator<TenacityPropertyKey> keys) {
+        super(keyFactory, keys);
     }
 
-    public TenacityBundle(TenacityPropertyKey... keys) {
-        super(keys);
+    public TenacityBundle(TenacityPropertyKeyFactory keyFactory, TenacityPropertyKey... keys) {
+        super(keyFactory, keys);
     }
-
-
 
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
@@ -35,5 +35,6 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
     public void run(Environment environment) {
         environment.addServlet(new HystrixMetricsStreamServlet(), "/tenacity/metrics.stream");
         environment.addResource(new TenacityPropertyKeysResource(keys));
+        environment.addResource(new TenacityConfigurationResource(keyFactory));
     }
 }

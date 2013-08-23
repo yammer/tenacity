@@ -17,6 +17,7 @@ import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
 import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
+import com.yammer.tenacity.core.properties.TenacityPropertyStore;
 import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
@@ -104,6 +105,8 @@ public class TenacityPropertiesTest extends TenacityTest {
         assertEquals(threadPoolProperties.metricsRollingStatisticalWindowBuckets().get().intValue(), threadPoolConfiguration.getMetricsRollingStatisticalWindowBuckets());
         assertEquals(threadPoolProperties.metricsRollingStatisticalWindowInMilliseconds().get().intValue(), threadPoolConfiguration.getMetricsRollingStatisticalWindowInMilliseconds());
         assertEquals(threadPoolProperties.queueSizeRejectionThreshold().get().intValue(), threadPoolConfiguration.getQueueSizeRejectionThreshold());
+
+        assertEquals(TenacityPropertyStore.getTenacityConfiguration(DependencyKey.OVERRIDE), overrideConfiguration);
     }
 
 
@@ -173,6 +176,8 @@ public class TenacityPropertiesTest extends TenacityTest {
         final ThreadPoolConfiguration threadPoolConfiguration = exampleConfiguration.getThreadpool();
         assertEquals(threadPoolProperties.queueSizeRejectionThreshold().get().intValue(), threadPoolConfiguration.getQueueSizeRejectionThreshold());
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), threadPoolConfiguration.getMaxQueueSize());
+
+        assertEquals(TenacityPropertyStore.getTenacityConfiguration(DependencyKey.SLEEP), exampleConfiguration);
     }
 
     @Test
@@ -217,5 +222,6 @@ public class TenacityPropertiesTest extends TenacityTest {
 
         //-1 means no limit on the number of items in the queue, which uses the SynchronousBlockingQueue
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), -1);
+        assertEquals(TenacityPropertyStore.getTenacityConfiguration(DependencyKey.EXAMPLE), new TenacityConfiguration());
     }
 }
