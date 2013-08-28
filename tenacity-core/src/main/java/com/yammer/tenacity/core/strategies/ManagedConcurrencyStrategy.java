@@ -30,7 +30,7 @@ public class ManagedConcurrencyStrategy extends HystrixConcurrencyStrategy {
                                             HystrixProperty<Integer> keepAliveTime,
                                             TimeUnit unit,
                                             BlockingQueue<Runnable> workQueue) {
-        final String nameFormat = Joiner.on('-').join(ImmutableList.of("hystrix"), threadPoolKey.name(), "-%d");
+        final String nameFormat = Joiner.on('-').join(ImmutableList.of("hystrix"), threadPoolKey.name(), "%d");
         final ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setNameFormat(nameFormat)
                 .build();
