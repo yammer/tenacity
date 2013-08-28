@@ -265,7 +265,7 @@ When any percentile data is needed this should be calculated using historical da
 and take the `max` of a particular metric.
 
 1. Tenacity
-  -   executionIsolationThreadTimeoutInMillis = `ceil(1.5 * (max(p99) + max(median)))`
+  -   executionIsolationThreadTimeoutInMillis = `ceil(2.0 * (max(p99) + max(median)))`
   -   threadpool
       *   size = `(p99 in seconds) * (m1 rate req/sec)` 
       *   minimum of 4, anything over 20 should be discussed
@@ -275,7 +275,7 @@ and take the `max` of a particular metric.
   -   Where `executionIsolationThreadTimeoutInMillis` is the max value of `executionIsolationThreadTimeoutInMillis` over the relevant calls:
       *   Usually this is all the calls to a dependent service, unless there are multiple HTTP clients on the service level
   -   connectTimeout = `33% of executionIsolationThreadTimeoutInMillis`
-  -   timeout (readTimeout) = `100% of executionIsolationThreadTimeoutInMillis`
+  -   timeout (readTimeout) = `300% of executionIsolationThreadTimeoutInMillis`
       *   Integrating tenacity offers a greater deal of control and feedback around failures and latent calls; setting the read timeout to the tenacity timeout ensures resource cleanup.
 
 Service Dashboards
