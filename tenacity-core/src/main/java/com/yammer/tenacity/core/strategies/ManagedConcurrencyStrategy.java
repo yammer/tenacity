@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
+import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableLifecycle;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
@@ -43,5 +45,25 @@ public class ManagedConcurrencyStrategy extends HystrixConcurrencyStrategy {
                 threadFactory);
         environment.manage(new ExecutorServiceManager(threadPoolExecutor, 5, TimeUnit.SECONDS, nameFormat));
         return threadPoolExecutor;
+    }
+
+    @Override
+    public <T> HystrixRequestVariable<T> getRequestVariable(final HystrixRequestVariableLifecycle<T> rv) {
+        //Overriden because custom concurrency strategies require requestVariables. This is a null implementation.
+        return new HystrixRequestVariable<T>() {
+            @Override
+            public T get() {
+                return null;
+            }
+
+            @Override
+            public T initialValue() {
+                return rv.initialValue();
+            }
+
+            public void shutdown(T value) {
+                rv.shutdown(value);
+            }
+        };
     }
 }
