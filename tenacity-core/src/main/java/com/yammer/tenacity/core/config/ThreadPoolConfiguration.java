@@ -30,7 +30,8 @@ public class ThreadPoolConfiguration {
     @Max(Integer.MAX_VALUE)
     private int metricsRollingStatisticalWindowBuckets = 10;
 
-    public ThreadPoolConfiguration() {}
+    public ThreadPoolConfiguration() { /* Jackson */ }
+
 
     public ThreadPoolConfiguration(int threadPoolCoreSize,
                                    int keepAliveTimeMinutes,
@@ -68,6 +69,30 @@ public class ThreadPoolConfiguration {
 
     public int getMetricsRollingStatisticalWindowBuckets() {
         return metricsRollingStatisticalWindowBuckets;
+    }
+
+    public void setThreadPoolCoreSize(int threadPoolCoreSize) {
+        this.threadPoolCoreSize = threadPoolCoreSize;
+    }
+
+    public void setKeepAliveTimeMinutes(int keepAliveTimeMinutes) {
+        this.keepAliveTimeMinutes = keepAliveTimeMinutes;
+    }
+
+    public void setMaxQueueSize(int maxQueueSize) {
+        this.maxQueueSize = maxQueueSize;
+    }
+
+    public void setQueueSizeRejectionThreshold(int queueSizeRejectionThreshold) {
+        this.queueSizeRejectionThreshold = queueSizeRejectionThreshold;
+    }
+
+    public void setMetricsRollingStatisticalWindowInMilliseconds(int metricsRollingStatisticalWindowInMilliseconds) {
+        this.metricsRollingStatisticalWindowInMilliseconds = metricsRollingStatisticalWindowInMilliseconds;
+    }
+
+    public void setMetricsRollingStatisticalWindowBuckets(int metricsRollingStatisticalWindowBuckets) {
+        this.metricsRollingStatisticalWindowBuckets = metricsRollingStatisticalWindowBuckets;
     }
 
     @Override

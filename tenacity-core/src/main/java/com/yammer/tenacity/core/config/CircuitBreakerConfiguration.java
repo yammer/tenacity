@@ -24,7 +24,8 @@ public class CircuitBreakerConfiguration {
     @Max(Integer.MAX_VALUE)
     private int metricsRollingStatisticalWindowBuckets = 10;
 
-    public CircuitBreakerConfiguration() {}
+    public CircuitBreakerConfiguration() { /* Jackson */ }
+
 
     public CircuitBreakerConfiguration(int requestVolumeThreshold,
                                        int sleepWindowInMillis,
@@ -56,6 +57,26 @@ public class CircuitBreakerConfiguration {
 
     public int getMetricsRollingStatisticalWindowBuckets() {
         return metricsRollingStatisticalWindowBuckets;
+    }
+
+    public void setRequestVolumeThreshold(int requestVolumeThreshold) {
+        this.requestVolumeThreshold = requestVolumeThreshold;
+    }
+
+    public void setSleepWindowInMillis(int sleepWindowInMillis) {
+        this.sleepWindowInMillis = sleepWindowInMillis;
+    }
+
+    public void setErrorThresholdPercentage(int errorThresholdPercentage) {
+        this.errorThresholdPercentage = errorThresholdPercentage;
+    }
+
+    public void setMetricsRollingStatisticalWindowInMilliseconds(int metricsRollingStatisticalWindowInMilliseconds) {
+        this.metricsRollingStatisticalWindowInMilliseconds = metricsRollingStatisticalWindowInMilliseconds;
+    }
+
+    public void setMetricsRollingStatisticalWindowBuckets(int metricsRollingStatisticalWindowBuckets) {
+        this.metricsRollingStatisticalWindowBuckets = metricsRollingStatisticalWindowBuckets;
     }
 
     @Override

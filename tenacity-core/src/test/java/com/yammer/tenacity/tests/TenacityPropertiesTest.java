@@ -76,7 +76,7 @@ public class TenacityPropertiesTest extends TenacityTest {
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OVERRIDE, overrideConfiguration),
-                new BreakerboxConfiguration("http://localhost", 10000, 60000),
+                new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class));
 
         tenacityPropertyRegister.register();
@@ -137,7 +137,7 @@ public class TenacityPropertiesTest extends TenacityTest {
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.SLEEP, exampleConfiguration),
-                new BreakerboxConfiguration("http://localhost", 10000, 60000),
+                new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class));
 
         tenacityPropertyRegister.register();

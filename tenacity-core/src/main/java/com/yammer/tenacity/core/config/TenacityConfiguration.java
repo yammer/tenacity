@@ -5,6 +5,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class TenacityConfiguration {
     @NotNull @Valid
     private ThreadPoolConfiguration threadpool = new ThreadPoolConfiguration();
@@ -16,14 +18,13 @@ public class TenacityConfiguration {
     @Max(Integer.MAX_VALUE)
     private int executionIsolationThreadTimeoutInMillis = 1000;
 
-    public TenacityConfiguration() {}
+    public TenacityConfiguration() { /* Jackson */ }
 
-    //TODO: leverage defaults here for json serialization
     public TenacityConfiguration(ThreadPoolConfiguration threadpool,
                                  CircuitBreakerConfiguration circuitBreaker,
                                  int executionIsolationThreadTimeoutInMillis) {
-        this.threadpool = threadpool;
-        this.circuitBreaker = circuitBreaker;
+        this.threadpool = checkNotNull(threadpool);
+        this.circuitBreaker = checkNotNull(circuitBreaker);
         this.executionIsolationThreadTimeoutInMillis = executionIsolationThreadTimeoutInMillis;
     }
 
@@ -37,6 +38,18 @@ public class TenacityConfiguration {
 
     public int getExecutionIsolationThreadTimeoutInMillis() {
         return executionIsolationThreadTimeoutInMillis;
+    }
+
+    public void setThreadpool(ThreadPoolConfiguration threadpool) {
+        this.threadpool = threadpool;
+    }
+
+    public void setCircuitBreaker(CircuitBreakerConfiguration circuitBreaker) {
+        this.circuitBreaker = circuitBreaker;
+    }
+
+    public void setExecutionIsolationThreadTimeoutInMillis(int executionIsolationThreadTimeoutInMillis) {
+        this.executionIsolationThreadTimeoutInMillis = executionIsolationThreadTimeoutInMillis;
     }
 
     @Override

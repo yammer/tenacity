@@ -32,8 +32,8 @@ public class ArchaiusPropertyRegister {
                 new DynamicConfiguration(
                     new URLConfigurationSource(breakerboxConfiguration.getUrls().split(",")),
                     new TenacityPollingScheduler(
-                            breakerboxConfiguration.getInitialDelay(),
-                            breakerboxConfiguration.getDelay(),
+                            (int)breakerboxConfiguration.getInitialDelay().toMilliseconds(),
+                            (int)breakerboxConfiguration.getDelay().toMilliseconds(),
                             false)));
     }
 }
