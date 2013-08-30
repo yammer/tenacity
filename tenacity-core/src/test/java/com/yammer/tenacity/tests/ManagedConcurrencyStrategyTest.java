@@ -2,26 +2,27 @@ package com.yammer.tenacity.tests;
 
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.validation.Validator;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.strategies.ManagedConcurrencyStrategy;
-import org.junit.BeforeClass;
+import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class ManagedConcurrencyStrategyTest {
-    static ManagedConcurrencyStrategy managedConcurrencyStrategy;
+public class ManagedConcurrencyStrategyTest extends TenacityTest {
+    static {
+        initialization();
+    }
 
-    @BeforeClass
-    public static void initialization() throws Exception {
+    public static void initialization() {
         final Environment environment = new Environment(
                 "managed-concurrency-strategy-test",
-                ConfigurationFactory.forClass(Configuration.class, new Validator()).build(),
+                mock(Configuration.class),
                 new ObjectMapperFactory(),
                 new Validator());
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
