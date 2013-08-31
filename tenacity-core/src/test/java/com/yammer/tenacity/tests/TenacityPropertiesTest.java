@@ -18,7 +18,6 @@ import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyStore;
-import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
 import java.util.concurrent.Future;
@@ -27,7 +26,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
-public class TenacityPropertiesTest extends TenacityTest {
+public class TenacityPropertiesTest extends AbstractTenacityTest {
     @Test
     public void executeCorrectly() throws Exception {
         assertThat(new TenacitySuccessCommand().execute()).isEqualTo("value");
