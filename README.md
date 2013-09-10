@@ -243,7 +243,7 @@ defaults.
 
 Here are the rest of the descriptions:
 
--   `keepAliveTimeMinutes`: Self explanatory.
+-   `keepAliveTimeMinutes`: Thread keepAlive time in the thread pool.
 -   `maxQueueSize`: -1 uses a `SynchronousQueue`. Anything >0 leverages a `BlockingQueue` and enables the `queueSizeRejectionThreshold` variable.
 -   `queueSizeRejectionThreshold`: Disabled when using -1 for `maxQueueSize` otherwise self explanatory.
 -   `requestVolumeThreshold`: The minimum number of requests that need to be received within the `metricsRollingStatisticalWindowInMilliseconds` in order to open a circuit breaker.
@@ -262,14 +262,17 @@ Equations
 ---------
 
 When any percentile data is needed this should be calculated using historical data. Look somewhere between a week to a month
-and take the `max` of a particular metric.
+and take the `max` of a particular metric. If the client experiences bursty traffice (such as during a deploy or dependency's
+deploy) you should consider this or ensure the clients dependent on that call have sufficient retry logic to sustain failures
+on this command.
+
 
 1. Tenacity
   -   executionIsolationThreadTimeoutInMillis = `ceil(2.0 * (max(p99) + max(median)))`
+  -   p99 < executionIsolationThreadTimeoutInMillis < p999
   -   threadpool
-      *   size = `(p99 in seconds) * (m1 rate req/sec)` 
-      *   minimum of 4, anything over 20 should be discussed
-      *   If the client experiences bursty traffic, this may need to be higher
+      *   size = `(p99 in seconds) * (m1 rate req/sec)`
+      *   4 < size <= 20; anything over 20 should be discussed
 
 2. HTTP client
   -   Where `executionIsolationThreadTimeoutInMillis` is the max value of `executionIsolationThreadTimeoutInMillis` over the relevant calls:
@@ -277,6 +280,22 @@ and take the `max` of a particular metric.
   -   connectTimeout = `33% of executionIsolationThreadTimeoutInMillis`
   -   timeout (readTimeout) = `300% of executionIsolationThreadTimeoutInMillis`
       *   Integrating tenacity offers a greater deal of control and feedback around failures and latent calls; setting the read timeout to the tenacity timeout ensures resource cleanup.
+
+JerseyClient
+------------
+Our JerseyClient read timeouts have typically been quite generous. For tenacity to function correctly, you should bound your jersey client read
+timeouts to be no less than ~20ms higher than the timout of the highest command associcated with that client.
+
+For example,
+JerseyClient `J` is used with Commands 
+  -  `C1` (executionIsolationThreadTimeoutInMillis=103ms), and
+  -  `C2` (executionIsolationThreadTimeoutInMillis=150ms).
+  -  Both `C1` and `C2` utilize `J` as a part of their default behavior.
+
+The read timeout for `J` should be set to at least ~170ms. The calls to this client are bounded by the 150ms timeout of `C2`,
+but if we simply set `J`s read timeout to be the same, we end up with a non-deterministic result if the timeout occurrs. Sometimes
+the jersey client will throw a timeout exception (looking like an error to Tenacity and subsequently Breakerbox), other times Tenacity
+will timeout (and propogate that information).
 
 Service Dashboards
 ==================
