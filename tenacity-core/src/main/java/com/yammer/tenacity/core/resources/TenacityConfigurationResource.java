@@ -13,7 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Path("/tenacity/configuration/{key}")
+@Path("/tenacity/v1/configuration/{key}")
 public class TenacityConfigurationResource {
     private final TenacityPropertyKeyFactory factory;
 
@@ -21,9 +21,7 @@ public class TenacityConfigurationResource {
         this.factory = checkNotNull(factory);
     }
 
-    @GET
-    @Timed
-    @Produces(MediaType.APPLICATION_JSON)
+    @GET @Timed @Produces(MediaType.APPLICATION_JSON)
     public TenacityConfiguration get(@PathParam("key") String key) {
         return TenacityPropertyStore.getTenacityConfiguration(factory.from(key));
     }

@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Path("tenacity/propertykeys")
+@Path("tenacity/v1/propertykeys")
 public class TenacityPropertyKeysResource {
     private final Iterable<TenacityPropertyKey> keys;
 
@@ -24,7 +24,7 @@ public class TenacityPropertyKeysResource {
     }
 
     @GET @Timed @Produces(MediaType.APPLICATION_JSON)
-    public Iterable<TenacityPropertyKey> keys() {
+    public Iterable<TenacityPropertyKey> getKeys() {
         return keys;
     }
 }
