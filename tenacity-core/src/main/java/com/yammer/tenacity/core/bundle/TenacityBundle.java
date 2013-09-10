@@ -6,6 +6,7 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.tenacity.core.healthchecks.TenacityCircuitBreakersHealthcheck;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
@@ -38,5 +39,6 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
         environment.addServlet(new HystrixMetricsStreamServlet(), "/tenacity/metrics.stream");
         environment.addResource(new TenacityPropertyKeysResource(keys));
         environment.addResource(new TenacityConfigurationResource(keyFactory));
+        environment.addHealthCheck(new TenacityCircuitBreakersHealthcheck(keys));
     }
 }
