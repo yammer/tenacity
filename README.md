@@ -137,19 +137,26 @@ Dropwizard
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.0.10</version>
+            <version>0.1.1</version>
         </dependency>
 
 
 2. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best
 when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
-shave down some characters to save on space, again for UI purposes.
+shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
 
             public enum CompletieDependencyKeys implements TenacityPropertyKey {
                 CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
                 CMPLT_TOKIE_AUTH,
                 CMPLT_TYRANT_AUTH,
                 CMPLT_WHVLL_PRESENCE
+            }
+
+            public class CompletieDependencyKeyFactory implements TenacityPropertyKeyFactory {
+                @Override
+                public TenacityPropertyKey from(String value) {
+                    return CompletieDependencyKeys.valueOf(value.toUpperCase());
+                }
             }
 
 3. Then make sure you add the bundle in your `Service` and register your custom tenacity properties. Here we made use of a helper class
@@ -160,7 +167,7 @@ such as application and testing code. Note the helper class makes use the `Tenac
         @Override
         public void initialize(Bootstrap<Configuration> bootstrap) {
             ...
-            bootstrap.addBundle(new TenacityBundle(CompletieDependencyKeys.values()));
+            bootstrap.addBundle(new TenacityBundle(new CompletieDependencyKeyFactory(), CompletieDependencyKeys.values()));
             ...
         }
 
@@ -207,7 +214,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.0.10</version>
+            <version>0.1.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -302,7 +309,7 @@ Service Dashboards
 
 One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery for issues. These are available at:
 
-http://breakerbox.int.yammer.com
+https://breakerbox.int.yammer.com
 
 Hystrix Documentation
 =====================
