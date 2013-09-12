@@ -16,8 +16,8 @@ import java.net.URI;
 
 public class TenacityClient {
     private final Client client;
-    public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/propertykeys";
-    public static final String TENACITY_CONFIGURATION_PATH = "/tenacity/configuration";
+    public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/v1/propertykeys";
+    public static final String TENACITY_CONFIGURATION_PATH = "/tenacity/v1/configuration";
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityClient.class);
     private static final Timer TIMER_GET_CONFIGURATION = Metrics.newTimer(TenacityClient.class, "get-configuration");
     private static final Timer TIMER_GET_PROPERTYKEYS = Metrics.newTimer(TenacityClient.class, "get-propertykeys");
