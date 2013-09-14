@@ -28,6 +28,7 @@ public class ArchaiusPropertyRegister {
         }
     }
     public void register(BreakerboxConfiguration breakerboxConfiguration) {
+        if(breakerboxConfiguration.getUrls().isEmpty()) return;
         ConfigurationManager.install(
                 new DynamicConfiguration(
                     new URLConfigurationSource(breakerboxConfiguration.getUrls().split(",")),

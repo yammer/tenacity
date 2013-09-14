@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class BreakerboxConfiguration {
-    @NotNull @NotEmpty @Valid
+    @NotNull @Valid
     private String urls = "";
 
     @NotNull @Valid
