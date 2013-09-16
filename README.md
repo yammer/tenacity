@@ -137,7 +137,7 @@ Dropwizard
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.1.1</version>
+            <version>0.1.4</version>
         </dependency>
 
 
