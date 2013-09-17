@@ -35,6 +35,6 @@ public class ArchaiusPropertyRegister {
                     new TenacityPollingScheduler(
                             (int)breakerboxConfiguration.getInitialDelay().toMilliseconds(),
                             (int)breakerboxConfiguration.getDelay().toMilliseconds(),
-                            false)));
+                            true)));
     }
 }
