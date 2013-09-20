@@ -7,6 +7,7 @@ import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Timer;
 import com.yammer.metrics.core.TimerContext;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
+import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +19,11 @@ public class TenacityClient {
     private final Client client;
     public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/v1/propertykeys";
     public static final String TENACITY_CONFIGURATION_PATH = "/tenacity/v1/configuration";
+    public static final String TENACITY_CIRCUITBREAKERS_PATH = "/tenacity/circuitbreakers";
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityClient.class);
     private static final Timer TIMER_GET_CONFIGURATION = Metrics.newTimer(TenacityClient.class, "get-configuration");
     private static final Timer TIMER_GET_PROPERTYKEYS = Metrics.newTimer(TenacityClient.class, "get-propertykeys");
+    private static final Timer TIME_GET_CIRCUITBREAKERS = Metrics.newTimer(TenacityClient.class, "get-circuitbreakers");
 
     public TenacityClient(Client client) {
         this.client = client;
@@ -55,6 +58,25 @@ public class TenacityClient {
                         .get(TenacityConfiguration.class));
             } catch (Exception err) {
                 LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, key, err);
+            }
+            return Optional.absent();
+        } finally {
+            timerContext.stop();
+        }
+    }
+
+
+    public Optional<ImmutableList<CircuitBreaker>> getCircuitBreakers(URI root) {
+        final TimerContext timerContext = TIME_GET_CIRCUITBREAKERS.time();
+        try {
+            try {
+                return Optional.of(ImmutableList.copyOf(client
+                        .resource(root)
+                        .path(TENACITY_CIRCUITBREAKERS_PATH)
+                        .accept(MediaType.APPLICATION_JSON_TYPE)
+                        .get(CircuitBreaker[].class)));
+            } catch (Exception err) {
+                LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
             }
             return Optional.absent();
         } finally {

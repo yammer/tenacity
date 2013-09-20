@@ -2,11 +2,12 @@ package com.yammer.tenacity.tests;
 
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ManagedConcurrencyStrategyTest extends AbstractTenacityTest {
+public class ManagedConcurrencyStrategyTest extends TenacityTest {
     private static enum Key implements TenacityPropertyKey {
         KEY
     }

@@ -7,13 +7,14 @@ import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.tenacity.core.dropwizard.TenacityAuthenticatorOperation;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.testing.TenacityTest;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TenacityAuthenticatorTest extends AbstractTenacityTest {
+public class TenacityAuthenticatorTest extends TenacityTest {
     public static final class MockAuthenticatorOperation extends TenacityAuthenticatorOperation<String, Boolean> {
 
         protected MockAuthenticatorOperation(Authenticator<String, Boolean> authenticator, String authString, TenacityPropertyKey tenacityPropertyKey) {
