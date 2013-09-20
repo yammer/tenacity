@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 
 public class TenacityConfigurationResourceTest extends ResourceTest {
 
-    public static final String TENACITY_CONFIGURATION_URI = "/tenacity/v1/configuration";
+    public static final String TENACITY_CONFIGURATION_URI = "/tenacity/configuration";
     private TenacityPropertyKeyFactory mock;
 
     @Override

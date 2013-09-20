@@ -11,15 +11,16 @@ import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Path("/tenacity/propertykeys")
-public class TenacityPropertyKeysResource {
+@Path("/tenacity/v1/propertykeys")
+@Deprecated
+public class DeprecatedTenacityPropertyKeysResource {
     private final Iterable<TenacityPropertyKey> keys;
 
-    public TenacityPropertyKeysResource(TenacityPropertyKey[] keys) {
+    public DeprecatedTenacityPropertyKeysResource(TenacityPropertyKey[] keys) {
         this(ImmutableList.copyOf(keys));
     }
 
-    public TenacityPropertyKeysResource(Iterable<TenacityPropertyKey> keys) {
+    public DeprecatedTenacityPropertyKeysResource(Iterable<TenacityPropertyKey> keys) {
         this.keys = checkNotNull(keys);
     }
 

@@ -8,8 +8,7 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.tenacity.core.bundle.AbstractTenacityPropertyKeys;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
-import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
-import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
+import com.yammer.tenacity.core.resources.*;
 import com.yammer.tenacity.core.strategies.ManagedConcurrencyStrategy;
 
 import java.util.Iterator;
@@ -34,5 +33,10 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
         environment.addServlet(new HystrixMetricsStreamServlet(), "/tenacity/metrics.stream");
         environment.addResource(new TenacityPropertyKeysResource(keys));
         environment.addResource(new TenacityConfigurationResource(keyFactory));
+        environment.addResource(new TenacityCircuitBreakersResource(keys));
+
+        //TODO: cgray As of 0.1.6 these are needed to be backwards compatible. These can be removed any future release.
+        environment.addResource(new DeprecatedTenacityConfigurationResource(keyFactory));
+        environment.addResource(new DeprecatedTenacityPropertyKeysResource(keys));
     }
 }

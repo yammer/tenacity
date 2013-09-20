@@ -13,7 +13,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class TenacityPropertyKeyResourceTest extends ResourceTest {
 
-    public static final String PROPERTY_KEY_URI = "/tenacity/v1/propertykeys";
+    public static final String PROPERTY_KEY_URI = "/tenacity/propertykeys";
     private ImmutableList<TenacityPropertyKey> keys;
 
     @Override

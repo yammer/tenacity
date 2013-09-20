@@ -17,6 +17,7 @@ import java.net.URI;
 
 public class TenacityClient {
     private final Client client;
+    //TODO: When the deprecated resources are removed, we can change these paths to not reference a versioned endpoint.
     public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/v1/propertykeys";
     public static final String TENACITY_CONFIGURATION_PATH = "/tenacity/v1/configuration";
     public static final String TENACITY_CIRCUITBREAKERS_PATH = "/tenacity/circuitbreakers";

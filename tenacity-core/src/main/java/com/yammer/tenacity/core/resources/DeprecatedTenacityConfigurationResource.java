@@ -13,11 +13,12 @@ import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Path("/tenacity/configuration/{key}")
-public class TenacityConfigurationResource {
+@Path("/tenacity/v1/configuration/{key}")
+@Deprecated
+public class DeprecatedTenacityConfigurationResource {
     private final TenacityPropertyKeyFactory factory;
 
-    public TenacityConfigurationResource(TenacityPropertyKeyFactory factory) {
+    public DeprecatedTenacityConfigurationResource(TenacityPropertyKeyFactory factory) {
         this.factory = checkNotNull(factory);
     }
 
