@@ -267,6 +267,10 @@ We have some suggestions for how you go about this in the Equations section.
 
 Breakerbox
 ----------
+One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery and mean-time-to-recovery for issues. These are available at:
+
+https://breakerbox.int.yammer.com
+
 Breakerbox is a central dashboard and an on-the-fly configuration tool for Tenacity. In addition to the per-tenacity-command configurations shown above this configuration piece let's you define where and how often
 to check for newer configurations.
 
@@ -278,8 +282,10 @@ to check for newer configurations.
 -   `urls` is a list of comma-deliminated list of urls for where to pull tenacity configurations. At the moment there are two recommended choices:
     1. `breakerbox.sjc1.yammer.com:8080` for services that are in the `sjc1` data-center.
     2. `breakerbox.bn1.yammer.com:8080` for services that are in the `bn1` data-center.
+
     Both of these internal VIPs will failover to the other in the event that all backends are unavailable. In other words, if all breakerboxes behind `breakerbox.sjc1.yammer.com` are unavailable then you'll be
     redirected to `breakerbox.bn1.yammer.com`.
+
 -   `initialDelay` how long before the first poll for newer configuration executes.
 -   `delay` the ongoing schedule to poll for newer configurations.
 
@@ -322,13 +328,6 @@ The read timeout for `J` should be set to at least ~170ms. The calls to this cli
 but if we simply set `J`s read timeout to be the same, we end up with a non-deterministic result if the timeout occurrs. Sometimes
 the jersey client will throw a timeout exception (looking like an error to Tenacity and subsequently Breakerbox), other times Tenacity
 will timeout (and propogate that information).
-
-Service Dashboards
-==================
-
-One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery and mean-time-to-recovery for issues. These are available at:
-
-https://breakerbox.int.yammer.com
 
 Hystrix Documentation
 =====================
