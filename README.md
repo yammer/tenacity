@@ -265,6 +265,25 @@ These are recommended to be left alone unless you know what you're doing:
 Once you are done configuring your Tenacity dependencies. Don't forget to tweak the necessary connect/read timeouts on HTTP clients.
 We have some suggestions for how you go about this in the Equations section.
 
+Breakerbox
+----------
+Breakerbox is a central dashboard and an on-the-fly configuration tool for Tenacity. In addition to the per-tenacity-command configurations shown above this configuration piece let's you define where and how often
+to check for newer configurations.
+
+      breakerbox:
+          urls: http://breakerbox.sjc1.yammer.com:8080/archaius/{service}
+          initialDelay: 10s
+          delay: 60s 
+
+-   `urls` is a list of comma-deliminated list of urls for where to pull tenacity configurations. At the moment there are two recommended choices:
+    1. `breakerbox.sjc1.yammer.com:8080` for services that are in the `sjc1` data-center.
+    2. `breakerbox.bn1.yammer.com:8080` for services that are in the `bn1` data-center.
+    Both of these internal VIPs will failover to the other in the event that all backends are unavailable. In other words, if all breakerboxes behind `breakerbox.sjc1.yammer.com` are unavailable then you'll be
+    redirected to `breakerbox.bn1.yammer.com`.
+-   `initialDelay` how long before the first poll for newer configuration executes.
+-   `delay` the ongoing schedule to poll for newer configurations.
+
+
 Equations
 ---------
 
@@ -307,7 +326,7 @@ will timeout (and propogate that information).
 Service Dashboards
 ==================
 
-One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery for issues. These are available at:
+One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery and mean-time-to-recovery for issues. These are available at:
 
 https://breakerbox.int.yammer.com
 
