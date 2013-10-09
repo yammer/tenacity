@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public abstract class TenacityTest {
     @Before
     public void testInitialization() {
+        resetHystrixPlugins();
         HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
         ConfigurationManager
                 .getConfigInstance()
@@ -22,6 +23,10 @@ public abstract class TenacityTest {
     public void testTeardown() {
         Hystrix.reset(1, TimeUnit.SECONDS);
         ConfigurationManager.getConfigInstance().clear();
+        resetHystrixPlugins();
+    }
+
+    private static void resetHystrixPlugins() {
         new HystrixPlugins.UnitTest().reset();
     }
 }
