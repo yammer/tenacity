@@ -10,12 +10,9 @@ import org.junit.Before;
 import java.util.concurrent.TimeUnit;
 
 public abstract class TenacityTest {
-    static {
-        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
-    }
-
     @Before
     public void testInitialization() {
+        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
         ConfigurationManager
                 .getConfigInstance()
                 .setProperty("hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds", "1");
