@@ -25,5 +25,6 @@ public abstract class TenacityTest {
     public void testTeardown() {
         Hystrix.reset(1, TimeUnit.SECONDS);
         ConfigurationManager.getConfigInstance().clear();
+        new HystrixPlugins.UnitTest().reset();
     }
 }
