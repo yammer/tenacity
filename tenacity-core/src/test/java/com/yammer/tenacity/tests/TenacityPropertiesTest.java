@@ -206,7 +206,7 @@ public class TenacityPropertiesTest extends TenacityTest {
                 .isEqualTo(0);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
-                .isGreaterThan(40);
+                .isGreaterThanOrEqualTo(40);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_FAILURE))
                 .isEqualTo(0);
