@@ -305,6 +305,7 @@ on this command.
   -   threadpool
       *   size = `(p99 in seconds) * (m1 rate req/sec)`
       *   4 < size <= 20; anything over 20 should be discussed
+      *   Note: this number only meets the current traffic needs. Increase this value by some percentage to account for growth.
 
 2. HTTP client
   -   Where `executionIsolationThreadTimeoutInMillis` is the max value of `executionIsolationThreadTimeoutInMillis` over the relevant calls:
