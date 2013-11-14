@@ -137,7 +137,7 @@ Dropwizard
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.1.10</version>
+            <version>0.1.12</version>
         </dependency>
 
 
@@ -214,7 +214,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.1.10</version>
+            <version>0.1.12</version>
             <scope>test</scope>
         </dependency>
 
