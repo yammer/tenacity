@@ -13,15 +13,15 @@ public class TenacityPropertyRegister {
     protected final BreakerboxConfiguration breakerboxConfiguration;
     protected final ArchaiusPropertyRegister archaiusPropertyRegister;
 
-    public TenacityPropertyRegister(ImmutableMap<TenacityPropertyKey, TenacityConfiguration> configurations,
+    public TenacityPropertyRegister(Map<TenacityPropertyKey, TenacityConfiguration> configurations,
                                     BreakerboxConfiguration breakerboxConfiguration) {
         this(configurations, breakerboxConfiguration, new ArchaiusPropertyRegister());
     }
 
-    public TenacityPropertyRegister(ImmutableMap<TenacityPropertyKey, TenacityConfiguration> configurations,
+    public TenacityPropertyRegister(Map<TenacityPropertyKey, TenacityConfiguration> configurations,
                                     BreakerboxConfiguration breakerboxConfiguration,
                                     ArchaiusPropertyRegister archaiusPropertyRegister) {
-        this.configurations = configurations;
+        this.configurations = ImmutableMap.copyOf(configurations);
         this.breakerboxConfiguration = breakerboxConfiguration;
         this.archaiusPropertyRegister = archaiusPropertyRegister;
     }
