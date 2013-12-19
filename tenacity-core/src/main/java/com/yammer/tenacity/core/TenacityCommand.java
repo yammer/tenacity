@@ -65,7 +65,4 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
 
     @Override
     protected abstract ReturnType run() throws Exception;
-
-    @Override
-    protected abstract ReturnType getFallback();
 }
