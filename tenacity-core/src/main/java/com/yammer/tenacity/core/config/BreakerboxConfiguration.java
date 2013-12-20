@@ -1,7 +1,6 @@
 package com.yammer.tenacity.core.config;
 
 import com.yammer.dropwizard.util.Duration;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -13,7 +12,7 @@ public class BreakerboxConfiguration {
     private String urls = "";
 
     @NotNull @Valid
-    private Duration initialDelay = Duration.seconds(10);
+    private Duration initialDelay = Duration.seconds(0);
 
     @NotNull @Valid
     private Duration delay = Duration.seconds(60);
