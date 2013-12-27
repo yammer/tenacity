@@ -130,7 +130,8 @@ public enum CompletieDependencyKeys implements TenacityPropertyKey {
     CMPLT_TYRANT_AUTH,
     CMPLT_WHVLL_PRESENCE
 }
-
+```
+```java
 public class CompletieDependencyKeyFactory implements TenacityPropertyKeyFactory {
     @Override
     public TenacityPropertyKey from(String value) {
