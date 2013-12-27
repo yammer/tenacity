@@ -102,12 +102,12 @@ public class AlwaysSucceed extends TenacityCommand<String> {
 The arguments are:
 
 1. `commandKey`: This creates a circuit-breaker, threadpool, and also the identifier that will be used in dashboards.
-This should be your implementation of the `TenacityProperyKey` interface.
+This should be your implementation of the `TenacityPropertyKey` interface.
 
-It is possible to create multiple circuit-breakers that leverage a single threadpool, but for simplicity we are not allowing that type of configuration.
+*It is possible to create multiple circuit-breakers that leverage a single threadpool, but for simplicity we are not allowing that type of configuration.*
 
 
-Dropwizard
+How to add to your Dropwizard Service
 ----------
 
 1. To leverage within dropwizard first at the following to your `pom.xml`:
