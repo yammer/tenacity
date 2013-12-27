@@ -115,11 +115,11 @@ How to add to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.1.12</version>
+            <version>0.1.13</version>
         </dependency>
 
 
-2. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best
+2. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best for us
 when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
 shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
 
@@ -141,50 +141,53 @@ shave down some characters to save on space, again for UI purposes. In addition,
 to register properties given a `CompletieConfiguration`. This is helpful when you might need to register custom properties from multiple locations
 such as application and testing code. Note the helper class makes use the `TenacityPropertyRegister` which needs a much more general: `ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration>` type.
 
+```java
+@Override
+public void initialize(Bootstrap<Configuration> bootstrap) {
+    ...
+    bootstrap.addBundle(new TenacityBundle(new CompletieDependencyKeyFactory(), CompletieDependencyKeys.values()));
+    ...
+}
 
-        @Override
-        public void initialize(Bootstrap<Configuration> bootstrap) {
-            ...
-            bootstrap.addBundle(new TenacityBundle(new CompletieDependencyKeyFactory(), CompletieDependencyKeys.values()));
-            ...
-        }
+@Override
+public void run(CompletieConfiguration configuration, Environment environment) throws Exception {
+     new CompletieTenacityPropertyRegister(configuration).register();
+}
+```
 
-        @Override
-        public void run(CompletieConfiguration configuration, Environment environment) throws Exception {
-             new CompletieTenacityPropertyRegister(configuration).register();
-        }
+```java
+public class CompletieTenacityPropertyRegister {
+    private final CompletieConfiguration configuration;
 
-        ////////////////////////////////////////////////
+    public CompletieTenacityPropertyRegister(CompletieConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-        public class CompletieTenacityPropertyRegister {
-            private final CompletieConfiguration configuration;
+    public void register() {
+        final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
 
-            public CompletieTenacityPropertyRegister(CompletieConfiguration configuration) {
-                this.configuration = configuration;
-            }
+        builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
+        builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
+        builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
+        builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
+        builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
+        builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
 
-            public void register() {
-                final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
-
-                builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
-                builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
-                builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
-                builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
-                builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
-                builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
-
-                new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
-            }
-        }
+        new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
+    }
+}
+```
 
 4. Use `TenacityCommand` to select which custom tenacity configuration you want to use.
 
-        public class CompletieDependencyOnTokie extends TenacityCommand<String> {
-            public CompletieDependencyOnTokie() {
-                super(CompletieDependencyKey.CMPLT_TOKIE_AUTH);
-            }
-            ...
-        }
+```java
+public class CompletieDependencyOnTokie extends TenacityCommand<String> {
+    public CompletieDependencyOnTokie() {
+        super(CompletieDependencyKey.CMPLT_TOKIE_AUTH);
+    }
+    ...
+}
+```
 
 5. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration),
 and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply extend the `TenacityTest` helper.
@@ -192,7 +195,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.1.12</version>
+            <version>0.1.13</version>
             <scope>test</scope>
         </dependency>
 
@@ -205,20 +208,22 @@ Configuration
 Once you have identified your dependencies you need to configure them appropriately. Here is the basic structure of a single
 `TenacityConfiguration` that may be leverage multiple times through your service configuration:
 
-        executionIsolationThreadTimeoutInMillis: 1000
-        threadpool:
-            threadPoolCoreSize: 10
-            keepAliveTimeMinutes: 1
-            maxQueueSize: -1
-            queueSizeRejectionThreshold: 5
-            metricsRollingStatisticalWindowInMilliseconds: 10000
-            metricsRollingStatisticalWindowBuckets: 10
-        circuitBreaker:
-            requestVolumeThreshold: 20
-            errorThresholdPercentage: 50
-            sleepWindowInMillis: 5000
-            metricsRollingStatisticalWindowInMilliseconds: 10000
-            metricsRollingStatisticalWindowBuckets: 10
+```yaml
+executionIsolationThreadTimeoutInMillis: 1000
+threadpool:
+    threadPoolCoreSize: 10
+    keepAliveTimeMinutes: 1
+    maxQueueSize: -1
+    queueSizeRejectionThreshold: 5
+    metricsRollingStatisticalWindowInMilliseconds: 10000
+    metricsRollingStatisticalWindowBuckets: 10
+circuitBreaker:
+    requestVolumeThreshold: 20
+    errorThresholdPercentage: 50
+    sleepWindowInMillis: 5000
+    metricsRollingStatisticalWindowInMilliseconds: 10000
+    metricsRollingStatisticalWindowBuckets: 10
+```
 
 The following two are the most important and you can probably get by just fine by defining just these two and leveraging the
 defaults.
