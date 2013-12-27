@@ -123,74 +123,74 @@ How to add to your Dropwizard Service
 when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
 shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
 
-```java
-public enum CompletieDependencyKeys implements TenacityPropertyKey {
-    CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
-    CMPLT_TOKIE_AUTH,
-    CMPLT_TYRANT_AUTH,
-    CMPLT_WHVLL_PRESENCE
-}
-```
-```java
-public class CompletieDependencyKeyFactory implements TenacityPropertyKeyFactory {
-    @Override
-    public TenacityPropertyKey from(String value) {
-        return CompletieDependencyKeys.valueOf(value.toUpperCase());
+    ```java
+    public enum CompletieDependencyKeys implements TenacityPropertyKey {
+        CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
+        CMPLT_TOKIE_AUTH,
+        CMPLT_TYRANT_AUTH,
+        CMPLT_WHVLL_PRESENCE
     }
-}
-```
+    ```
+    ```java
+    public class CompletieDependencyKeyFactory implements TenacityPropertyKeyFactory {
+        @Override
+        public TenacityPropertyKey from(String value) {
+            return CompletieDependencyKeys.valueOf(value.toUpperCase());
+        }
+    }
+    ```
 
 3. Then make sure you add the bundle in your `Service` and register your custom tenacity properties. Here we made use of a helper class
 to register properties given a `CompletieConfiguration`. This is helpful when you might need to register custom properties from multiple locations
 such as application and testing code. Note the specialized class uses `TenacityPropertyRegister` which takes a: `Map<TenacityPropertyKey, TenacityConfiguration>` type.
 
-```java
-@Override
-public void initialize(Bootstrap<Configuration> bootstrap) {
-    ...
-    bootstrap.addBundle(new TenacityBundle(new CompletieDependencyKeyFactory(), CompletieDependencyKeys.values()));
-    ...
-}
-
-@Override
-public void run(CompletieConfiguration configuration, Environment environment) throws Exception {
-     new CompletieTenacityPropertyRegister(configuration).register();
-}
-```
-
-```java
-public class CompletieTenacityPropertyRegister {
-    private final CompletieConfiguration configuration;
-
-    public CompletieTenacityPropertyRegister(CompletieConfiguration configuration) {
-        this.configuration = configuration;
+    ```java
+    @Override
+    public void initialize(Bootstrap<Configuration> bootstrap) {
+        ...
+        bootstrap.addBundle(new TenacityBundle(new CompletieDependencyKeyFactory(), CompletieDependencyKeys.values()));
+        ...
     }
 
-    public void register() {
-        final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
-
-        builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
-        builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
-        builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
-        builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
-        builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
-        builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
-
-        new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
+    @Override
+    public void run(CompletieConfiguration configuration, Environment environment) throws Exception {
+         new CompletieTenacityPropertyRegister(configuration).register();
     }
-}
-```
+    ```
+
+    ```java
+    public class CompletieTenacityPropertyRegister {
+        private final CompletieConfiguration configuration;
+
+        public CompletieTenacityPropertyRegister(CompletieConfiguration configuration) {
+            this.configuration = configuration;
+        }
+
+        public void register() {
+            final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
+
+            builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
+            builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
+            builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
+            builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
+            builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
+            builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
+
+            new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
+        }
+    }
+    ```
 
 4. Use `TenacityCommand` to select which custom tenacity configuration you want to use.
 
-```java
-public class CompletieDependencyOnTokie extends TenacityCommand<String> {
-    public CompletieDependencyOnTokie() {
-        super(CompletieDependencyKey.CMPLT_TOKIE_AUTH);
+    ```java
+    public class CompletieDependencyOnTokie extends TenacityCommand<String> {
+        public CompletieDependencyOnTokie() {
+            super(CompletieDependencyKey.CMPLT_TOKIE_AUTH);
+        }
+        ...
     }
-    ...
-}
-```
+    ```
 
 5. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration),
 and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply extend the `TenacityTest` helper.
