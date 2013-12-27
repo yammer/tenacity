@@ -49,7 +49,7 @@ public class AlwaysSucceed extends TenacityCommand<String> {
 }
 ```
 
-A quick primer on the way to use a `TenacityCommand` if you are not familiar with [Hystrix]'s execution model(https://github.com/Netflix/Hystrix/wiki/How-To-Use#wiki-Synchronous-Execution):
+A quick primer on the way to use a `TenacityCommand` if you are not familiar with [Hystrix's execution model](https://github.com/Netflix/Hystrix/wiki/How-To-Use#wiki-Synchronous-Execution):
 
 Synchronous Execution
 ---------------------
@@ -71,7 +71,7 @@ Reactive Execution
 ------------------------------
 
 ```java
-    Observable<String> observable = new AlwaysSucceed().observe();
+Observable<String> observable = new AlwaysSucceed().observe();
 ```
 
 Fallbacks
