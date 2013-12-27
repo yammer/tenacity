@@ -123,23 +123,25 @@ How to add to your Dropwizard Service
 when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
 shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
 
-            public enum CompletieDependencyKeys implements TenacityPropertyKey {
-                CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
-                CMPLT_TOKIE_AUTH,
-                CMPLT_TYRANT_AUTH,
-                CMPLT_WHVLL_PRESENCE
-            }
+```java
+public enum CompletieDependencyKeys implements TenacityPropertyKey {
+    CMPLT_PRNK_USER, CMPLT_PRNK_GROUP, CMPLT_PRNK_SCND_ORDER, CMPLT_PRNK_NETWORK,
+    CMPLT_TOKIE_AUTH,
+    CMPLT_TYRANT_AUTH,
+    CMPLT_WHVLL_PRESENCE
+}
 
-            public class CompletieDependencyKeyFactory implements TenacityPropertyKeyFactory {
-                @Override
-                public TenacityPropertyKey from(String value) {
-                    return CompletieDependencyKeys.valueOf(value.toUpperCase());
-                }
-            }
+public class CompletieDependencyKeyFactory implements TenacityPropertyKeyFactory {
+    @Override
+    public TenacityPropertyKey from(String value) {
+        return CompletieDependencyKeys.valueOf(value.toUpperCase());
+    }
+}
+```
 
 3. Then make sure you add the bundle in your `Service` and register your custom tenacity properties. Here we made use of a helper class
 to register properties given a `CompletieConfiguration`. This is helpful when you might need to register custom properties from multiple locations
-such as application and testing code. Note the helper class makes use the `TenacityPropertyRegister` which needs a much more general: `ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration>` type.
+such as application and testing code. Note the specialized class uses `TenacityPropertyRegister` which takes a: `Map<TenacityPropertyKey, TenacityConfiguration>` type.
 
 ```java
 @Override
