@@ -269,7 +269,7 @@ breakerbox:
 -   `delay` the ongoing schedule to poll for newer configurations.
 
 ![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.png)
-![Breakerbox Configure](http://yammer.github.io/tenacity/breakerbox_configure.png
+![Breakerbox Configure](http://yammer.github.io/tenacity/breakerbox_configure.png)
 
 Configuration Hierarchy Order
 -----------------------------
