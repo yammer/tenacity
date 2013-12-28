@@ -302,3 +302,12 @@ do this because we have found it to actually be faster to fail those requests, r
       *   We put this timeout higher so that it doesn't raise a TimeoutException from the HTTP client, but instead from Hystrix.
 
 *Note: These are just suggestions, feel free to look at Hystrix's configuration [documentation](https://github.com/Netflix/Hystrix/wiki/Configuration), or implement your own.*
+
+Resources
+=========
+
+Tenacity adds three resources under `/tenacity`:
+
+1. `GET /tenacity/configuration/propertykeys`: Returns a list of strings which are all the registered propertykeys with Tenacity.
+2. `GET /tenacity/configuration/{key}:         Returns a JSON representation of a `TenacityConfiguration` for the supplied {key}.
+3. `GET /tenacity/circuitbreakers:             Returns a simple JSON representation of all circuitbreakers and their circuitbreaker status.
