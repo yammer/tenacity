@@ -104,7 +104,7 @@ This should be your implementation of the `TenacityPropertyKey` interface.
 *It is possible to create multiple circuit-breakers that leverage a single threadpool, but for simplicity we are not allowing that type of configuration.*
 
 
-How to add to your Dropwizard Service
+How to add Tenacity to your Dropwizard Service
 ----------
 
 1. To leverage within dropwizard first at the following to your `pom.xml`:
@@ -269,6 +269,7 @@ breakerbox:
 -   `delay` the ongoing schedule to poll for newer configurations.
 
 ![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.png)
+![Breakerbox Configure](http://yammer.github.io/tenacity/breakerbox_configure.png
 
 Configuration Hierarchy Order
 -----------------------------
