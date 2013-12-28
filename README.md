@@ -308,6 +308,7 @@ Resources
 
 Tenacity adds three resources under `/tenacity`:
 
-1. `GET /tenacity/configuration/propertykeys`: Returns a list of strings which are all the registered propertykeys with Tenacity.
-2. `GET /tenacity/configuration/{key}:         Returns a JSON representation of a `TenacityConfiguration` for the supplied {key}.
-3. `GET /tenacity/circuitbreakers:             Returns a simple JSON representation of all circuitbreakers and their circuitbreaker status.
+1. `GET /tenacity/configuration/propertykeys`: List of strings which are all the registered propertykeys with Tenacity.
+2. `GET /tenacity/configuration/{key}:         JSON representation of a `TenacityConfiguration` for the supplied {key}.
+3. `GET /tenacity/circuitbreakers:             Simple JSON representation of all circuitbreakers and their circuitbreaker status.
+4. `GET /tenacity/metrics.stream:              text/event-stream of Hystrix metrics.
