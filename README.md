@@ -211,6 +211,8 @@ Configuration
 Once you have identified your dependencies you need to configure them appropriately. Here is the basic structure of a single
 `TenacityConfiguration` that may be leverage multiple times through your service configuration:
 
+Defaults
+--------
 ```yaml
 executionIsolationThreadTimeoutInMillis: 1000
 threadpool:
@@ -253,70 +255,52 @@ We have some suggestions for how you go about this in the Equations section.
 
 Breakerbox
 ----------
-One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery and mean-time-to-recovery for issues. These are available at:
-
-https://breakerbox.int.yammer.com
+One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery and mean-time-to-recovery for issues. This is available through a separate service [Breakerbox](https://github.com/yammer/breakerbox).
 
 Breakerbox is a central dashboard and an on-the-fly configuration tool for Tenacity. In addition to the per-tenacity-command configurations shown above this configuration piece let's you define where and how often
 to check for newer configurations.
 
-      breakerbox:
-          urls: http://breakerbox.sjc1.yammer.com:8080/archaius/{service}
-          initialDelay: 10s
-          delay: 60s 
+```yaml
+breakerbox:
+  urls: http://breakerbox.yourcompany.com:8080/archaius/{service}
+  initialDelay: 0s
+  delay: 60s
+```
 
--   `urls` is a list of comma-deliminated list of urls for where to pull tenacity configurations. At the moment there are two recommended choices:
-    1. `breakerbox.sjc1.yammer.com:8080` for services that are in the `sjc1` data-center.
-    2. `breakerbox.bn1.yammer.com:8080` for services that are in the `bn1` data-center.
-
-    Both of these internal VIPs will failover to the other in the event that all backends are unavailable. In other words, if all breakerboxes behind `breakerbox.sjc1.yammer.com` are unavailable then you'll be
-    redirected to `breakerbox.bn1.yammer.com`.
-
+-   `urls` is a list of comma-deliminated list of urls for where to pull tenacity configurations. This will pull override configurations for all dependency keys for requested service.
 -   `initialDelay` how long before the first poll for newer configuration executes.
 -   `delay` the ongoing schedule to poll for newer configurations.
 
+![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.jpeg)
 
-Equations
+Configuration Hierarchy Order
+-----------------------------
+
+Configurations can happen in a lot of different spots so it's good to just spell it out clearly. The order in this list matters, the earlier items override those that come later.
+
+1. Breakerbox
+2. Local service configuration YAML
+3. [Defaults](https://github.com/yammer/tenacity#defaults)
+
+
+Configuration Equations
 ---------
 
-When any percentile data is needed this should be calculated using historical data. Look somewhere between a week to a month
-and take the `max` of a particular metric. If the client experiences bursty traffice (such as during a deploy or dependency's
-deploy) you should consider this or ensure the clients dependent on that call have sufficient retry logic to sustain failures
-on this command.
-
+How to configure your dependent services can be confusing. A good place to start if don't have a predefined SLA is to just look
+at actual measurements. At Yammer, we set our max operational time for our actions somewhere between p99 and p999 for response times. We
+do this because we have found it to actually be faster to fail those requests, retry, and optimistically get a p50 response time.
 
 1. Tenacity
-  -   executionIsolationThreadTimeoutInMillis = `ceil(2.0 * (max(p99) + max(median)))`
+  -   executionIsolationThreadTimeoutInMillis = `p99 + median + extra`
   -   p99 < executionIsolationThreadTimeoutInMillis < p999
   -   threadpool
-      *   size = `(p99 in seconds) * (m1 rate req/sec)`
-      *   4 < size <= 20; anything over 20 should be discussed
-      *   Note: this number only meets the current traffic needs. Increase this value by some percentage to account for growth.
+      *   size = `(p99 in seconds) * (m1 rate req/sec) + extra`
+      *   10 is usually fine for most operations. Anything with a large pool should be understood why that is necessary (e.g. long response times)
+      *   Extra: this number only meets the current traffic needs. Make sure to add some extra for bursts as well as growth.
 
 2. HTTP client
-  -   Where `executionIsolationThreadTimeoutInMillis` is the max value of `executionIsolationThreadTimeoutInMillis` over the relevant calls:
-      *   Usually this is all the calls to a dependent service, unless there are multiple HTTP clients on the service level
   -   connectTimeout = `33% of executionIsolationThreadTimeoutInMillis`
-  -   timeout (readTimeout) = `300% of executionIsolationThreadTimeoutInMillis`
-      *   Integrating tenacity offers a greater deal of control and feedback around failures and latent calls; setting the read timeout to the tenacity timeout ensures resource cleanup.
+  -   timeout (readTimeout) = `110% of executionIsolationThreadTimeoutInMillis`
+      *   We put this timeout higher so that it doesn't raise a TimeoutException from the HTTP client, but instead from Hystrix.
 
-JerseyClient
-------------
-Our JerseyClient read timeouts have typically been quite generous. For tenacity to function correctly, you should bound your jersey client read
-timeouts to be no less than ~20ms higher than the timout of the highest command associcated with that client.
-
-For example,
-JerseyClient `J` is used with Commands 
-  -  `C1` (executionIsolationThreadTimeoutInMillis=103ms), and
-  -  `C2` (executionIsolationThreadTimeoutInMillis=150ms).
-  -  Both `C1` and `C2` utilize `J` as a part of their default behavior.
-
-The read timeout for `J` should be set to at least ~170ms. The calls to this client are bounded by the 150ms timeout of `C2`,
-but if we simply set `J`s read timeout to be the same, we end up with a non-deterministic result if the timeout occurrs. Sometimes
-the jersey client will throw a timeout exception (looking like an error to Tenacity and subsequently Breakerbox), other times Tenacity
-will timeout (and propogate that information).
-
-Hystrix Documentation
-=====================
-
-https://github.com/Netflix/Hystrix/wiki
+*Note: These are just suggestions, feel free to look at Hystrix's configuration [documentation](https://github.com/Netflix/Hystrix/wiki/Configuration), or implement your own.*
