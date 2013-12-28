@@ -306,7 +306,7 @@ do this because we have found it to actually be faster to fail those requests, r
 Resources
 =========
 
-Tenacity adds three resources under `/tenacity`:
+Tenacity adds resources under `/tenacity`:
 
 1. `GET /tenacity/configuration/propertykeys`: List of strings which are all the registered propertykeys with Tenacity.
 2. `GET /tenacity/configuration/{key}`:         JSON representation of a `TenacityConfiguration` for the supplied {key}.
