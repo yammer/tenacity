@@ -254,7 +254,7 @@ Breakerbox
 ----------
 One of the great things about Tenacity is the ability to aid in the reduction of mean-time-to-discovery and mean-time-to-recovery for issues. This is available through a separate service [Breakerbox](https://github.com/yammer/breakerbox).
 
-Breakerbox is a central dashboard and an on-the-fly configuration tool for Tenacity. In addition to the per-tenacity-command configurations shown above this configuration piece let's you define where and how often
+[Breakerbox](https://github.com/yammer/breakerbox) is a central dashboard and an on-the-fly configuration tool for Tenacity. In addition to the per-tenacity-command configurations shown above this configuration piece let's you define where and how often
 to check for newer configurations.
 
 ```yaml
@@ -276,7 +276,7 @@ Configuration Hierarchy Order
 
 Configurations can happen in a lot of different spots so it's good to just spell it out clearly. The order in this list matters, the earlier items override those that come later.
 
-1. Breakerbox
+1. [Breakerbox](https://github.com/yammer/breakerbox)
 2. Local service configuration YAML
 3. [Defaults](https://github.com/yammer/tenacity#defaults)
 
