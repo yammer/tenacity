@@ -1,9 +1,6 @@
 Tenacity
 ========
 
-What is it?
------------
-
 Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/Netflix/Hystrix).
 
 [Dropwizard](http://www.dropwizard.io) is a framework for building REST services. [Hystrix](https://github.com/Netflix/Hystrix) is a resiliency library from [Netflix](https://github.com/Netflix) and [Ben Christensen](https://github.com/benjchristensen).
