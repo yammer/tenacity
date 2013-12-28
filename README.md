@@ -6,16 +6,16 @@ What is it?
 
 Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/Netflix/Hystrix).
 
-Dropwizard is a framework for building REST services. Hystrix is a resiliency library from Netflix and [Ben Christensen](https://github.com/benjchristensen).
+[Dropwizard](http://www.dropwizard.io) is a framework for building REST services. [Hystrix](https://github.com/Netflix/Hystrix) is a resiliency library from [Netflix](https://github.com/Netflix) and [Ben Christensen](https://github.com/benjchristensen).
 
-Hystrix goals are to:
+[Hystrix](https://github.com/Netflix/Hystrix) goals are to:
 
 1. Stop cascading failures.
 2. Fail-fast and rapidly recover.
 3. Reduce mean-time-to-discovery (with dashboards)
 4. Reduce mean-time-to-recovery (with dynamic configuration)
 
-Tenacity makes Hystrix dropwizard-friendly and for dropwizard-developers to quickly leverage the benefits of Hystrix.
+Tenacity makes [Hystrix](https://github.com/Netflix/Hystrix) dropwizard-friendly and for dropwizard-developers to quickly leverage the benefits of Hystrix.
 
 1. Uses dropwizard-bundles for bootstrapping: property strategies, metrics, dynamic configuration, and some resource endpoints (e.g. for dashboards).
 2. Dropwizard-configuration style (YAML) for dependencies.
