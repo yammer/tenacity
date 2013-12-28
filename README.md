@@ -271,7 +271,7 @@ breakerbox:
 -   `initialDelay` how long before the first poll for newer configuration executes.
 -   `delay` the ongoing schedule to poll for newer configurations.
 
-![Breakerbox Dashboard](https://yammer.github.io/tenacity/breakerbox_latest.png)
+![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.png)
 
 Configuration Hierarchy Order
 -----------------------------
