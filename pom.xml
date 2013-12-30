@@ -6,11 +6,19 @@
     <artifactId>tenacity-parent</artifactId>
     <version>0.1.14-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>tenacity Project</name>
 
-    <prerequisites>
-        <maven>3.0.0</maven>
-    </prerequisites>
+    <name>Tenacity</name>
+    <description>Dropwizard + Hystrix</description>
+
+    <url>https://github.com/yammer/tenacity</url>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <modules>
         <module>tenacity-core</module>
@@ -20,15 +28,15 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git://github.int.yammer.com/yammer/tenacity.git</connection>
-        <developerConnection>scm:git:git@github.int.yammer.com:yammer/tenacity.git</developerConnection>
-        <url>http://github.int.yammer.com/yammer/tenacity/</url>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git://github.com/yammer/tenacity.git</connection>
+        <developerConnection>scm:git:git@github.com:yammer/tenacity.git</developerConnection>
+        <url>http://github.com/yammer/tenacity/</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.int.yammer.com/yammer/tenacity/issues</url>
+        <url>http://github.com/yammer/tenacity/issues</url>
     </issueManagement>
 
     <properties>
@@ -46,43 +54,57 @@
     </developers>
 
     <distributionManagement>
-        <repository>
-            <id>maven.int.yammer.com-releases</id>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/releases/</url>
-        </repository>
         <snapshotRepository>
-            <id>maven.int.yammer.com-snapshots</id>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>maven.int.yammer.com-releases</id>
-            <name>Yammer Maven Releases</name>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>maven.int.yammer.com-snapshots</id>
-            <name>Yammer Maven Snapshots</name>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <keyname>28D77313</keyname>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -104,46 +126,67 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <outputDirectory />
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.4.1</version>
+                <version>2.4.2</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <mavenExecutorId>forked-path</mavenExecutorId>
-                    <tagNameFormat>v@{project.version}</tagNameFormat>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>com.atlassian.maven.plugins</groupId>
-                <artifactId>maven-clover2-plugin</artifactId>
-                <version>3.1.10.1</version>
-                <configuration>
-                    <generateHistorical>true</generateHistorical>
-                    <historyDir>${project.basedir}/clover/history/${project.artifact}</historyDir>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.7</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.16</version>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Default</threshold>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
