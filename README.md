@@ -5,7 +5,7 @@ Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/
 
 [Dropwizard](http://www.dropwizard.io) is a framework for building REST services. [Hystrix](https://github.com/Netflix/Hystrix) is a resiliency library from [Netflix](https://github.com/Netflix) and [Ben Christensen](https://github.com/benjchristensen).
 
-[Hystrix](https://github.com/Netflix/Hystrix) goals are to:
+[Hystrix's](https://github.com/Netflix/Hystrix) goals are to:
 
 1. Stop cascading failures.
 2. Fail-fast and rapidly recover.
@@ -19,6 +19,8 @@ Tenacity makes [Hystrix](https://github.com/Netflix/Hystrix) dropwizard-friendly
 3. Abstractions to clearly configure a dependency operation (`TenacityCommand<ReturnType>`).
 4. Ability to unit-test Hystrix: Resets static state held by Hystrix (metrics, counters, etc.). Increases rate at which a concurrent thread updates metrics.
 5. Publishes measurements via [Metrics](https://github.com/codahale/metrics).
+
+Tenacity is also meant to be used with [Breakerbox](https://github.com/yammer/breakerbox) which adds real-time visualization of metrics and dynamic configuration.
 
 Modules
 -------
