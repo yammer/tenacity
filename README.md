@@ -147,7 +147,11 @@ such as application and testing code. Note the specialized class uses `TenacityP
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
         ...
-        bootstrap.addBundle(new TenacityBundle(new CompletieDependencyKeyFactory(), CompletieDependencyKeys.values()));
+        bootstrap.addBundle(TenacityBundleBuilder
+                                            .newBuilder()
+                                            .propertyKeyFactory(new CompletieDependencyKeyFactory())
+                                            .propertyKeys(CompletieDependencyKeys.values())
+                                            .build();
         ...
     }
 
@@ -314,3 +318,18 @@ Tenacity adds resources under `/tenacity`:
 2. `GET /tenacity/configuration/{key}`:         JSON representation of a `TenacityConfiguration` for the supplied {key}.
 3. `GET /tenacity/circuitbreakers`:             Simple JSON representation of all circuitbreakers and their circuitbreaker status.
 4. `GET /tenacity/metrics.stream`:              text/event-stream of Hystrix metrics.
+
+TenacityExceptionMapper
+=======================
+
+An exception mapper exists to serve as an aid for unhandled `HystrixRuntimeException`s. It is used to convert all the types of unhandled exceptions to be converted to a simple
+HTTP status code. A common pattern here is to convert the unhandled `HystrixRuntimeException`s to [429 Too Many Requests](http://tools.ietf.org/html/rfc6585#section-4):
+
+```java
+TenacityBundleBuilder
+                .newBuilder()
+                .propertyKeyFactory(propertyKeyFactory)
+                .propertyKeys(propertyKeys)
+                .exceptionMapper(new TenacityExceptionMapper(429))
+                .build();
+```
