@@ -28,7 +28,7 @@ public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeEx
             case REJECTED_THREAD_EXECUTION:
             case REJECTED_SEMAPHORE_EXECUTION:
             case REJECTED_SEMAPHORE_FALLBACK:
-                LOGGER.info("Unhandled HystrixRuntimeException", exception);
+                LOGGER.debug("Unhandled HystrixRuntimeException", exception);
                 return Response.status(statusCode).build(); //TODO: Retry-After for 429
             case COMMAND_EXCEPTION:
             default:
