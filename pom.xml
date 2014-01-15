@@ -10,7 +10,7 @@
     <name>Tenacity</name>
     <description>Dropwizard + Hystrix</description>
 
-    <url>https://github.com/yammer/tenacity</url>
+    <url>https://github.int.yammer.com/yammer/tenacity</url>
 
     <licenses>
         <license>
@@ -28,15 +28,15 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git://github.com/yammer/tenacity.git</connection>
-        <developerConnection>scm:git:git@github.com:yammer/tenacity.git</developerConnection>
-        <url>http://github.com/yammer/tenacity/</url>
+        <connection>scm:git:git://github.int.yammer.com/yammer/tenacity.git</connection>
+        <developerConnection>scm:git:git@github.int.yammer.com:yammer/tenacity.git</developerConnection>
+        <url>http://github.int.yammer.com/yammer/tenacity/</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.com/yammer/tenacity/issues</url>
+        <url>http://github.int.yammer.com/yammer/tenacity/issues</url>
     </issueManagement>
 
     <properties>
