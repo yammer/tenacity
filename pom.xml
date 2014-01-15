@@ -28,10 +28,10 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git://github.int.yammer.com/yammer/tenacity.git</connection>
-        <developerConnection>scm:git:git@github.int.yammer.com:yammer/tenacity.git</developerConnection>
-        <url>http://github.int.yammer.com/yammer/tenacity/</url>
-        <tag>HEAD</tag>
+        <connection>scm:git:git://github.com/yammer/tenacity.git</connection>
+        <developerConnection>scm:git:git@github.com:yammer/tenacity.git</developerConnection>
+        <url>http://github.com/yammer/tenacity/</url>
+        <tag>tenacity-parent-0.1.14</tag>
     </scm>
 
     <issueManagement>
