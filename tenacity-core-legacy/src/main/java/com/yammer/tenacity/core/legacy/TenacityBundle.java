@@ -6,13 +6,14 @@ import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.tenacity.core.bundle.AbstractTenacityPropertyKeys;
-import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
 import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 import com.yammer.tenacity.core.strategies.ManagedConcurrencyStrategy;
+
+import javax.ws.rs.ext.ExceptionMapper;
 
 public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bundle {
     public TenacityBundle(TenacityPropertyKeyFactory keyFactory,
@@ -22,8 +23,8 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
 
     public TenacityBundle(TenacityPropertyKeyFactory keyFactory,
                           Iterable<TenacityPropertyKey> keys,
-                          TenacityExceptionMapper exceptionMapper) {
-        super(keyFactory, keys, exceptionMapper);
+                          Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers) {
+        super(keyFactory, keys, exceptionMappers);
     }
 
     @Override
@@ -31,7 +32,9 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
         HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
         environment.addServlet(new HystrixMetricsStreamServlet(), "/tenacity/metrics.stream");
-        environment.addProvider(exceptionMapper);
+        for (ExceptionMapper<?> exceptionMapper : exceptionMappers) {
+            environment.addProvider(exceptionMapper);
+        }
         environment.addResource(new TenacityPropertyKeysResource(keys));
         environment.addResource(new TenacityConfigurationResource(keyFactory));
         environment.addResource(new TenacityCircuitBreakersResource(keys));

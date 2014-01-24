@@ -1,30 +1,29 @@
 package com.yammer.tenacity.core.bundle;
 
 import com.google.common.collect.ImmutableList;
-import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 
-import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public abstract class AbstractTenacityPropertyKeys {
     protected final Iterable<TenacityPropertyKey> keys;
     protected final TenacityPropertyKeyFactory keyFactory;
-    protected final TenacityExceptionMapper exceptionMapper;
+    protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
 
     public AbstractTenacityPropertyKeys(TenacityPropertyKeyFactory keyFactory,
                                         Iterable<TenacityPropertyKey> keys) {
-        this(keyFactory, keys, new TenacityExceptionMapper(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
+        this(keyFactory, keys, ImmutableList.<ExceptionMapper<? extends Throwable>>of());
     }
 
     public AbstractTenacityPropertyKeys(TenacityPropertyKeyFactory keyFactory,
                                         Iterable<TenacityPropertyKey> keys,
-                                        TenacityExceptionMapper exceptionMapper) {
+                                        Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers) {
         this.keys = ImmutableList.copyOf(checkNotNull(keys));
         this.keyFactory = checkNotNull(keyFactory);
-        this.exceptionMapper = checkNotNull(exceptionMapper);
+        this.exceptionMappers = ImmutableList.copyOf(checkNotNull(exceptionMappers));
     }
 
     @Override
@@ -34,7 +33,7 @@ public abstract class AbstractTenacityPropertyKeys {
 
         AbstractTenacityPropertyKeys that = (AbstractTenacityPropertyKeys) o;
 
-        if (!exceptionMapper.equals(that.exceptionMapper)) return false;
+        if (!exceptionMappers.equals(that.exceptionMappers)) return false;
         if (!keyFactory.equals(that.keyFactory)) return false;
         if (!keys.equals(that.keys)) return false;
 
@@ -45,7 +44,7 @@ public abstract class AbstractTenacityPropertyKeys {
     public int hashCode() {
         int result = keys.hashCode();
         result = 31 * result + keyFactory.hashCode();
-        result = 31 * result + exceptionMapper.hashCode();
+        result = 31 * result + exceptionMappers.hashCode();
         return result;
     }
 }

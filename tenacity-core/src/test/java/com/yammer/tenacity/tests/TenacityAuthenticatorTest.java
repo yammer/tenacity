@@ -2,6 +2,7 @@ package com.yammer.tenacity.tests;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.tenacity.core.auth.TenacityAuthenticator;
@@ -21,7 +22,7 @@ import static org.mockito.Mockito.when;
 
 
 public class TenacityAuthenticatorTest {
-    @Test(expected = AuthenticationException.class)
+    @Test(expected = HystrixRuntimeException.class)
     public void shouldThrowWhenAuthenticateTimesOut() throws AuthenticationException {
         @SuppressWarnings("unchecked")
         final Authenticator<Object, Object> mockAuthenticator = mock(Authenticator.class);
@@ -45,7 +46,12 @@ public class TenacityAuthenticatorTest {
             }
         });
 
-        assertThat(tenacityAuthenticator.authenticate("credentials"))
-            .isEqualTo(Optional.absent());
+        try {
+            assertThat(tenacityAuthenticator.authenticate("credentials"))
+                .isEqualTo(Optional.absent());
+        } catch (HystrixRuntimeException err) {
+            assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
+            throw err;
+        }
     }
 }

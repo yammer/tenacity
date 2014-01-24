@@ -1,7 +1,6 @@
 package com.yammer.tenacity.core.auth;
 
 import com.google.common.base.Optional;
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.tenacity.core.TenacityCommand;
@@ -23,11 +22,7 @@ public class TenacityAuthenticator<C, P> implements Authenticator<C, P> {
 
     @Override
     public Optional<P> authenticate(C credentials) throws AuthenticationException {
-        try {
             return new TenacityAuthenticate(credentials).execute();
-        } catch (HystrixRuntimeException err) {
-            throw new AuthenticationException(err);
-        }
     }
 
     private class TenacityAuthenticate extends TenacityCommand<Optional<P>> {

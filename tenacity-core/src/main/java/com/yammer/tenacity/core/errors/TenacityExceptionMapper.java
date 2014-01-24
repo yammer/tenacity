@@ -20,6 +20,10 @@ public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeEx
         this.statusCode = statusCode;
     }
 
+    public int getStatusCode() {
+        return statusCode;
+    }
+
     @Override
     public Response toResponse(HystrixRuntimeException exception) {
         switch (exception.getFailureType()) {

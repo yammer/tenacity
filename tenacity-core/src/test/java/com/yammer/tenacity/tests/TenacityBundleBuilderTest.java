@@ -3,10 +3,13 @@ package com.yammer.tenacity.tests;
 import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.bundle.TenacityBundle;
 import com.yammer.tenacity.core.bundle.TenacityBundleBuilder;
+import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import org.junit.Test;
+
+import javax.ws.rs.ext.ExceptionMapper;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -29,7 +32,6 @@ public class TenacityBundleBuilderTest {
                 .build();
 
         assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys));
-        assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys, new TenacityExceptionMapper(500)));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -54,9 +56,25 @@ public class TenacityBundleBuilderTest {
                 .newBuilder()
                 .propertyKeyFactory(propertyKeyFactory)
                 .propertyKeys(propertyKeys)
-                .exceptionMapper(new TenacityExceptionMapper(429))
+                .addExceptionMapper(new TenacityExceptionMapper(429))
                 .build();
 
-        assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys, new TenacityExceptionMapper(429)));
+        assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys,
+                ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))));
+    }
+
+    @Test
+    public void useAllExceptionMappers() {
+        final TenacityBundle bundle = TenacityBundleBuilder
+                .newBuilder()
+                .propertyKeyFactory(propertyKeyFactory)
+                .propertyKeys(propertyKeys)
+                .mapAllHystrixRuntimeExceptionsTo(429)
+                .build();
+
+        assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys,
+                ImmutableList.<ExceptionMapper<? extends Throwable>>of(
+                        new TenacityExceptionMapper(429),
+                        new TenacityContainerExceptionMapper(429))));
     }
 }

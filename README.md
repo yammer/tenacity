@@ -330,6 +330,6 @@ TenacityBundleBuilder
                 .newBuilder()
                 .propertyKeyFactory(propertyKeyFactory)
                 .propertyKeys(propertyKeys)
-                .exceptionMapper(new TenacityExceptionMapper(429))
+                .mapAllHystrixRuntimeExceptionsTo(429)
                 .build();
 ```

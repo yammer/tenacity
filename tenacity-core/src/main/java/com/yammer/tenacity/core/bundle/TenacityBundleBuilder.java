@@ -2,16 +2,18 @@ package com.yammer.tenacity.core.bundle;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 
+import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Iterator;
 
 public class TenacityBundleBuilder {
     private Optional<TenacityPropertyKeyFactory> propertyKeyFactory = Optional.absent();
     private Optional<Iterable<TenacityPropertyKey>> propertyKeys = Optional.absent();
-    private TenacityExceptionMapper exceptionMapper = new TenacityExceptionMapper(500);
+    private final ImmutableList.Builder<ExceptionMapper<? extends Throwable>> exceptionMapperBuilder = ImmutableList.builder();
 
     public static TenacityBundleBuilder newBuilder() {
         return new TenacityBundleBuilder();
@@ -37,8 +39,14 @@ public class TenacityBundleBuilder {
         return this;
     }
 
-    public TenacityBundleBuilder exceptionMapper(TenacityExceptionMapper tenacityExceptionMapper) {
-        exceptionMapper = tenacityExceptionMapper;
+    public <T extends Throwable> TenacityBundleBuilder addExceptionMapper(ExceptionMapper<T> exceptionMapper) {
+        exceptionMapperBuilder.add(exceptionMapper);
+        return this;
+    }
+
+    public TenacityBundleBuilder mapAllHystrixRuntimeExceptionsTo(int statusCode) {
+        exceptionMapperBuilder.add(new TenacityExceptionMapper(statusCode));
+        exceptionMapperBuilder.add(new TenacityContainerExceptionMapper(statusCode));
         return this;
     }
 
@@ -51,6 +59,6 @@ public class TenacityBundleBuilder {
             throw new IllegalArgumentException("Must supply TenacityPropertyKeys.");
         }
 
-        return new TenacityBundle(propertyKeyFactory.get(), propertyKeys.get(), exceptionMapper);
+        return new TenacityBundle(propertyKeyFactory.get(), propertyKeys.get(), exceptionMapperBuilder.build());
     }
 }
