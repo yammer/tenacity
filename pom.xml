@@ -10,7 +10,7 @@
     <name>Tenacity</name>
     <description>Dropwizard + Hystrix</description>
 
-    <url>https://github.int.yammer.com/yammer/tenacity</url>
+    <url>https://github.com/yammer/tenacity</url>
 
     <licenses>
         <license>
@@ -28,15 +28,15 @@
     </modules>
 
     <scm>
-        <connection>scm:git:git://github.int.yammer.com/yammer/tenacity.git</connection>
-        <developerConnection>scm:git:git@github.int.yammer.com:yammer/tenacity.git</developerConnection>
-        <url>http://github.int.yammer.com/yammer/tenacity/</url>
+        <connection>scm:git:git://github.com/yammer/tenacity.git</connection>
+        <developerConnection>scm:git:git@github.com:yammer/tenacity.git</developerConnection>
+        <url>http://github.com/yammer/tenacity/</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.int.yammer.com/yammer/tenacity/issues</url>
+        <url>http://github.com/yammer/tenacity/issues</url>
     </issueManagement>
 
     <properties>
@@ -49,19 +49,55 @@
         <developer>
             <name>Chris Gray</name>
             <email>cgray@yammer-inc.com</email>
+            <timezone>-8</timezone>
         </developer>
     </developers>
 
     <distributionManagement>
-        <repository>
-            <id>maven.int.yammer.com-releases</id>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/releases/</url>
-        </repository>
         <snapshotRepository>
-            <id>maven.int.yammer.com-snapshots</id>
-            <url>http://maven.int.yammer.com/nexus/content/repositories/snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Nexus Release Repository</name>
+            <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
+
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <keyname>28D77313</keyname>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
