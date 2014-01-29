@@ -92,6 +92,7 @@
                         </executions>
                         <configuration>
                             <keyname>28D77313</keyname>
+                            <passphrase></passphrase>
                         </configuration>
                     </plugin>
                 </plugins>
