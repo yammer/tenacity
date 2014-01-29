@@ -114,7 +114,7 @@ How to add Tenacity to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.1.13</version>
+            <version>0.2.0</version>
         </dependency>
 
 
@@ -201,7 +201,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.1.13</version>
+            <version>0.2.0</version>
             <scope>test</scope>
         </dependency>
 
