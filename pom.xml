@@ -93,6 +93,7 @@
                         <configuration>
                             <keyname>28D77313</keyname>
                             <passphrase></passphrase>
+                            <useAgent>true</useAgent>
                         </configuration>
                     </plugin>
                 </plugins>
