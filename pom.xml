@@ -42,7 +42,7 @@
     <properties>
         <dropwizard.version>0.6.2</dropwizard.version>
         <legacy.dropwizard.version>0.5.1</legacy.dropwizard.version>
-        <hystrix.version>1.3.8</hystrix.version>
+        <hystrix.version>1.3.9</hystrix.version>
     </properties>
 
     <developers>
