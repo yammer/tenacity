@@ -1,4 +1,4 @@
-Tenacity
+Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.png)](https://travis-ci.org/yammer/tenacity)
 ========
 
 Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/Netflix/Hystrix).
