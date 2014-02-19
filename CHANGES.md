@@ -1,4 +1,4 @@
-0.2.1-SNAPSHOT
+0.2.1
 --------------
 Upgrade Hystrix to 1.3.9
 
