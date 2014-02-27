@@ -1,17 +1,13 @@
 language: java
-
-script: 'mvn verify deploy --settings maven_deploy_settings.xml'
-
+script: mvn verify deploy --settings maven_deploy_settings.xml
 jdk:
-  - oraclejdk7
-  - openjdk7
-
+- oraclejdk7
+- openjdk7
 notifications:
   email:
     recipients:
-      - yammer-sonatype@microsoft.com
-
+    - yammer-sonatype@microsoft.com
 env:
   global:
-    - secure: "SW2hc4fAlNcZmakSbYVg6NSwnb9g4eUX3m/DLSMYo7ddoBiqik55hFV9AGCGB0A5JXO62tIWIh8tAxJq7+/wghMm0rjp5Fa7EFp9gYcLmPDZcfNT6JzwFsKSph4UT59r+kb3uxMfNUEyPIJ+YVgy1RmlEHFhkkTUdzaRthra6fs="
-    - secure: "BsUHiFgBOKYbQYmQ/VgOJ4IcKqGoeQeZPckzoiTKp72vNMaaYGx7g0E0VigRl3xE+0kRfMsVE+pA5rtVliFCWGgpyD2odruwh9CInWG3SBu+UMomrPN1PEbvMySjoMsCXdLybQPq+YOwFY0lTCO0ucbhlXprOHX6zkwIiBy3ITM="
+  - secure: v7aLGiynYsXsofGA6niM+K5C3SpbV+0rsCq2iiMpCbnNlNe+IbHTlNnnan4SnK0Igon7koJ/h/7FQ7HzsKqFbPkfM00QyFeK5jLiO33JV/aSpbm4BtWH2CQ4O3BVRHekhQJt3Ov2Laezy/muS8kvFsLRjmkuUjPcH8alN0eDflE=
+  - secure: Qa7CrsioW48/vdnHeN69KgjnY1U7TZL9/kmcKi54gPsw4HE9zhvEcgFLb9oXd1zjdoJlU/8pX5oUcTY2pJ0njGDCZECzbzhSthYCUmuYLaF2PptW1F3TS4fFKZ88YG1owH03ceWFV22rfAMp+xGnXJMhAXRCFlvhLmlecxnJzY8=
