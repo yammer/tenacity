@@ -22,22 +22,22 @@ import java.util.List;
  */
 public class ExceptionLoggingCommandHook extends HystrixCommandExecutionHook {
 
-    private final List<ExceptionLogger> exceptionLoggers;
+    private final List<ExceptionLogger<? extends Exception>> exceptionLoggers;
 
     @SuppressWarnings("unused")
     /**
      * Empty constructor only sets the DefaultExceptionLogger, which will log every type of exception
      */
     public ExceptionLoggingCommandHook() {
-        this(ImmutableList.<ExceptionLogger>of(new DefaultExceptionLogger()));
+        this(ImmutableList.<ExceptionLogger<? extends Exception>>of(new DefaultExceptionLogger()));
     }
 
-    public ExceptionLoggingCommandHook(ExceptionLogger ... exceptionLoggers) {
-        this(ImmutableList.copyOf(exceptionLoggers));
+    public ExceptionLoggingCommandHook(ExceptionLogger<? extends Exception> ... exceptionLoggers) {
+        this.exceptionLoggers = ImmutableList.copyOf(exceptionLoggers);
     }
 
-    public ExceptionLoggingCommandHook(List<ExceptionLogger> exceptionLoggers) {
-        this.exceptionLoggers = exceptionLoggers;
+    public ExceptionLoggingCommandHook(List<ExceptionLogger<? extends Exception>> exceptionLoggers) {
+        this.exceptionLoggers = ImmutableList.copyOf(exceptionLoggers);
     }
 
     @Override
