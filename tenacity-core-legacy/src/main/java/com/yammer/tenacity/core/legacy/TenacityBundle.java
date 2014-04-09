@@ -1,8 +1,10 @@
 package com.yammer.tenacity.core.legacy;
 
+import com.google.common.base.Optional;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import com.netflix.hystrix.contrib.yammermetricspublisher.HystrixYammerMetricsPublisher;
 import com.netflix.hystrix.strategy.HystrixPlugins;
+import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.tenacity.core.bundle.AbstractTenacityPropertyKeys;
@@ -23,13 +25,17 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
 
     public TenacityBundle(TenacityPropertyKeyFactory keyFactory,
                           Iterable<TenacityPropertyKey> keys,
-                          Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers) {
-        super(keyFactory, keys, exceptionMappers);
+                          Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers,
+                          Optional<HystrixCommandExecutionHook> executionHook) {
+        super(keyFactory, keys, exceptionMappers, executionHook);
     }
 
     @Override
     public void initialize(Environment environment) {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
+        if (executionHook.isPresent()) {
+            HystrixPlugins.getInstance().registerCommandExecutionHook(executionHook.get());
+        }
         HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
         environment.addServlet(new HystrixMetricsStreamServlet(), "/tenacity/metrics.stream");
         for (ExceptionMapper<?> exceptionMapper : exceptionMappers) {

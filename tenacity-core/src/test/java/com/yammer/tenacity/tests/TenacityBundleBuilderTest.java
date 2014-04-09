@@ -1,10 +1,13 @@
 package com.yammer.tenacity.tests;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.bundle.TenacityBundle;
 import com.yammer.tenacity.core.bundle.TenacityBundleBuilder;
 import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
+import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import org.junit.Test;
@@ -60,7 +63,7 @@ public class TenacityBundleBuilderTest {
                 .build();
 
         assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys,
-                ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))));
+                ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429)), Optional.<HystrixCommandExecutionHook>absent()));
     }
 
     @Test
@@ -75,6 +78,21 @@ public class TenacityBundleBuilderTest {
         assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys,
                 ImmutableList.<ExceptionMapper<? extends Throwable>>of(
                         new TenacityExceptionMapper(429),
-                        new TenacityContainerExceptionMapper(429))));
+                        new TenacityContainerExceptionMapper(429)),
+                Optional.<HystrixCommandExecutionHook>absent()));
+    }
+
+    @Test
+    public void withExecutionMappers() throws Exception {
+        final HystrixCommandExecutionHook hook = new ExceptionLoggingCommandHook();
+        final TenacityBundle bundle = TenacityBundleBuilder
+                .newBuilder()
+                .propertyKeyFactory(propertyKeyFactory)
+                .propertyKeys(propertyKeys)
+                .commandExecutionHook(hook)
+                .build();
+
+        assertThat(bundle).isEqualTo(new TenacityBundle(propertyKeyFactory, propertyKeys,
+                ImmutableList.<ExceptionMapper<? extends Throwable>>of(), Optional.of(hook)));
     }
 }
