@@ -114,7 +114,7 @@ How to add Tenacity to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.2.1</version>
+            <version>0.2.2</version>
         </dependency>
 
 
@@ -170,14 +170,14 @@ such as application and testing code. Note the specialized class uses `TenacityP
         }
 
         public void register() {
-            final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
+            final ImmutableMap.Builder<TenacityPropertyKeys, TenacityConfiguration> builder = ImmutableMap.builder();
 
-            builder.put(CompletieDependencyKey.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
-            builder.put(CompletieDependencyKey.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
-            builder.put(CompletieDependencyKey.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
-            builder.put(CompletieDependencyKey.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
-            builder.put(CompletieDependencyKey.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
-            builder.put(CompletieDependencyKey.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
 
             new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
         }
@@ -189,7 +189,7 @@ such as application and testing code. Note the specialized class uses `TenacityP
     ```java
     public class CompletieDependencyOnTokie extends TenacityCommand<String> {
         public CompletieDependencyOnTokie() {
-            super(CompletieDependencyKey.CMPLT_TOKIE_AUTH);
+            super(CompletieDependencyKeys.CMPLT_TOKIE_AUTH);
         }
         ...
     }
@@ -201,7 +201,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.2.1</version>
+            <version>0.2.2</version>
             <scope>test</scope>
         </dependency>
 
