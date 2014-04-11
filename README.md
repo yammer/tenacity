@@ -29,6 +29,7 @@ Modules
 -   `tenacity-core-legacy`:     Support for legacy versions of Dropwizard. Currently there is a conflict with <0.6.0 versions (around Bundles).
 -   `tenacity-client`:          Client for consuming the resources that `tenacity-core` adds.
 -   `tenacity-testing`:         `TenacityTest` allows for easier unit testing. Resets internal state of Hystrix.
+-   `tenacity-jdbi`:            Pulls in dropwizard-jdbi and provides a DBIExceptionLogger and SQLExceptionLogger to be used with the ExceptionLoggingCommandHook.
 
 How To Use
 ==========
@@ -314,7 +315,7 @@ Resources
 
 Tenacity adds resources under `/tenacity`:
 
-1. `GET /tenacity/configuration/propertykeys`: List of strings which are all the registered propertykeys with Tenacity.
+1. `GET /tenacity/configuration/propertykeys`:  List of strings which are all the registered propertykeys with Tenacity.
 2. `GET /tenacity/configuration/{key}`:         JSON representation of a `TenacityConfiguration` for the supplied {key}.
 3. `GET /tenacity/circuitbreakers`:             Simple JSON representation of all circuitbreakers and their circuitbreaker status.
 4. `GET /tenacity/metrics.stream`:              text/event-stream of Hystrix metrics.
@@ -331,5 +332,27 @@ TenacityBundleBuilder
                 .propertyKeyFactory(propertyKeyFactory)
                 .propertyKeys(propertyKeys)
                 .mapAllHystrixRuntimeExceptionsTo(429)
+                .build();
+```
+
+ExceptionLoggingCommandHook
+===========================
+
+If you don't handle logging exceptions explicatly within each `TenacityCommand`, you can easily miss problems or at-least find them very hard to debug.
+Instead you can add the `ExceptionLoggingCommandHook` to the `TenacityBundle` and register `ExceptionLogger`s to handle the logging of different kinds of Exceptions.
+The `ExecutionLoggingCommandHook` acts as a `HystrixCommandExecutionHook` and intercepts all Exceptions that occur during the `run()` method of your `TenacityCommand`s.
+By sequencing `ExceptionLogger`s from most specific to most general, the `ExceptionLoggingCommandHook` will be able to find the best `ExceptionLogger` for the type of Exception.
+
+```java
+TenacityBundleBuilder
+                .newBuilder()
+                .propertyKeyFactory(propertyKeyFactory)
+                .propertyKeys(propertyKeys)
+                .mapAllHystrixRuntimeExceptionsTo(429)
+                .commandExecutionHook(new ExceptionLoggingCommandHook(
+                    new DBIExceptionLogger(),
+                    new SQLExceptionLogger(),
+                    new DefaultExceptionLogger()
+                ))
                 .build();
 ```
