@@ -350,8 +350,8 @@ TenacityBundleBuilder
                 .propertyKeys(propertyKeys)
                 .mapAllHystrixRuntimeExceptionsTo(429)
                 .commandExecutionHook(new ExceptionLoggingCommandHook(
-                    new DBIExceptionLogger(),
-                    new SQLExceptionLogger(),
+                    new DBIExceptionLogger(registry),
+                    new SQLExceptionLogger(registry),
                     new DefaultExceptionLogger()
                 ))
                 .build();
