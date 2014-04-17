@@ -2,7 +2,7 @@ package com.yammer.tenacity.core.resources;
 
 import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.HystrixCircuitBreaker;
-import com.yammer.metrics.annotation.Timed;
+import com.codahale.metrics.annotation.Timed;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;

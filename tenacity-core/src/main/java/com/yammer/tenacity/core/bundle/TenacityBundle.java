@@ -5,9 +5,9 @@ import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServl
 import com.netflix.hystrix.contrib.yammermetricspublisher.HystrixYammerMetricsPublisher;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
-import com.yammer.dropwizard.Bundle;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
+import io.dropwizard.Bundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
@@ -42,12 +42,12 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
     @Override
     public void run(Environment environment) {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
-        environment.addServlet(new HystrixMetricsStreamServlet(), "/tenacity/metrics.stream");
+        environment.servlets().addServlet("hystrix-metrics", new HystrixMetricsStreamServlet());
         for (ExceptionMapper<?> exceptionMapper : exceptionMappers) {
-            environment.addProvider(exceptionMapper);
+            environment.jersey().register(exceptionMapper);
         }
-        environment.addResource(new TenacityPropertyKeysResource(keys));
-        environment.addResource(new TenacityConfigurationResource(keyFactory));
-        environment.addResource(new TenacityCircuitBreakersResource(keys));
+        environment.jersey().register(new TenacityPropertyKeysResource(keys));
+        environment.jersey().register(new TenacityConfigurationResource(keyFactory));
+        environment.jersey().register(new TenacityCircuitBreakersResource(keys));
     }
 }

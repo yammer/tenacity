@@ -1,7 +1,7 @@
 package com.yammer.tenacity.core.logging;
 
 import com.netflix.hystrix.HystrixCommand;
-import com.yammer.dropwizard.util.Generics;
+import io.dropwizard.util.Generics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
