@@ -1,6 +1,7 @@
 package com.yammer.tenacity.tests;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.sun.jersey.api.client.GenericType;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
@@ -8,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import java.util.ArrayList;
+import java.util.List;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class TenacityPropertyKeyResourceTest {
@@ -22,9 +24,9 @@ public class TenacityPropertyKeyResourceTest {
     @Test
     public void testGetKeys() throws Exception {
         final Iterable<? extends TenacityPropertyKey> iterable = resources.client().resource(PROPERTY_KEY_URI).get(new GenericType<ArrayList<DependencyKey>>() { });
-        for (TenacityPropertyKey key : keys) {
-            // This will not compile for me in JDK7
-            // assertThat(iterable).contains(key);
+        final List<TenacityPropertyKey> properties = Lists.newArrayList(iterable);
+        for (TenacityPropertyKey key : properties) {
+            assertThat(properties).contains(key);
         }
     }
 }
