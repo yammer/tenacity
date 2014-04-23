@@ -1,31 +1,36 @@
 package com.yammer.tenacity.tests;
 
-import com.yammer.dropwizard.testing.ResourceTest;
+import io.dropwizard.testing.junit.ResourceTestRule;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.reset;
 
-public class TenacityConfigurationResourceTest extends ResourceTest {
+public class TenacityConfigurationResourceTest {
 
     public static final String TENACITY_CONFIGURATION_URI = "/tenacity/configuration";
-    private TenacityPropertyKeyFactory mock;
+    private TenacityPropertyKeyFactory mock = mock(TenacityPropertyKeyFactory.class);
 
-    @Override
-    protected void setUpResources() throws Exception {
-        mock = mock(TenacityPropertyKeyFactory.class);
-        addResource(new TenacityConfigurationResource(mock));
+    @Rule
+    public final ResourceTestRule resources = ResourceTestRule.builder()
+            .addResource(new TenacityConfigurationResource(mock)).build();
+    
+    @Before
+    public void setUp() {
+        reset(mock);
     }
 
     @Test
     public void testGet() throws Exception {
         when(mock.from(anyString())).thenReturn(DependencyKey.EXAMPLE);
-        final TenacityConfiguration tenacityConfiguration = client().resource(TENACITY_CONFIGURATION_URI).path(DependencyKey.EXAMPLE.toString()).get(TenacityConfiguration.class);
+        final TenacityConfiguration tenacityConfiguration = resources.client().resource(TENACITY_CONFIGURATION_URI).path(DependencyKey.EXAMPLE.toString()).get(TenacityConfiguration.class);
         assertThat(tenacityConfiguration).isNotNull();
     }
 }

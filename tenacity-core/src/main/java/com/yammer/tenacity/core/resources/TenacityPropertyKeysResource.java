@@ -1,7 +1,7 @@
 package com.yammer.tenacity.core.resources;
 
 import com.google.common.collect.ImmutableList;
-import com.yammer.metrics.annotation.Timed;
+import com.codahale.metrics.annotation.Timed;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import javax.ws.rs.GET;

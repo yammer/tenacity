@@ -8,14 +8,13 @@ import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariable;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestVariableLifecycle;
 import com.netflix.hystrix.strategy.properties.HystrixProperty;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
-
+import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
+import io.dropwizard.lifecycle.ExecutorServiceManager;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ManagedConcurrencyStrategy extends HystrixConcurrencyStrategy {
@@ -43,7 +42,7 @@ public class ManagedConcurrencyStrategy extends HystrixConcurrencyStrategy {
                 unit,
                 workQueue,
                 threadFactory);
-        environment.manage(new ExecutorServiceManager(threadPoolExecutor, 5, TimeUnit.SECONDS, nameFormat));
+        environment.lifecycle().manage(new ExecutorServiceManager(threadPoolExecutor, Duration.seconds(5), nameFormat));
         return threadPoolExecutor;
     }
 

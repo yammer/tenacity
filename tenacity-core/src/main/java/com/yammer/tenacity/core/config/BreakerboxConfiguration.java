@@ -1,6 +1,6 @@
 package com.yammer.tenacity.core.config;
 
-import com.yammer.dropwizard.util.Duration;
+import io.dropwizard.util.Duration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

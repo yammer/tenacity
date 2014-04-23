@@ -3,3 +3,6 @@
 *.iml
 *.tmp
 target*
+.project
+.settings
+.classpath

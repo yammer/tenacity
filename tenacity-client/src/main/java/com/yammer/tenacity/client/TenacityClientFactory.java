@@ -1,17 +1,19 @@
 package com.yammer.tenacity.client;
 
-import com.yammer.dropwizard.client.JerseyClientBuilder;
-import com.yammer.dropwizard.client.JerseyClientConfiguration;
-import com.yammer.dropwizard.config.Environment;
+import com.sun.jersey.api.client.Client;
+import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientConfiguration;
+import io.dropwizard.setup.Environment;
 
 public class TenacityClientFactory {
-    private final JerseyClientBuilder jerseyClientBuilder;
+    private final JerseyClientConfiguration jerseyConfiguration;
 
     public TenacityClientFactory(JerseyClientConfiguration configuration) {
-        this.jerseyClientBuilder = new JerseyClientBuilder().using(configuration);
+        this.jerseyConfiguration = configuration;
     }
 
     public TenacityClient build(Environment environment) {
-        return new TenacityClient(jerseyClientBuilder.using(environment).build());
+        final Client client = new JerseyClientBuilder(environment).using(jerseyConfiguration).build("tenacity");
+        return new TenacityClient(client);
     }
 }
