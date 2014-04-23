@@ -1,5 +1,6 @@
 package com.yammer.tenacity.tests.logging;
 
+import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.HystrixCommand;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
@@ -33,7 +34,8 @@ public class ExceptionLoggingCommandHookTest extends TenacityTest {
 
     @Before
     public void setUp() throws Exception {
-        hook = new ExceptionLoggingCommandHook(firstLogger, secondLogger, thirdLogger);
+        hook = new ExceptionLoggingCommandHook(
+                ImmutableList.<ExceptionLogger<? extends Exception>>of(firstLogger, secondLogger, thirdLogger));
     }
 
     @Test

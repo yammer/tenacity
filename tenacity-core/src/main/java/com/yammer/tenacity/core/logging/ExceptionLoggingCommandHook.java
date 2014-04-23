@@ -24,26 +24,25 @@ public class ExceptionLoggingCommandHook extends HystrixCommandExecutionHook {
 
     private final List<ExceptionLogger<? extends Exception>> exceptionLoggers;
 
-    @SuppressWarnings("unused")
     /**
      * Empty constructor only sets the DefaultExceptionLogger, which will log every type of exception
      */
     public ExceptionLoggingCommandHook() {
-        this(ImmutableList.<ExceptionLogger<? extends Exception>>of(new DefaultExceptionLogger()));
+        this(new DefaultExceptionLogger());
     }
 
-    public ExceptionLoggingCommandHook(ExceptionLogger<? extends Exception> ... exceptionLoggers) {
-        this.exceptionLoggers = ImmutableList.copyOf(exceptionLoggers);
+    public ExceptionLoggingCommandHook(ExceptionLogger<? extends Exception> exceptionLogger) {
+        this(ImmutableList.<ExceptionLogger<? extends Exception>>of(exceptionLogger));
     }
 
-    public ExceptionLoggingCommandHook(List<ExceptionLogger<? extends Exception>> exceptionLoggers) {
+    public ExceptionLoggingCommandHook(Iterable<ExceptionLogger<? extends Exception>> exceptionLoggers) {
         this.exceptionLoggers = ImmutableList.copyOf(exceptionLoggers);
     }
 
     @Override
     public <T> Exception onRunError(HystrixCommand<T> commandInstance, Exception exception) {
 
-        for (ExceptionLogger logger: exceptionLoggers) {
+        for (ExceptionLogger<? extends Exception> logger: exceptionLoggers) {
             if (logger.canHandleException(exception)) {
                 logger.log(exception, commandInstance);
                 return exception;
