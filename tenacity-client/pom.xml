@@ -13,12 +13,10 @@
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-client</artifactId>
-            <version>${dropwizard.version}</version>
         </dependency>
     </dependencies>
 </project>
