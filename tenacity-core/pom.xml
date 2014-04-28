@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-parent</artifactId>
-        <version>0.2.4-SNAPSHOT</version>
+        <version>0.2.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>tenacity-core</artifactId>
