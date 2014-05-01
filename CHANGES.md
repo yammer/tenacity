@@ -1,6 +1,7 @@
 0.3.0-SNAPSHOT
 --------------
-* Working towards supporting dropwizard 0.7.0
+* Supporting dropwizard 0.7.0
+* 0.2.x now will only have fixes for the deprecated dropwizard <0.7.0
 
 0.2.4
 -----
