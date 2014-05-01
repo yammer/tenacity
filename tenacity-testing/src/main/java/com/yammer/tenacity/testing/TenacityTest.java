@@ -1,8 +1,9 @@
 package com.yammer.tenacity.testing;
 
+import com.codahale.metrics.MetricRegistry;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.Hystrix;
-import com.netflix.hystrix.contrib.yammermetricspublisher.HystrixYammerMetricsPublisher;
+import com.netflix.hystrix.contrib.codahalemetricspublisher.HystrixCodaHaleMetricsPublisher;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +14,7 @@ public abstract class TenacityTest {
     @Before
     public void testInitialization() {
         resetHystrixPlugins();
-        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixYammerMetricsPublisher());
+        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixCodaHaleMetricsPublisher(new MetricRegistry()));
         ConfigurationManager
                 .getConfigInstance()
                 .setProperty("hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds", "1");

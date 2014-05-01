@@ -76,7 +76,7 @@
             </dependency>
             <dependency>
                 <groupId>com.netflix.hystrix</groupId>
-                <artifactId>hystrix-yammer-metrics-publisher</artifactId>
+                <artifactId>hystrix-codahale-metrics-publisher</artifactId>
                 <version>${hystrix.version}</version>
             </dependency>
             <dependency>
