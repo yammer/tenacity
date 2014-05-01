@@ -26,7 +26,6 @@ Modules
 -------
 
 -   `tenacity-core`:            The building blocks to quickly use Hystrix within the context of Dropwizard.
--   `tenacity-core-legacy`:     Support for legacy versions of Dropwizard. Currently there is a conflict with <0.6.0 versions (around Bundles).
 -   `tenacity-client`:          Client for consuming the resources that `tenacity-core` adds.
 -   `tenacity-testing`:         `TenacityTest` allows for easier unit testing. Resets internal state of Hystrix.
 -   `tenacity-jdbi`:            Pulls in dropwizard-jdbi and provides a DBIExceptionLogger and SQLExceptionLogger to be used with the ExceptionLoggingCommandHook.
@@ -115,7 +114,7 @@ How to add Tenacity to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.2.4</version>
+            <version>0.3.0</version>
         </dependency>
 
 
@@ -202,7 +201,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.2.4</version>
+            <version>0.3.0</version>
             <scope>test</scope>
         </dependency>
 
