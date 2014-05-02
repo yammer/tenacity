@@ -14,6 +14,6 @@ public class TenacityClientFactory {
 
     public TenacityClient build(Environment environment) {
         final Client client = new JerseyClientBuilder(environment).using(jerseyConfiguration).build("tenacity");
-        return new TenacityClient(client);
+        return new TenacityClient(environment.metrics(), client);
     }
 }
