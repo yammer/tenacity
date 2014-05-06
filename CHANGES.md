@@ -1,3 +1,8 @@
+0.3.1-SNAPSHOT
+-----
+* tenacity-client incorrectly captured metrics
+* Hystrix 1.3.16
+
 0.3.0
 --------------
 * Supporting dropwizard 0.7.0
