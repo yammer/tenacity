@@ -1,7 +1,8 @@
-0.3.1-SNAPSHOT
+0.3.1
 -----
 * tenacity-client incorrectly captured metrics
 * Hystrix 1.3.16
+* maven-enforcer-plugin
 
 0.3.0
 --------------
