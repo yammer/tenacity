@@ -1,4 +1,7 @@
 package com.yammer.tenacity.core.properties;
 
-public interface TenacityPropertyKey {
+import com.netflix.hystrix.HystrixCommandKey;
+import com.netflix.hystrix.HystrixThreadPoolKey;
+
+public interface TenacityPropertyKey extends HystrixCommandKey, HystrixThreadPoolKey {
 }
