@@ -1,3 +1,10 @@
+0.3.2
+-----
+* Under high contention it's possible for HystrixThreadPoolMetrics to be associated with an incorrect TheadPoolExecutor.
+This manifests itself as showing the incorrect metrics because the executor being used by Hystrix is different from the one
+being used to supply metrics. As a temporary fix we now ensure that for any given ThreadPoolKey we only ever construct one pool.
+This will be removed once it's fixed in upstream Hystrix.
+
 0.3.1
 -----
 * tenacity-client incorrectly captured metrics
