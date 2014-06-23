@@ -95,19 +95,21 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
         Short circuited failure tests
      */
 
-    @Test
-    public void shortCircuitedAvailableInGetFallbackUsingExecute() throws Exception {
+    @Test(timeout = 1000)
+    public void shortCircuitedAvailableInGetFallbackUsingExecute() {
         setUpTenacityCommand(2, 100);
-        exceptionCommand().execute();
-        Thread.sleep(1);    // Wait for circuit breaker to update
+        final TenacityCommand<?> exceptionCommand = exceptionCommand();
+        exceptionCommand.execute();
+        while (!exceptionCommand.isCircuitBreakerOpen());
         assertThat(shortCircuitedCommand().execute()).isTrue();
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void shortCircuitedAvailableInGetFallbackUsingQueue() throws Exception {
         setUpTenacityCommand(2, 100);
-        exceptionCommand().execute();
-        Thread.sleep(1);    // Wait for circuit breaker to update
+        final TenacityCommand<?> exceptionCommand = exceptionCommand();
+        exceptionCommand.execute();
+        while (!exceptionCommand.isCircuitBreakerOpen());
         final Future<Boolean> result = shortCircuitedCommand().queue();
         while (!result.isDone()) {
             Thread.sleep(10);
@@ -115,11 +117,12 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
         assertThat(result.get()).isTrue();
     }
 
-    @Test
-    public void shortCircuitedAvailableInGetFallbackUsingObserve() throws Exception {
+    @Test(timeout = 1000)
+    public void shortCircuitedAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 100);
-        exceptionCommand().execute();
-        Thread.sleep(1);    // Wait for circuit breaker to update
+        final TenacityCommand<?> exceptionCommand = exceptionCommand();
+        exceptionCommand.execute();
+        while (!exceptionCommand.isCircuitBreakerOpen());
         final Observable<Boolean> result = shortCircuitedCommand().observe();
         assertThat(result.toBlockingObservable().single()).isTrue();
     }
