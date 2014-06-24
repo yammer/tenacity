@@ -45,7 +45,7 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
         assertThat(timedOutCommand(20).execute()).isTrue();
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void timeoutIsNotObeyedUsingQueue() throws Exception {
         setUpTenacityCommand(2, 10);
         final Future<Boolean> result = timedOutCommand(20).queue();
@@ -73,7 +73,7 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
         assertThat(exceptionCommand().execute()).isTrue();
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void thrownExceptionAvailableInGetFallbackUsingQueue() throws Exception {
         setUpTenacityCommand(2, 100);
         final Future<Boolean> result = exceptionCommand().queue();
@@ -132,7 +132,7 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
         Thread pool rejection failure tests
      */
 
-    @Test
+    @Test(timeout = 1000)
     public void threadPoolRejectionAvailableInGetFallbackUsingExecute() throws Exception {
         setUpTenacityCommand(1, 100);
         final ExecutorService executorService = Executors.newFixedThreadPool(5);
@@ -162,7 +162,7 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
         assertThat(commandRejected).isTrue();
     }
 
-    @Test
+    @Test(timeout = 1000)
     public void threadPoolRejectionAvailableInGetFallbackUsingQueue() throws Exception {
         setUpTenacityCommand(1, 100);
         sleepCommand(80).queue();
