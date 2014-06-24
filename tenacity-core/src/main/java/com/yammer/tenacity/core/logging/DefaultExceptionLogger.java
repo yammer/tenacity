@@ -9,6 +9,9 @@ public class DefaultExceptionLogger extends ExceptionLogger<Exception> {
 
     @Override
     protected <T> void logException(Exception exception, HystrixCommand<T> commandInstance) {
-        logger.warn("An exception occurred while executing {}:{}", commandInstance.getCommandKey(), commandInstance.getClass().getSimpleName(), exception);
+        logger.warn("An exception occurred while executing {}:{}",
+                commandInstance.getCommandKey().name(),
+                commandInstance.getClass().getSimpleName(),
+                exception);
     }
 }

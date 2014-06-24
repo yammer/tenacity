@@ -20,7 +20,7 @@ Tenacity makes [Hystrix](https://github.com/Netflix/Hystrix) dropwizard-friendly
 4. Ability to unit-test Hystrix: Resets static state held by Hystrix (metrics, counters, etc.). Increases rate at which a concurrent thread updates metrics.
 5. Publishes measurements via [Metrics](https://github.com/codahale/metrics).
 
-*Tenacity is meant to be used with [Breakerbox](https://github.com/yammer/breakerbox) which adds real-time visualization of metrics and dynamic configuration. This isn't open sourced yet, but will be soon.*
+*Tenacity is meant to be used with [Breakerbox](https://github.com/yammer/breakerbox) which adds real-time visualization of metrics and dynamic configuration.*
 
 Modules
 -------
@@ -114,7 +114,7 @@ How to add Tenacity to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
         </dependency>
 
 
@@ -201,7 +201,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.3.0</version>
+            <version>0.3.1</version>
             <scope>test</scope>
         </dependency>
 

@@ -7,24 +7,16 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnType> {
     protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
         super(HystrixCommand.Setter.withGroupKey(commandGroupKeyFrom("TENACITY"))
-                .andCommandKey(commandKeyFrom(tenacityPropertyKey))
-                .andThreadPoolKey(threadpoolKeyFrom(tenacityPropertyKey)));
+                .andCommandKey(tenacityPropertyKey)
+                .andThreadPoolKey(tenacityPropertyKey));
     }
 
     public static HystrixCommandGroupKey commandGroupKeyFrom(String key) {
         return HystrixCommandGroupKey.Factory.asKey(key);
     }
 
-    public static HystrixCommandKey commandKeyFrom(TenacityPropertyKey key) {
-        return HystrixCommandKey.Factory.asKey(key.toString());
-    }
-
-    public static HystrixThreadPoolKey threadpoolKeyFrom(TenacityPropertyKey key) {
-        return HystrixThreadPoolKey.Factory.asKey(key.toString());
-    }
-
     public static HystrixCommandProperties getCommandProperties(TenacityPropertyKey key) {
-        return HystrixPropertiesFactory.getCommandProperties(commandKeyFrom(key), null);
+        return HystrixPropertiesFactory.getCommandProperties(key, null);
     }
 
     public HystrixCommandProperties getCommandProperties() {
@@ -32,7 +24,7 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
     }
 
     public static HystrixThreadPoolProperties getThreadpoolProperties(TenacityPropertyKey key) {
-        return HystrixPropertiesFactory.getThreadPoolProperties(threadpoolKeyFrom(key), null);
+        return HystrixPropertiesFactory.getThreadPoolProperties(key, null);
     }
 
     public HystrixThreadPoolProperties getThreadpoolProperties() {
@@ -44,7 +36,7 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
     }
 
     public static HystrixCommandMetrics getCommandMetrics(TenacityPropertyKey key) {
-        return HystrixCommandMetrics.getInstance(commandKeyFrom(key));
+        return HystrixCommandMetrics.getInstance(key);
     }
 
     public HystrixThreadPoolMetrics getThreadpoolMetrics() {
@@ -52,7 +44,7 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
     }
 
     public static HystrixThreadPoolMetrics getThreadpoolMetrics(TenacityPropertyKey key) {
-        return HystrixThreadPoolMetrics.getInstance(threadpoolKeyFrom(key));
+        return HystrixThreadPoolMetrics.getInstance(key);
     }
 
     public HystrixCircuitBreaker getCircuitBreaker() {
@@ -60,7 +52,7 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
     }
 
     public static HystrixCircuitBreaker getCircuitBreaker(TenacityPropertyKey key) {
-        return HystrixCircuitBreaker.Factory.getInstance(commandKeyFrom(key));
+        return HystrixCircuitBreaker.Factory.getInstance(key);
     }
 
     @Override
