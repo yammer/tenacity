@@ -151,15 +151,15 @@ public class TenacityCommandFailureCauseTest extends TenacityTest {
                 }
             });
         }
-        final Collection<Future<Boolean>> resultList = executorService.invokeAll(rejectCommands);
-        boolean commandRejected = false;
-        for (final Future<Boolean> future : resultList) {
+        final Collection<Future<Boolean>> results = executorService.invokeAll(rejectCommands);
+        boolean rejectionFound = false;
+        for (final Future<Boolean> future : results) {
             if (future.get()) {
-                commandRejected = true;
+                rejectionFound = true;
             }
         }
         executorService.shutdownNow();
-        assertThat(commandRejected).isTrue();
+        assertThat(rejectionFound).isTrue();
     }
 
     @Test(timeout = 1000)
