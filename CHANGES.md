@@ -3,6 +3,7 @@
 * Dropwizard 0.7.1
 * Force hystrix-codahale to depend on metrics 3.0.2, until [pull request 279](https://github.com/Netflix/Hystrix/pull/279) is merged
 * Upgrade to findbugs 2.5.4
+* Merged pull request 8. This adds a bunch of tests to test failure behavioral differences between execute()/queue()/observe()
 
 0.3.2
 -----
