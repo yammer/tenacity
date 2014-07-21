@@ -23,6 +23,13 @@ This will be removed once it's fixed in upstream Hystrix. [pull request 270](htt
 * Supporting dropwizard 0.7.0
 * 0.2.x now will only have fixes for the deprecated dropwizard <0.7.0
 
+0.2.5
+-----
+* Under high contention it's possible for HystrixThreadPoolMetrics to be associated with an incorrect TheadPoolExecutor.
+This manifests itself as showing the incorrect metrics because the executor being used by Hystrix is different from the one
+being used to supply metrics. As a temporary fix we now ensure that for any given ThreadPoolKey we only ever construct one pool.
+This will be removed once it's fixed in upstream Hystrix. [pull request 270](https://github.com/Netflix/Hystrix/pull/270)
+
 0.2.4
 -----
 * Hystrix 1.3.15
