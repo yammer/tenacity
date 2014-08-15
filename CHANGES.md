@@ -1,3 +1,7 @@
+0.3.4-SNAPSHOT
+-------------
+* Adding 99.9 to the latencies. Hystrix by default maxes out at 99.5 which is not consistent with Coda Hale metrics
+
 0.3.3
 --------------
 * Dropwizard 0.7.1

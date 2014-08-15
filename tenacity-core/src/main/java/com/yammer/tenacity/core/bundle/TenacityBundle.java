@@ -1,10 +1,10 @@
 package com.yammer.tenacity.core.bundle;
 
 import com.google.common.base.Optional;
-import com.netflix.hystrix.contrib.codahalemetricspublisher.HystrixCodaHaleMetricsPublisher;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
+import com.yammer.tenacity.core.metrics.YammerMetricsPublisher;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
@@ -33,7 +33,7 @@ public class TenacityBundle extends AbstractTenacityPropertyKeys implements Bund
 
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
-        HystrixPlugins.getInstance().registerMetricsPublisher(new HystrixCodaHaleMetricsPublisher(bootstrap.getMetricRegistry()));
+        HystrixPlugins.getInstance().registerMetricsPublisher(new YammerMetricsPublisher(bootstrap.getMetricRegistry()));
         if (executionHook.isPresent()) {
             HystrixPlugins.getInstance().registerCommandExecutionHook(executionHook.get());
         }
