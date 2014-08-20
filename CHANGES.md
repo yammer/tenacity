@@ -31,6 +31,10 @@ This will be removed once it's fixed in upstream Hystrix. [pull request 270](htt
 
 Dropwizard 0.6.x Releases
 =========================
+0.2.7
+-------------
+* Adding 95/98 to the latencies. 
+* Fixed bug where we are no longer publishing HystrixThreadPool metrics.
 
 0.2.6
 -------------
