@@ -2,6 +2,7 @@ package com.yammer.tenacity.core.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.netflix.hystrix.*;
+import com.netflix.hystrix.contrib.codahalemetricspublisher.HystrixCodaHaleMetricsPublisherThreadPool;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherCommand;
 import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherThreadPool;
@@ -20,6 +21,6 @@ public class YammerMetricsPublisher extends HystrixMetricsPublisher {
 
     @Override
     public HystrixMetricsPublisherThreadPool getMetricsPublisherForThreadPool(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolMetrics metrics, HystrixThreadPoolProperties properties) {
-        return super.getMetricsPublisherForThreadPool(threadPoolKey, metrics, properties);
+        return new HystrixCodaHaleMetricsPublisherThreadPool(threadPoolKey, metrics, properties, metricRegistry);
     }
 }
