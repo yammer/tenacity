@@ -1,14 +1,21 @@
 package com.yammer.tenacity.tests.logging;
 
+import com.google.common.base.Throwables;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixCommandGroupKey;
+import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.yammer.tenacity.core.TenacityCommand;
+import com.yammer.tenacity.core.logging.DefaultExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.testing.TenacityTest;
 import com.yammer.tenacity.tests.DependencyKey;
 import com.yammer.tenacity.tests.TenacityFailingCommand;
+import io.dropwizard.auth.AuthenticationException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -17,8 +24,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 @Ignore("Can't run this with other test classes as the CommandExecutionHook will already have been set")
 public class ExceptionLoggingCommandHookIntegrationTest extends TenacityTest {
@@ -95,5 +103,39 @@ public class ExceptionLoggingCommandHookIntegrationTest extends TenacityTest {
         protected String getFallback() {
             return "fallback";
         }
+    }
+
+    private static class AlwaysShortCircuit extends HystrixCommand<String> {
+        private AlwaysShortCircuit() {
+            super(HystrixCommand.Setter
+                    .withGroupKey(HystrixCommandGroupKey.Factory.asKey("test"))
+                    .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withCircuitBreakerForceOpen(true)));
+        }
+
+        @Override
+        protected String run() throws Exception {
+            fail();
+            throw new RuntimeException();
+        }
+
+        @Override
+        protected String getFallback() {
+            return "";
+        }
+    }
+
+    @Test
+    public void shouldNotLogWhenShortCircuited() {
+        final DefaultExceptionLogger defaultExceptionLogger = spy(new DefaultExceptionLogger());
+        HystrixPlugins.getInstance().registerCommandExecutionHook(new ExceptionLoggingCommandHook(defaultExceptionLogger));
+
+        try {
+            new AlwaysShortCircuit().execute();
+        } catch (HystrixRuntimeException err) {
+            assertFalse(Iterables.isEmpty(
+                    Iterables.filter(Throwables.getCausalChain(err), AuthenticationException.class)));
+        }
+
+        verifyZeroInteractions(defaultExceptionLogger);
     }
 }
