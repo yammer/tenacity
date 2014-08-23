@@ -170,7 +170,7 @@ such as application and testing code. Note the specialized class uses `TenacityP
         }
 
         public void register() {
-            final ImmutableMap.Builder<TenacityPropertyKeys, TenacityConfiguration> builder = ImmutableMap.builder();
+            final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
 
             builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
             builder.put(CompletieDependencyKeys.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
