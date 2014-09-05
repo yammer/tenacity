@@ -1,3 +1,7 @@
+0.3.6
+-----
+* Hystrix 1.3.18
+
 0.3.5
 -------------
 * Adding 95/98 to the latencies. 
@@ -36,6 +40,10 @@ This will be removed once it's fixed in upstream Hystrix. [pull request 270](htt
 
 Dropwizard 0.6.x Releases
 =========================
+0.2.8
+-----
+* Hystrix 1.3.18
+
 0.2.7
 -------------
 * Adding 95/98 to the latencies. 
