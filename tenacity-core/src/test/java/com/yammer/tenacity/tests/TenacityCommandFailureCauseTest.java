@@ -9,7 +9,8 @@ import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
+import org.junit.Rule;
 import org.junit.Test;
 import rx.Observable;
 
@@ -34,10 +35,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
  * Note: When testing TenacityCommand.queue(), Future.get() should not be used to force the command to complete or
  * it may perform the same as TenacityCommand.execute(); spin on Future.isDone(), then call Future.get().
  */
-public class TenacityCommandFailureCauseTest extends TenacityTest {
+public class TenacityCommandFailureCauseTest {
     /*
         Timed out failure tests
      */
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @Test
     public void timedOutAvailableInGetFallbackUsingExecute() {

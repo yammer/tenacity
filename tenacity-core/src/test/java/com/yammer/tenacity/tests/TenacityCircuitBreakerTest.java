@@ -2,7 +2,8 @@ package com.yammer.tenacity.tests;
 
 import com.netflix.hystrix.HystrixCommandMetrics;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
@@ -11,7 +12,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TenacityCircuitBreakerTest extends TenacityTest {
+public class TenacityCircuitBreakerTest {
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+
     @Test
     public void circuitBreakerShouldOpen() throws URISyntaxException, InterruptedException {
         final TenacityFailingCommand tenacityFailingCommand = new TenacityFailingCommand();

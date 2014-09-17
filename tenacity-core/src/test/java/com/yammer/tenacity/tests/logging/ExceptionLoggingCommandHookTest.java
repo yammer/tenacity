@@ -4,9 +4,10 @@ import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.HystrixCommand;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import com.yammer.tenacity.tests.TenacityFailingCommand;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,7 +17,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExceptionLoggingCommandHookTest extends TenacityTest {
+public class ExceptionLoggingCommandHookTest {
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     private final HystrixCommand<String> failedCommand = new TenacityFailingCommand();
     private final Exception exception = new Exception();

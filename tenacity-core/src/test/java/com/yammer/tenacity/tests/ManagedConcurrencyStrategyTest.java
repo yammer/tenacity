@@ -2,12 +2,16 @@ package com.yammer.tenacity.tests;
 
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ManagedConcurrencyStrategyTest extends TenacityTest {
+public class ManagedConcurrencyStrategyTest {
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+
     private static enum Key implements TenacityPropertyKey {
         KEY
     }

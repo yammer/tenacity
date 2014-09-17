@@ -27,9 +27,9 @@ Modules
 
 -   `tenacity-core`:            The building blocks to quickly use Hystrix within the context of Dropwizard.
 -   `tenacity-client`:          Client for consuming the resources that `tenacity-core` adds.
--   `tenacity-testing`:         `TenacityTest` allows for easier unit testing. Resets internal state of Hystrix.
+-   `tenacity-testing`:         `TenacityTestRule` allows for easier unit testing. Resets internal state of Hystrix.
 -   `tenacity-jdbi`:            Pulls in dropwizard-jdbi and provides a DBIExceptionLogger and SQLExceptionLogger to be used with the ExceptionLoggingCommandHook.
-
+                                                                   
 How To Use
 ==========
 
@@ -196,7 +196,12 @@ such as application and testing code. Note the specialized class uses `TenacityP
     ```
 
 5. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration),
-and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply extend the `TenacityTest` helper.
+and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply use the `TenacityTestRule`.
+
+    ```java
+        @Rule
+        public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+    ```
 
         <dependency>
             <groupId>com.yammer.tenacity</groupId>

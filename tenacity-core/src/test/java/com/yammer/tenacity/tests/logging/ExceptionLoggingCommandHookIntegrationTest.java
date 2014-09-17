@@ -12,14 +12,11 @@ import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.logging.DefaultExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import com.yammer.tenacity.tests.DependencyKey;
 import com.yammer.tenacity.tests.TenacityFailingCommand;
 import io.dropwizard.auth.AuthenticationException;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,7 +26,10 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 @Ignore("Can't run this with other test classes as the CommandExecutionHook will already have been set")
-public class ExceptionLoggingCommandHookIntegrationTest extends TenacityTest {
+public class ExceptionLoggingCommandHookIntegrationTest {
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     // Using a dummy exception logger that's statically defined as Hystrix only lets you set the environment hook once
     private static final DummyExceptionLogger exceptionLogger = new DummyExceptionLogger();

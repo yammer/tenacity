@@ -4,12 +4,16 @@ import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class TenacityCircuitBreakersResourceTest extends TenacityTest {
+public class TenacityCircuitBreakersResourceTest {
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+
     @Test
     public void healthyWithNoCircuitBreakers() {
         final TenacityCircuitBreakersResource resource =

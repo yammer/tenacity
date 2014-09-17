@@ -19,7 +19,7 @@ import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
-import com.yammer.tenacity.testing.TenacityTest;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
@@ -45,7 +45,11 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
-public class TenacityAuthenticatorTest extends TenacityTest {
+public class TenacityAuthenticatorTest {
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+
     private Authenticator<String, Object> mockAuthenticator;
     private Authenticator<String, Object> tenacityAuthenticator;
     private TenacityExceptionMapper tenacityExceptionMapper = spy(new TenacityExceptionMapper());
