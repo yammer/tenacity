@@ -199,8 +199,8 @@ such as application and testing code. Note the specialized class uses `TenacityP
 and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply use the `TenacityTestRule`.
 
     ```java
-        @Rule
-        public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
     ```
 
         <dependency>
