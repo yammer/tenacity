@@ -63,7 +63,7 @@ public class TenacityCommandFailureCauseTest {
     public void timedOutAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 10);
         final Observable<Boolean> result = timedOutCommand(20).observe();
-        assertThat(result.toBlockingObservable().single()).isTrue();
+        assertThat(result.toBlocking().single()).isTrue();
     }
 
 
@@ -91,7 +91,7 @@ public class TenacityCommandFailureCauseTest {
     public void thrownExceptionAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 100);
         final Observable<Boolean> result = exceptionCommand().observe();
-        assertThat(result.toBlockingObservable().single()).isTrue();
+        assertThat(result.toBlocking().single()).isTrue();
     }
 
 
@@ -128,7 +128,7 @@ public class TenacityCommandFailureCauseTest {
         exceptionCommand.execute();
         while (!exceptionCommand.isCircuitBreakerOpen());
         final Observable<Boolean> result = shortCircuitedCommand().observe();
-        assertThat(result.toBlockingObservable().single()).isTrue();
+        assertThat(result.toBlocking().single()).isTrue();
     }
 
 
@@ -196,7 +196,7 @@ public class TenacityCommandFailureCauseTest {
         }
         boolean rejectionFound = false;
         for (final Observable<Boolean> observable : results) {
-            if (observable.toBlockingObservable().single()) {
+            if (observable.toBlocking().single()) {
                 rejectionFound = true;
             }
         }
