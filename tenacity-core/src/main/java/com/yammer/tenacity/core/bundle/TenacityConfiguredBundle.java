@@ -56,7 +56,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         new TenacityPropertyRegister(
                 tenacityPropertyKeyConfigurations,
                 tenacityBundleConfigurationFactory.getBreakerboxConfiguration(configuration)
-        );
+        ).register();
     }
 
     @Override
