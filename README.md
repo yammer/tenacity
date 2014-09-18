@@ -114,7 +114,7 @@ How to add Tenacity to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.3.6</version>
+            <version>0.3.7</version>
         </dependency>
 
 
