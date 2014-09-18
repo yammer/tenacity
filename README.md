@@ -138,10 +138,32 @@ shave down some characters to save on space, again for UI purposes. In addition,
         }
     }
     ```
+3. Create a `TenacityBundleConfigurationFactory` implementaion - you can use the `BaseTenacityBundleConfigurationFactory` as your starting point. This will be used to register your custom tenacity dependencies and custom configurations.
 
-3. Then make sure you add the bundle in your `Service` and register your custom tenacity properties. Here we made use of a helper class
-to register properties given a `CompletieConfiguration`. This is helpful when you might need to register custom properties from multiple locations
-such as application and testing code. Note the specialized class uses `TenacityPropertyRegister` which takes a: `Map<TenacityPropertyKey, TenacityConfiguration>` type.
+```
+public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBundleConfigurationFactory<CompletieConfiguration> {
+
+  @Override
+  public public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(CompletieConfiguration applicatoinConfiguration) {
+        final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
+
+        builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
+        builder.put(CompletieDependencyKeys.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
+        builder.put(CompletieDependencyKeys.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
+        builder.put(CompletieDependencyKeys.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
+        builder.put(CompletieDependencyKeys.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
+        builder.put(CompletieDependencyKeys.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig())
+  
+        return builder.build();                                                                   
+  }
+
+}
+
+```
+
+4. Then make sure you add the bundle in your `Service`. 
+
+`Map<TenacityPropertyKey, TenacityConfiguration>` type.
 
     ```java
     @Override
@@ -149,42 +171,12 @@ such as application and testing code. Note the specialized class uses `TenacityP
         ...
         bootstrap.addBundle(TenacityBundleBuilder
                                             .newBuilder()
-                                            .propertyKeyFactory(new CompletieDependencyKeyFactory())
-                                            .propertyKeys(CompletieDependencyKeys.values())
+                                            .configurationFactory(new CompletieTenacityBundleConfigurationFactory())
                                             .build();
         ...
     }
 
-    @Override
-    public void run(CompletieConfiguration configuration, Environment environment) throws Exception {
-         new CompletieTenacityPropertyRegister(configuration).register();
-    }
-    ```
-
-    ```java
-    public class CompletieTenacityPropertyRegister {
-        private final CompletieConfiguration configuration;
-
-        public CompletieTenacityPropertyRegister(CompletieConfiguration configuration) {
-            this.configuration = configuration;
-        }
-
-        public void register() {
-            final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
-
-            builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
-            builder.put(CompletieDependencyKeys.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
-            builder.put(CompletieDependencyKeys.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
-            builder.put(CompletieDependencyKeys.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
-            builder.put(CompletieDependencyKeys.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
-            builder.put(CompletieDependencyKeys.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig());
-
-            new TenacityPropertyRegister(builder.build(), configuration.getBreakerboxConfiguration()).register();
-        }
-    }
-    ```
-
-4. Use `TenacityCommand` to select which custom tenacity configuration you want to use.
+5. Use `TenacityCommand` to select which custom tenacity configuration you want to use.
 
     ```java
     public class CompletieDependencyOnTokie extends TenacityCommand<String> {
@@ -195,7 +187,7 @@ such as application and testing code. Note the specialized class uses `TenacityP
     }
     ```
 
-5. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration),
+6. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration),
 and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply use the `TenacityTestRule`.
 
     ```java
@@ -281,6 +273,15 @@ breakerbox:
 
 ![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.png)
 ![Breakerbox Configure](http://yammer.github.io/tenacity/breakerbox_configure.png)
+
+In order to add integration with Breakerbox you need to implement the following method in your `TenacityBundleConfigurationFactory` implementation: 
+
+```
+@Override
+public BreakerboxConfiguration getBreakerboxConfiguration(CompletieConfiguration configuration) {
+   return configuration.getBreakerbox();
+}
+```
 
 Configuration Hierarchy Order
 -----------------------------
