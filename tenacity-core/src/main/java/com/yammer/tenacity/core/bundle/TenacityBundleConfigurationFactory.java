@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface TenacityBundleConfigurationFactory<T extends Configuration> {
 
-    Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(T applicatoinConfiguration);
+    Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(T applicationConfiguration);
 
     TenacityPropertyKeyFactory getTenacityPropertyKeyFactory(T applicationConfiguration);
 
