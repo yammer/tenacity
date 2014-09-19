@@ -198,7 +198,7 @@ and tweaks threads that calculate metrics which influence circuit breakers to up
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <version>0.3.6</version>
+            <version>0.4.0</version>
             <scope>test</scope>
         </dependency>
 
