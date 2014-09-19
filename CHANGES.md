@@ -1,4 +1,4 @@
-0.3.7
+0.4.0
 -----
 Changed `TenacityBundle` to be a `TenacityConfiguredBundle` and streamlined the tenacity-application integration process. This means:
 - when declaring `TenacityPropertyKey` instances, there is access to the configuration class
