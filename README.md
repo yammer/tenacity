@@ -114,7 +114,7 @@ How to add Tenacity to your Dropwizard Service
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-core</artifactId>
-            <version>0.3.7</version>
+            <version>0.4.0</version>
         </dependency>
 
 
@@ -144,7 +144,7 @@ shave down some characters to save on space, again for UI purposes. In addition,
 public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBundleConfigurationFactory<CompletieConfiguration> {
 
   @Override
-  public public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(CompletieConfiguration applicatoinConfiguration) {
+  public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(CompletieConfiguration configuration) {
         final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
 
         builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
