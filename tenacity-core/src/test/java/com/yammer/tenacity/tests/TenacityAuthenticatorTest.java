@@ -112,7 +112,7 @@ public class TenacityAuthenticatorTest {
         }
     }
 
-    @Test @Ignore("Can't run this until we can reset the HystrixCommandExecutionHook")
+    @Test
     public void shouldLogWhenExceptionIsThrown() throws AuthenticationException {
         final DefaultExceptionLogger defaultExceptionLogger = spy(new DefaultExceptionLogger());
         HystrixPlugins.getInstance().registerCommandExecutionHook(new ExceptionLoggingCommandHook(defaultExceptionLogger));
