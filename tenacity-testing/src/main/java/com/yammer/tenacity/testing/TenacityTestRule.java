@@ -38,7 +38,11 @@ public class TenacityTestRule implements TestRule {
     /**
      * There is a bug in {@link com.netflix.hystrix.strategy.HystrixPlugins.UnitTest#reset()} whereby the reset method
      * used to reset the test environment fails to reset commandExecutionHook field and thus prevents multiple tests from running.
+     *
      * This class fixes this in a very hacky way and should be abandoned as tenacity is migrated to new hystrix that fixes it.
+     * Pull request has been merged, but new version has not been released yet:
+     * https://github.com/Netflix/Hystrix/pull/240
+     *
      */
     private static void resetCommandExecutionHook() {
         try {
