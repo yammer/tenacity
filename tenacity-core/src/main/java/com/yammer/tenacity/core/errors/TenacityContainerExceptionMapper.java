@@ -1,6 +1,5 @@
 package com.yammer.tenacity.core.errors;
 
-import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.sun.jersey.api.container.ContainerException;
 
 import javax.ws.rs.core.Response;
@@ -21,18 +20,9 @@ public class TenacityContainerExceptionMapper implements ExceptionMapper<Contain
         return statusCode;
     }
 
-    private boolean isHystrixRuntimeException(Throwable throwable) {
-        if (throwable == null) {
-            return false;
-        } else if (throwable instanceof HystrixRuntimeException) {
-            return true;
-        }
-        return isHystrixRuntimeException(throwable.getCause());
-    }
-
     @Override
     public Response toResponse(ContainerException exception) {
-        if (isHystrixRuntimeException(exception.getCause())) {
+        if (TenacityExceptionMapper.isTenacityException(exception.getCause())) {
             return Response.status(statusCode).build();
         } else {
             throw exception;

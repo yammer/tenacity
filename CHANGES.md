@@ -1,8 +1,14 @@
+0.4.1-SNAPSHOT
+--------------
+* `TenacityExceptionMapper` and `TenacityContainerExceptionMapper` now use a shared check to ensure that HystrixRuntimeExceptions are handled
+  the same.
+* Adding a test to explicitly ensure that Hystrix Timeouts are handled appropriately by the ExceptionMapper
+
 0.4.0
 -----
-Changed `TenacityBundle` to be a `TenacityConfiguredBundle` and streamlined the tenacity-application integration process. This means:
-- when declaring `TenacityPropertyKey` instances, there is access to the configuration class
-- manual registering of configurations is no longer necessary.
+* Changed `TenacityBundle` to be a `TenacityConfiguredBundle` and streamlined the tenacity-application integration process. This means:
+  when declaring `TenacityPropertyKey` instances, there is access to the configuration class
+  manual registering of configurations is no longer necessary.
 
 0.3.6
 -----

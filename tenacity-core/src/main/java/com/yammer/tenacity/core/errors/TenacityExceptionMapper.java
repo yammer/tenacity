@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.net.SocketTimeoutException;
 
 public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeException> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityExceptionMapper.class);
@@ -24,20 +25,36 @@ public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeEx
         return statusCode;
     }
 
-    @Override
-    public Response toResponse(HystrixRuntimeException exception) {
+    public static boolean isTenacityException(Throwable throwable) {
+        if (throwable != null && throwable instanceof HystrixRuntimeException) {
+            return isTenacityException((HystrixRuntimeException) throwable);
+        }
+        return false;
+    }
+
+    public static boolean isTenacityException(HystrixRuntimeException exception) {
         switch (exception.getFailureType()) {
             case TIMEOUT:
             case SHORTCIRCUIT:
             case REJECTED_THREAD_EXECUTION:
             case REJECTED_SEMAPHORE_EXECUTION:
             case REJECTED_SEMAPHORE_FALLBACK:
-                LOGGER.debug("Unhandled HystrixRuntimeException", exception);
-                return Response.status(statusCode).build(); //TODO: Retry-After for 429
+                return true;
             case COMMAND_EXCEPTION:
+                return exception.getCause() instanceof SocketTimeoutException;
             default:
-                throw new WebApplicationException(exception);
+                return false;
         }
+    }
+
+    @Override
+    public Response toResponse(HystrixRuntimeException exception) {
+        if (isTenacityException(exception)) {
+            LOGGER.debug("Unhandled HystrixRuntimeException", exception);
+            return Response.status(statusCode).build(); //TODO: Retry-After for 429
+        }
+
+        throw new WebApplicationException(exception);
     }
 
     @Override

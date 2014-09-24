@@ -131,7 +131,7 @@ public class TenacityAuthenticatorTest {
     }
 
     @Test
-    public void shouldTransformAuthenticationExceptionIntoMappedException() throws AuthenticationException {
+    public void shouldNotTransformAuthenticationExceptionIntoMappedException() throws AuthenticationException {
         when(mockAuthenticator.authenticate(any(String.class))).thenThrow(new AuthenticationException("test"));
         final ClientResponse response = resources
                 .client()
@@ -139,7 +139,7 @@ public class TenacityAuthenticatorTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer stuff")
                 .get(ClientResponse.class);
 
-        assertThat(response.getStatus()).isEqualTo(tenacityExceptionMapper.getStatusCode());
+        assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         verify(mockAuthenticator, times(1)).authenticate(any(String.class));
         verify(tenacityContainerExceptionMapper, times(1)).toResponse(any(ContainerException.class));
