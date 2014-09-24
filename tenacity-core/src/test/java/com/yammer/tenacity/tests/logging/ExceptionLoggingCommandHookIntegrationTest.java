@@ -25,7 +25,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-@Ignore("Can't run this with other test classes as the CommandExecutionHook will already have been set")
 public class ExceptionLoggingCommandHookIntegrationTest {
 
     @Rule
@@ -33,11 +32,6 @@ public class ExceptionLoggingCommandHookIntegrationTest {
 
     // Using a dummy exception logger that's statically defined as Hystrix only lets you set the environment hook once
     private static final DummyExceptionLogger exceptionLogger = new DummyExceptionLogger();
-
-    @BeforeClass
-    public static void setUpExceptionLogger() throws Exception {
-        HystrixPlugins.getInstance().registerCommandExecutionHook(new ExceptionLoggingCommandHook(exceptionLogger));
-    }
 
     @Before
     public void setup() {
@@ -47,6 +41,7 @@ public class ExceptionLoggingCommandHookIntegrationTest {
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
     public void loggerLogsOnExpectedException() throws Exception {
+        HystrixPlugins.getInstance().registerCommandExecutionHook(new ExceptionLoggingCommandHook(exceptionLogger));
         final HystrixCommand<String> failingCommand = new TenacityFailingCommand();
 
         failingCommand.execute();
@@ -58,6 +53,7 @@ public class ExceptionLoggingCommandHookIntegrationTest {
 
     @Test
     public void loggerDoesntLogIfItsNotExpected() throws Exception {
+        HystrixPlugins.getInstance().registerCommandExecutionHook(new ExceptionLoggingCommandHook(exceptionLogger));
         final HystrixCommand<String> failingCommand = new TenacityFailingWithIOException();
 
         failingCommand.execute();
