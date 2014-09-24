@@ -1,8 +1,9 @@
-0.4.1-SNAPSHOT
+0.4.1
 --------------
 * `TenacityExceptionMapper` and `TenacityContainerExceptionMapper` now use a shared check to ensure that HystrixRuntimeExceptions are handled
   the same.
-* Adding a test to explicitly ensure that Hystrix Timeouts are handled appropriately by the ExceptionMapper
+* Added a test to explicitly ensure that Hystrix Timeouts are handled appropriately by the ExceptionMapper
+* Added a workaround for `HystrixPlugin.UnitTest.reset()` not reseting the static state correctly.
 
 0.4.0
 -----
