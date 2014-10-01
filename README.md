@@ -161,18 +161,18 @@ public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBun
 
 ```
 
-4. Then make sure you add the bundle in your `Service`. 
+4. Then make sure you add the bundle in your `Application`.
 
 `Map<TenacityPropertyKey, TenacityConfiguration>` type.
 
     ```java
     @Override
-    public void initialize(Bootstrap<Configuration> bootstrap) {
+    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
         ...
         bootstrap.addBundle(TenacityBundleBuilder
-                                            .newBuilder()
+                                            .<MyConfiguration> newBuilder()
                                             .configurationFactory(new CompletieTenacityBundleConfigurationFactory())
-                                            .build();
+                                            .build());
         ...
     }
 
