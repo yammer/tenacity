@@ -18,7 +18,7 @@ Tenacity makes [Hystrix](https://github.com/Netflix/Hystrix) dropwizard-friendly
 2. Dropwizard-configuration style (YAML) for dependencies.
 3. Abstractions to clearly configure a dependency operation (`TenacityCommand<ReturnType>`).
 4. Ability to unit-test Hystrix: Resets static state held by Hystrix (metrics, counters, etc.). Increases rate at which a concurrent thread updates metrics.
-5. Publishes measurements via [Metrics](https://github.com/codahale/metrics).
+5. Publishes measurements via [Metrics](https://github.com/dropwizard/metrics).
 
 *Tenacity is meant to be used with [Breakerbox](https://github.com/yammer/breakerbox) which adds real-time visualization of metrics and dynamic configuration.*
 
@@ -29,7 +29,7 @@ Modules
 -   `tenacity-client`:          Client for consuming the resources that `tenacity-core` adds.
 -   `tenacity-testing`:         `TenacityTestRule` allows for easier unit testing. Resets internal state of Hystrix.
 -   `tenacity-jdbi`:            Pulls in dropwizard-jdbi and provides a DBIExceptionLogger and SQLExceptionLogger to be used with the ExceptionLoggingCommandHook.
-                                                                   
+
 How To Use
 ==========
 
@@ -153,8 +153,8 @@ public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBun
         builder.put(CompletieDependencyKeys.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
         builder.put(CompletieDependencyKeys.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
         builder.put(CompletieDependencyKeys.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig())
-  
-        return builder.build();                                                                   
+
+        return builder.build();
   }
 
 }
@@ -274,7 +274,7 @@ breakerbox:
 ![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.png)
 ![Breakerbox Configure](http://yammer.github.io/tenacity/breakerbox_configure.png)
 
-In order to add integration with Breakerbox you need to implement the following method in your `TenacityBundleConfigurationFactory` implementation: 
+In order to add integration with Breakerbox you need to implement the following method in your `TenacityBundleConfigurationFactory` implementation:
 
 ```
 @Override
