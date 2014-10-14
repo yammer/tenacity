@@ -39,6 +39,18 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
 
     }
 
+    public TenacityBundleConfigurationFactory<T> getTenacityBundleConfigurationFactory() {
+        return tenacityBundleConfigurationFactory;
+    }
+
+    public Optional<HystrixCommandExecutionHook> getExecutionHook() {
+        return executionHook;
+    }
+
+    public Iterable<ExceptionMapper<? extends Throwable>> getExceptionMappers() {
+        return exceptionMappers;
+    }
+
     @Override
     public void run(T configuration, Environment environment) throws Exception {
         Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations =
