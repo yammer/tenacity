@@ -25,9 +25,9 @@ import java.util.Objects;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TenacityConfiguredBundle<T extends Configuration> implements ConfiguredBundle<T> {
-    private final TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory;
-    private Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
-    private final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
+    protected final TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory;
+    protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
+    protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
 
     public TenacityConfiguredBundle(
             TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory,
@@ -44,7 +44,6 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations =
                 tenacityBundleConfigurationFactory.getTenacityConfigurations(configuration);
 
-
         configureHystrix(environment);
         addExceptionMappers(environment);
         addTenacityResources(
@@ -53,10 +52,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
                 tenacityPropertyKeyConfigurations.keySet()
         );
 
-        new TenacityPropertyRegister(
-                tenacityPropertyKeyConfigurations,
-                tenacityBundleConfigurationFactory.getBreakerboxConfiguration(configuration)
-        ).register();
+        registerTenacityProperties(tenacityPropertyKeyConfigurations, configuration);
     }
 
     @Override
@@ -67,20 +63,28 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         }
     }
 
-    private void addExceptionMappers(Environment environment) {
+    protected void registerTenacityProperties(Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations,
+                                              T configuration) {
+        new TenacityPropertyRegister(
+                tenacityPropertyKeyConfigurations,
+                tenacityBundleConfigurationFactory.getBreakerboxConfiguration(configuration)
+        ).register();
+    }
+
+    protected void addExceptionMappers(Environment environment) {
         for (ExceptionMapper<?> exceptionMapper : exceptionMappers) {
             environment.jersey().register(exceptionMapper);
         }
     }
 
-    private void configureHystrix(Environment environment) {
+    protected void configureHystrix(Environment environment) {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
         environment.servlets()
                 .addServlet("hystrix-metrics", new HystrixMetricsStreamServlet())
                 .addMapping("/tenacity/metrics.stream");
     }
 
-    private void addTenacityResources(Environment environment,
+    protected void addTenacityResources(Environment environment,
                                       TenacityPropertyKeyFactory keyFactory,
                                       Iterable<TenacityPropertyKey> tenacityPropertyKeys) {
 

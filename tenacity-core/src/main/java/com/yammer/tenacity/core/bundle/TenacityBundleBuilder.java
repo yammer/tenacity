@@ -10,9 +10,9 @@ import io.dropwizard.Configuration;
 import javax.ws.rs.ext.ExceptionMapper;
 
 public class TenacityBundleBuilder<T extends Configuration> {
-    private final ImmutableList.Builder<ExceptionMapper<? extends Throwable>> exceptionMapperBuilder = ImmutableList.builder();
-    private Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
-    private TenacityBundleConfigurationFactory<T> configurationFactory;
+    protected final ImmutableList.Builder<ExceptionMapper<? extends Throwable>> exceptionMapperBuilder = ImmutableList.builder();
+    protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
+    protected TenacityBundleConfigurationFactory<T> configurationFactory;
 
     public static <T extends Configuration> TenacityBundleBuilder<T> newBuilder() {
         return new TenacityBundleBuilder<>();
