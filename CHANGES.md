@@ -1,3 +1,7 @@
+0.4.2
+--------------
+Removed registration of `MetricsPublisher` in the `TenacityTestRule` as it was breaking application test rule tests and wasn't necessary.
+
 0.4.1
 --------------
 * `TenacityExceptionMapper` and `TenacityContainerExceptionMapper` now use a shared check to ensure that HystrixRuntimeExceptions are handled
