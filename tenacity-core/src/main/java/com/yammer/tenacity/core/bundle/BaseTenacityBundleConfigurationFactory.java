@@ -12,7 +12,7 @@ import java.util.Map;
 public abstract class BaseTenacityBundleConfigurationFactory<T extends Configuration> implements TenacityBundleConfigurationFactory<T> {
 
     @Override
-    public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(T applicatoinConfiguration) {
+    public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(T applicationConfiguration) {
         return Collections.emptyMap();
     }
 
