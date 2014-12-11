@@ -1,6 +1,10 @@
+0.4.3
+--------------
+* Hystrix 1.3.19
+
 0.4.2
 --------------
-Removed registration of `MetricsPublisher` in the `TenacityTestRule` as it was breaking application test rule tests and wasn't necessary.
+* Removed registration of `MetricsPublisher` in the `TenacityTestRule` as it was breaking application test rule tests and wasn't necessary.
 
 0.4.1
 --------------
