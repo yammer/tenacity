@@ -110,6 +110,7 @@ How to add Tenacity to your Dropwizard Service
 ----------
 
 1. To leverage within dropwizard first add the following to your `pom.xml`:
+
     ```xml
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
@@ -118,9 +119,7 @@ How to add Tenacity to your Dropwizard Service
     </dependency>
     ```
 
-2. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best for us
-when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also
-shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
+2. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best for us when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
 
     ```java
     public enum CompletieDependencyKeys implements TenacityPropertyKey {
@@ -138,32 +137,31 @@ shave down some characters to save on space, again for UI purposes. In addition,
         }
     }
     ```
+    
 3. Create a `TenacityBundleConfigurationFactory` implementaion - you can use the `BaseTenacityBundleConfigurationFactory` as your starting point. This will be used to register your custom tenacity dependencies and custom configurations.
 
-```
-public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBundleConfigurationFactory<CompletieConfiguration> {
-
-  @Override
-  public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(CompletieConfiguration configuration) {
-        final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
-
-        builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
-        builder.put(CompletieDependencyKeys.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
-        builder.put(CompletieDependencyKeys.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
-        builder.put(CompletieDependencyKeys.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
-        builder.put(CompletieDependencyKeys.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
-        builder.put(CompletieDependencyKeys.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig())
-
-        return builder.build();
-  }
-
-}
-
-```
-
+    ```java
+    public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBundleConfigurationFactory<CompletieConfiguration> {
+    
+      @Override
+      public Map<TenacityPropertyKey, TenacityConfiguration> getTenacityConfigurations(CompletieConfiguration configuration) {
+            final ImmutableMap.Builder<TenacityPropertyKey, TenacityConfiguration> builder = ImmutableMap.builder();
+    
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_USER, configuration.getRanking().getHystrixUserConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_GROUP, configuration.getRanking().getHystrixGroupConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_SCND_ORDER, configuration.getRanking().getHystrixSecondOrderConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_PRNK_NETWORK, configuration.getRanking().getHystrixNetworkConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_TOKIE_AUTH, configuration.getAuthentication().getHystrixConfig());
+            builder.put(CompletieDependencyKeys.CMPLT_WHVLL_PRESENCE, configuration.getPresence().getHystrixConfig())
+    
+            return builder.build();
+      }
+    }
+    ```
+    
 4. Then make sure you add the bundle in your `Application`.
 
-`Map<TenacityPropertyKey, TenacityConfiguration>` type.
+    `Map<TenacityPropertyKey, TenacityConfiguration>` type.
 
     ```java
     @Override
@@ -175,6 +173,7 @@ public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBun
                                             .build());
         ...
     }
+    ```
 
 5. Use `TenacityCommand` to select which custom tenacity configuration you want to use.
 
@@ -186,23 +185,23 @@ public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBun
         ...
     }
     ```
-
-6. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration),
-and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply use the `TenacityTestRule`.
+    
+6. When testing use the `tenacity-testing` module. This registers appropriate custom publishers/strategies, clears global `Archaius` configuration state (Hystrix uses internally to manage configuration), and tweaks threads that calculate metrics which influence circuit breakers to update a more frequent interval. Simply use the `TenacityTestRule`.
 
     ```java
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
     ```
+    ```xml
+    <dependency>
+        <groupId>com.yammer.tenacity</groupId>
+        <artifactId>tenacity-testing</artifactId>
+        <version>0.4.4</version>
+        <scope>test</scope>
+    </dependency>
+    ```
 
-        <dependency>
-            <groupId>com.yammer.tenacity</groupId>
-            <artifactId>tenacity-testing</artifactId>
-            <version>0.4.4</version>
-            <scope>test</scope>
-        </dependency>
-
-6. Last is to actually configure your dependencies once they are wrapped with `TenacityCommand`.
+7. Last is to actually configure your dependencies once they are wrapped with `TenacityCommand`.
 
 
 Configuration
