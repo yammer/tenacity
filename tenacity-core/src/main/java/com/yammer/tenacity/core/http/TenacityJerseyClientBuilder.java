@@ -19,7 +19,9 @@ public class TenacityJerseyClientBuilder {
     }
 
     public Client build(Client client) {
-        return new TenacityJerseyClient(tenacityPropertyKey, timeoutPadding, client);
+        return new TenacityJerseyClient(
+                new TenacityWebResourceFactory(tenacityPropertyKey, timeoutPadding),
+                client);
     }
 
     public static TenacityJerseyClientBuilder builder(TenacityPropertyKey key) {
