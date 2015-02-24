@@ -1,5 +1,10 @@
 0.4.5-SNAPSHOT
 --------------
+* Added `TenacityJerseyClient` and `TenacityJerseyClientBuilder` to reduce configuration complexity when using Tenacity
+  and `JerseyClient`. At the moment these two have competing timeout configurations that can end up looking like application exceptions
+  when they are simply `TimeoutException`s being thrown by JerseyClient. `TenacityJerseyClient` aims to fix this by adjusting the socket read timeout
+  on a per-request basis on the currently set execution timeout value for resources built from `TenacityJerseyClient` and its associated
+  `TenacityPropertyKey`
 
 0.4.4
 --------------

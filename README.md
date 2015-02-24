@@ -360,3 +360,23 @@ TenacityBundleBuilder
                 ))
                 .build();
 ```
+
+TenacityJerseyClientBuilder
+===========================
+`TenacityJerseyClient` and `TenacityJerseyClientBuilder` to reduce configuration complexity when using Tenacity
+and `JerseyClient`. At the moment these two have competing timeout configurations that can end up looking like application exceptions
+when they are simply `TimeoutException`s being thrown by JerseyClient. `TenacityJerseyClient` aims to fix this by adjusting the socket read timeout
+on a per-request basis on the currently set execution timeout value for resources built from `TenacityJerseyClient` and its associated
+`TenacityPropertyKey`.
+
+```java
+Client client = new JerseyClientBuilder(environment).build("some-external-dependency");
+Client tenacityClient = TenacityJerseyClientBuilder
+                .builder(YOUR_TENACITY_PROPERTY_KEY)
+                .usingTimeoutPadding(Duration.milliseconds(50)) //Padding to add in addition to the Tenacity set time.
+                                                                //Result: TenacityTimeout + TimeoutPadding = SocketReadTimeout
+                .build(client);
+
+//Then use tenacityClient the same way as you'd use client. TenacityClient overrides resource/asyncResource and those in turn are Tenacity*Resources.
+//They adjust timeouts on every use or on a per-request basis.
+```
