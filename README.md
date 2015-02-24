@@ -372,10 +372,11 @@ on a per-request basis on the currently set execution timeout value for resource
 ```java
 Client client = new JerseyClientBuilder(environment).build("some-external-dependency");
 Client tenacityClient = TenacityJerseyClientBuilder
-                .builder(YOUR_TENACITY_PROPERTY_KEY)
-                .usingTimeoutPadding(Duration.milliseconds(50)) //Padding to add in addition to the Tenacity set time.
-                                                                //Result: TenacityTimeout + TimeoutPadding = SocketReadTimeout
-                .build(client);
+    .builder(YOUR_TENACITY_PROPERTY_KEY)
+    .usingTimeoutPadding(Duration.milliseconds(50))
+        //Padding to add in addition to the Tenacity set time. Default is 50ms.
+        //Result: TenacityTimeout + TimeoutPadding = SocketReadTimeout
+    .build(client);
 
 //Then use tenacityClient the same way as you'd use client. TenacityClient overrides resource/asyncResource and those in turn are Tenacity*Resources.
 //They adjust timeouts on every use or on a per-request basis.
