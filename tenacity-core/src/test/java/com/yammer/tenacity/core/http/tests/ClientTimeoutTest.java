@@ -286,7 +286,7 @@ public class ClientTimeoutTest {
     @Test
     public void tenacityDoesntRaceWithJerseyTimeout() {
         clientConfiguration.setTimeout(Duration.milliseconds(1));
-        tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(100);
+        tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(300);
         registerTenacityProperties();
 
         final Client client = tenacityClientBuilder.build(buildClient());
@@ -303,7 +303,7 @@ public class ClientTimeoutTest {
         assertTrue(timeoutFailure);
         assertTrue(command.isResponseTimedOut());
 
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 150);
+        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 350);
     }
 
     @Test
