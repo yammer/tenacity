@@ -5,7 +5,7 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.util.Duration;
 
 public class TenacityJerseyClientBuilder {
-    protected TenacityPropertyKey tenacityPropertyKey;
+    protected final TenacityPropertyKey tenacityPropertyKey;
     //50ms by default, because with lower values we have seen issues with it racing with Tenacity/Hystrix's timeout
     protected Duration timeoutPadding = Duration.milliseconds(50);
 

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
+import java.util.Objects;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -74,19 +75,22 @@ public class TenacityClient {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TenacityClient that = (TenacityClient) o;
-
-        if (!client.equals(that.client)) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(client, fetchPropertyKeys, fetchConfiguration, fetchCircuitBreakers);
     }
 
     @Override
-    public int hashCode() {
-        return client.hashCode();
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final TenacityClient other = (TenacityClient) obj;
+        return Objects.equals(this.client, other.client)
+                && Objects.equals(this.fetchPropertyKeys, other.fetchPropertyKeys)
+                && Objects.equals(this.fetchConfiguration, other.fetchConfiguration)
+                && Objects.equals(this.fetchCircuitBreakers, other.fetchCircuitBreakers);
     }
 }
