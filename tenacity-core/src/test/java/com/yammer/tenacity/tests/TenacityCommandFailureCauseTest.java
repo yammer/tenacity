@@ -50,13 +50,13 @@ public class TenacityCommandFailureCauseTest {
     }
 
     @Test(timeout = 1000)
-    public void timeoutIsNotObeyedUsingQueue() throws Exception {
+    public void timeoutIsObeyedUsingQueue() throws Exception {
         setUpTenacityCommand(2, 10);
         final Future<Boolean> result = timedOutCommand(20).queue();
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get()).isFalse();
+        assertThat(result.get()).isTrue();
     }
 
     @Test
