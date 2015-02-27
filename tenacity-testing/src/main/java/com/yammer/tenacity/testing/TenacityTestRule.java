@@ -28,7 +28,7 @@ public class TenacityTestRule implements TestRule {
     }
 
     private static void resetHystrixPlugins() {
-        new HystrixPlugins.UnitTest().reset();
+        Hystrix.reset();
         resetCommandExecutionHook();
     }
 

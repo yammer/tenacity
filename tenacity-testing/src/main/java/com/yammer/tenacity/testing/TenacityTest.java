@@ -32,6 +32,6 @@ public abstract class TenacityTest {
     }
 
     private static void resetHystrixPlugins() {
-        new HystrixPlugins.UnitTest().reset();
+        HystrixPlugins.reset();
     }
 }
