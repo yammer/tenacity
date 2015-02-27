@@ -214,7 +214,7 @@ public class TenacityWebResource extends WebResource {
     protected void setReadTimeoutWithTenacity() {
         setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, Ints.checkedCast(TenacityCommand
                 .getCommandProperties(tenacityPropertyKey)
-                .executionIsolationThreadTimeoutInMilliseconds()
+                .executionTimeoutInMilliseconds()
                 .get() + timeoutPadding.toMilliseconds()));
     }
 
