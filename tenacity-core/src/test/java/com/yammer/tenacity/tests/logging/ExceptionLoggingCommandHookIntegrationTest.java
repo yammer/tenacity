@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.yammer.tenacity.core.TenacityCommand;
@@ -16,7 +17,9 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import com.yammer.tenacity.tests.DependencyKey;
 import com.yammer.tenacity.tests.TenacityFailingCommand;
 import io.dropwizard.auth.AuthenticationException;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
@@ -71,7 +74,7 @@ public class ExceptionLoggingCommandHookIntegrationTest {
         }
 
         @Override
-        protected <T> void logException(RuntimeException exception, HystrixCommand<T> commandInstance) {
+        protected <T> void logException(RuntimeException exception, HystrixInvokableInfo<T> commandInstance) {
             loggedExceptions.add(exception);
         }
 

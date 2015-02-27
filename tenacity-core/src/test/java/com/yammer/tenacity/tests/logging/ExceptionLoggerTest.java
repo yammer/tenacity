@@ -2,7 +2,7 @@ package com.yammer.tenacity.tests.logging;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixInvokableInfo;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
 import com.yammer.tenacity.tests.TenacityFailingCommand;
 import org.junit.Before;
@@ -11,9 +11,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ExceptionLoggerTest {
 
@@ -69,7 +67,7 @@ public class ExceptionLoggerTest {
         }
 
         @Override
-        protected <T> void logException(RuntimeException exception, HystrixCommand<T> commandInstance) {
+        protected <T> void logException(RuntimeException exception, HystrixInvokableInfo<T> commandInstance) {
             loggedExceptions.add(exception);
         }
 

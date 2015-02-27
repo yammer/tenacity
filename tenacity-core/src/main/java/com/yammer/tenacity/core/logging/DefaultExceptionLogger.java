@@ -1,6 +1,6 @@
 package com.yammer.tenacity.core.logging;
 
-import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixInvokableInfo;
 
 /**
  * The simplest exception logger out there, just logs any and every exception
@@ -8,7 +8,7 @@ import com.netflix.hystrix.HystrixCommand;
 public class DefaultExceptionLogger extends ExceptionLogger<Exception> {
 
     @Override
-    protected <T> void logException(Exception exception, HystrixCommand<T> commandInstance) {
+    protected <T> void logException(Exception exception, HystrixInvokableInfo<T> commandInstance) {
         logger.warn("An exception occurred while executing {}:{}",
                 commandInstance.getCommandKey().name(),
                 commandInstance.getClass().getSimpleName(),
