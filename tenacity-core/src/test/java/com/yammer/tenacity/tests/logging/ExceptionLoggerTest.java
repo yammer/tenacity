@@ -55,7 +55,7 @@ public class ExceptionLoggerTest {
     @Test
     public void logsExceptionOfSubType() throws Exception {
         exceptionLogger.log(validSubException, failingCommand);
-        assertEquals(ImmutableList.of(validSubException), exceptionLogger.getLoggedExceptions());
+        assertEquals(ImmutableList.<RuntimeException>of(validSubException), exceptionLogger.getLoggedExceptions());
     }
 
     static final class DummyExceptionLogger extends ExceptionLogger<RuntimeException> {
