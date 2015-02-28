@@ -26,7 +26,6 @@ import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.oauth.OAuthProvider;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
