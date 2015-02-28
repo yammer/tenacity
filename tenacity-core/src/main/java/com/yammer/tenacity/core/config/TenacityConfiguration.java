@@ -4,6 +4,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -53,24 +54,21 @@ public class TenacityConfiguration {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TenacityConfiguration that = (TenacityConfiguration) o;
-
-        if (executionIsolationThreadTimeoutInMillis != that.executionIsolationThreadTimeoutInMillis) return false;
-        if (!circuitBreaker.equals(that.circuitBreaker)) return false;
-        if (!threadpool.equals(that.threadpool)) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(threadpool, circuitBreaker, executionIsolationThreadTimeoutInMillis);
     }
 
     @Override
-    public int hashCode() {
-        int result = threadpool.hashCode();
-        result = 31 * result + circuitBreaker.hashCode();
-        result = 31 * result + executionIsolationThreadTimeoutInMillis;
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final TenacityConfiguration other = (TenacityConfiguration) obj;
+        return Objects.equals(this.threadpool, other.threadpool)
+                && Objects.equals(this.circuitBreaker, other.circuitBreaker)
+                && Objects.equals(this.executionIsolationThreadTimeoutInMillis, other.executionIsolationThreadTimeoutInMillis);
     }
 }

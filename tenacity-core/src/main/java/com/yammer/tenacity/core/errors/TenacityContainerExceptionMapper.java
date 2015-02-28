@@ -4,6 +4,7 @@ import com.sun.jersey.api.container.ContainerException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Objects;
 
 public class TenacityContainerExceptionMapper implements ExceptionMapper<ContainerException> {
     private final int statusCode;
@@ -30,19 +31,19 @@ public class TenacityContainerExceptionMapper implements ExceptionMapper<Contain
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TenacityContainerExceptionMapper that = (TenacityContainerExceptionMapper) o;
-
-        if (statusCode != that.statusCode) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(statusCode);
     }
 
     @Override
-    public int hashCode() {
-        return statusCode;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final TenacityContainerExceptionMapper other = (TenacityContainerExceptionMapper) obj;
+        return Objects.equals(this.statusCode, other.statusCode);
     }
 }

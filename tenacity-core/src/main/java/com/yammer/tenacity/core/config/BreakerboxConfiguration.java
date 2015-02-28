@@ -4,6 +4,7 @@ import io.dropwizard.util.Duration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -50,24 +51,21 @@ public class BreakerboxConfiguration {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BreakerboxConfiguration that = (BreakerboxConfiguration) o;
-
-        if (!delay.equals(that.delay)) return false;
-        if (!initialDelay.equals(that.initialDelay)) return false;
-        if (!urls.equals(that.urls)) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(urls, initialDelay, delay);
     }
 
     @Override
-    public int hashCode() {
-        int result = urls.hashCode();
-        result = 31 * result + initialDelay.hashCode();
-        result = 31 * result + delay.hashCode();
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final BreakerboxConfiguration other = (BreakerboxConfiguration) obj;
+        return Objects.equals(this.urls, other.urls)
+                && Objects.equals(this.initialDelay, other.initialDelay)
+                && Objects.equals(this.delay, other.delay);
     }
 }

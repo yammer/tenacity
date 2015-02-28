@@ -6,6 +6,7 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 public class CircuitBreaker {
     @NotNull @Valid
@@ -36,23 +37,21 @@ public class CircuitBreaker {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CircuitBreaker that = (CircuitBreaker) o;
-
-        if (open != that.open) return false;
-        if (!id.equals(that.id)) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(id, open);
     }
 
     @Override
-    public int hashCode() {
-        int result = id.hashCode();
-        result = 31 * result + (open ? 1 : 0);
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final CircuitBreaker other = (CircuitBreaker) obj;
+        return Objects.equals(this.id, other.id)
+                && Objects.equals(this.open, other.open);
     }
 
     @Override
