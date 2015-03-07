@@ -76,7 +76,7 @@ public class TenacityConfiguredBundleBuilderTest {
 
     @Test
     public void useAllExceptionMappers() {
-        final TenacityConfiguredBundle bundle = TenacityBundleBuilder
+        final TenacityConfiguredBundle<Configuration> bundle = TenacityBundleBuilder
                 .newBuilder()
                 .configurationFactory(configurationFactory)
                 .mapAllHystrixRuntimeExceptionsTo(429)
@@ -95,7 +95,7 @@ public class TenacityConfiguredBundleBuilderTest {
     @Test
     public void withExecutionMappers() throws Exception {
         final HystrixCommandExecutionHook hook = new ExceptionLoggingCommandHook();
-        final TenacityConfiguredBundle bundle = TenacityBundleBuilder
+        final TenacityConfiguredBundle<Configuration> bundle = TenacityBundleBuilder
                 .newBuilder()
                 .configurationFactory(configurationFactory)
                 .commandExecutionHook(hook)
