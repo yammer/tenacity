@@ -3,6 +3,7 @@ package com.yammer.tenacity.core.http.tests;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.sun.jersey.api.client.AsyncWebResource;
 import com.sun.jersey.api.client.Client;
@@ -112,7 +113,7 @@ public class ClientTimeoutTest {
     @ClassRule
     public static DropwizardAppRule<Configuration> RULE;
     private static final BarrierResource barrierResource = new BarrierResource();
-    private final URI uri = URI.create("http://localhost:8080");
+    private final URI uri = URI.create("http://localhost:" + RULE.getLocalPort());
     private JerseyClientConfiguration clientConfiguration;
     private TenacityConfiguration tenacityConfiguration;
     private MetricRegistry metricRegistry;
@@ -120,11 +121,7 @@ public class ClientTimeoutTest {
     private final TenacityJerseyClientBuilder tenacityClientBuilder = TenacityJerseyClientBuilder.builder(DependencyKey.CLIENT_TIMEOUT);
 
     static {
-        try {
-            RULE = new DropwizardAppRule<>(ClientTimeoutApplication.class, fixture("clientTimeoutTest.yml"));
-        } catch (IOException err) {
-            Throwables.propagate(err);
-        }
+        RULE = new DropwizardAppRule<>(ClientTimeoutApplication.class, Resources.getResource("clientTimeoutTest.yml").getPath());
     }
 
     @Before
@@ -250,10 +247,10 @@ public class ClientTimeoutTest {
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(500);
         registerTenacityProperties();
 
-        spyResource = spy(client.resource("http://localhost:8080"));
+        spyResource = spy(client.resource("http://localhost:" + RULE.getLocalPort()));
         spyResource.path("/").queryParam("time", "100").post();
         verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 550);
-        final AsyncWebResource spyAsyncResource = spy(client.asyncResource("http://localhost:8080/"));
+        final AsyncWebResource spyAsyncResource = spy(client.asyncResource("http://localhost:" + RULE.getLocalPort() + '/'));
         spyAsyncResource.path("/").queryParam("time", "100").post().get();
         verify(spyAsyncResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 550);
 
