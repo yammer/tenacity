@@ -1,3 +1,10 @@
+0.5.0-SNAPSHOT
+--------------
+* [1.4.0 Hystrix](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-140-maven-central-bintray)
+* TenacityObservableCommand is now available. This is _NOT_ executed on a separate thread, but instead leverages the semaphore-isolated execution strategy. It does support timeouts, and these are handled by
+  a separate thread `HystrixTimer`. In short, these timeouts will behave exactly like they did with the thread-isolated execution strategy.
+
+
 0.4.5-SNAPSHOT
 --------------
 * Added `TenacityJerseyClient` and `TenacityJerseyClientBuilder` to reduce configuration complexity when using Tenacity
