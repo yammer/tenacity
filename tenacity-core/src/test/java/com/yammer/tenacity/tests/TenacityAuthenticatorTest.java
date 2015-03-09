@@ -7,8 +7,6 @@ import com.google.common.collect.Iterables;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.strategy.HystrixPlugins;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.container.ContainerException;
 import com.yammer.tenacity.core.auth.TenacityAuthenticator;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
@@ -23,8 +21,9 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.oauth.OAuthProvider;
+import io.dropwizard.auth.oauth.OAuthFactory;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.glassfish.jersey.server.ContainerException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -62,11 +61,11 @@ public class TenacityAuthenticatorTest {
         mockAuthenticator = mock(Authenticator.class);
         tenacityAuthenticator = TenacityAuthenticator.wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT);
         resources = ResourceTestRule.builder()
-            .addResource(new AuthResource())
-            .addProvider(new OAuthProvider<>(tenacityAuthenticator, "test-realm"))
-            .addProvider(tenacityExceptionMapper)
-            .addProvider(tenacityContainerExceptionMapper)
-            .build();
+                .addResource(new AuthResource())
+                .addProvider(new OAuthFactory<>(tenacityAuthenticator, "test-realm", Object.class))
+                .addProvider(tenacityExceptionMapper)
+                .addProvider(tenacityContainerExceptionMapper)
+                .build();
     }
 
     @Before
@@ -104,10 +103,10 @@ public class TenacityAuthenticatorTest {
         });
 
         try {
-            assertThat(tenacityAuthenticator.authenticate("credentials"))
-                .isEqualTo(Optional.absent());
+            assertThat(tenacityAuthenticator.authenticate("credentials"),
+                    is(equalTo(Optional.absent())));
         } catch (HystrixRuntimeException err) {
-            assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
+            assertThat(err.getFailureType(), is(equalTo((HystrixRuntimeException.FailureType.TIMEOUT))));
             throw err;
         }
     }
@@ -133,13 +132,14 @@ public class TenacityAuthenticatorTest {
     @Test
     public void shouldNotTransformAuthenticationExceptionIntoMappedException() throws AuthenticationException {
         when(mockAuthenticator.authenticate(any(String.class))).thenThrow(new AuthenticationException("test"));
-        final ClientResponse response = resources
+        final Response response = resources
                 .client()
-                .resource("/auth")
+                .target("/auth")
+                .request()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer stuff")
-                .get(ClientResponse.class);
+                .get(Response.class);
 
-        assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertThat(response.getStatus(), is(equalTo((Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()))));
 
         verify(mockAuthenticator, times(1)).authenticate(any(String.class));
         verify(tenacityContainerExceptionMapper, times(1)).toResponse(any(ContainerException.class));
