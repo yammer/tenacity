@@ -1,4 +1,4 @@
-0.4.5-SNAPSHOT
+0.4.5
 --------------
 * Added `TenacityJerseyClient` and `TenacityJerseyClientBuilder` to reduce configuration complexity when using Tenacity
   and `JerseyClient`. At the moment these two have competing timeout configurations that can end up looking like application exceptions
