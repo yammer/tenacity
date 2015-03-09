@@ -18,7 +18,9 @@ import org.junit.Test;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Collections;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class TenacityConfiguredBundleBuilderTest {
     private final TenacityPropertyKeyFactory propertyKeyFactory = new TenacityPropertyKeyFactory() {
@@ -43,12 +45,12 @@ public class TenacityConfiguredBundleBuilderTest {
                         .configurationFactory(configurationFactory)
                         .build();
 
-        assertThat(bundle).
-                isEqualTo(new TenacityConfiguredBundle<>(
+        assertThat(bundle,
+                is(equalTo(new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.<HystrixCommandExecutionHook>absent(),
                         Collections.<ExceptionMapper<? extends Throwable>>emptyList()
-                ));
+                ))));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -66,12 +68,12 @@ public class TenacityConfiguredBundleBuilderTest {
                 .addExceptionMapper(new TenacityExceptionMapper(429))
                 .build();
 
-        assertThat(bundle).
-                isEqualTo(new TenacityConfiguredBundle<>(
+        assertThat(bundle,
+                is(equalTo((new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.<HystrixCommandExecutionHook>absent(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))
-                ));
+                )))));
     }
 
     @Test
@@ -82,14 +84,14 @@ public class TenacityConfiguredBundleBuilderTest {
                 .mapAllHystrixRuntimeExceptionsTo(429)
                 .build();
 
-        assertThat(bundle).
-                isEqualTo(new TenacityConfiguredBundle<>(
+        assertThat(bundle,
+                is(equalTo(new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.<HystrixCommandExecutionHook>absent(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(
                                 new TenacityExceptionMapper(429),
                                 new TenacityContainerExceptionMapper(429))
-                ));
+                ))));
     }
 
     @Test
@@ -101,11 +103,11 @@ public class TenacityConfiguredBundleBuilderTest {
                 .commandExecutionHook(hook)
                 .build();
 
-        assertThat(bundle).
-                isEqualTo(new TenacityConfiguredBundle<>(
+        assertThat(bundle,
+                is(equalTo(new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.of(hook),
                         Collections.<ExceptionMapper<? extends Throwable>>emptyList()
-                ));
+                ))));
     }
 }
