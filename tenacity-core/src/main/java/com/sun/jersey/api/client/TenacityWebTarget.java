@@ -28,11 +28,7 @@ public class TenacityWebTarget implements WebTarget {
 
 
     protected void setTimeoutWithTenacity() {
-        // todo <michal> double check this w.r.t. ClientConfig#property and mutability
-        delegate
-                .getConfiguration()
-                .getProperties()
-                .put(ClientProperties.READ_TIMEOUT, Ints.checkedCast(TenacityCommand
+        delegate.property(ClientProperties.READ_TIMEOUT, Ints.checkedCast(TenacityCommand
                         .getCommandProperties(tenacityPropertyKey)
                         .executionIsolationThreadTimeoutInMilliseconds()
                         .get() + timeoutPadding.toMilliseconds()));
