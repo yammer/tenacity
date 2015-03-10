@@ -82,7 +82,7 @@ public class TenacityAuthenticatorTest {
     public static class AuthResource {
         @GET
         @Produces(MediaType.TEXT_PLAIN)
-        public Response alwaysThrow(@Auth String auth) {
+        public Response alwaysThrow(@Auth Object principal) {
             return Response.ok().build();
         }
     }
@@ -133,9 +133,10 @@ public class TenacityAuthenticatorTest {
         verify(defaultExceptionLogger, times(1)).log(any(Exception.class), any(HystrixCommand.class));
     }
 
-    @Ignore("<michal> investigate this, once core tests passing") // todo
+    @Ignore("<michal> investigate this, once core tests passing")
     @Test
     public void shouldNotTransformAuthenticationExceptionIntoMappedException() throws AuthenticationException {
+        // todo - currently, it fails because the request is null, and we dereference that when we are trying to read header value
         when(mockAuthenticator.authenticate(any(String.class))).thenThrow(new AuthenticationException("test"));
         final Response response = resources
                 .client()
