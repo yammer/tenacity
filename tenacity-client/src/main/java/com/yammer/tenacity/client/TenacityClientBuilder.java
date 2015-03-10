@@ -1,11 +1,12 @@
 package com.yammer.tenacity.client;
 
-import com.sun.jersey.api.client.Client;
 import com.yammer.tenacity.core.http.TenacityJerseyClientBuilder;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
+
+import javax.ws.rs.client.Client;
 
 public class TenacityClientBuilder {
     protected JerseyClientConfiguration jerseyConfiguration = new JerseyClientConfiguration();
@@ -28,7 +29,7 @@ public class TenacityClientBuilder {
                 .using(jerseyConfiguration)
                 .build("tenacity-" + tenacityPropertyKey);
         return new TenacityClient(environment.metrics(), TenacityJerseyClientBuilder
-            .builder(tenacityPropertyKey)
-            .build(client));
+                .builder(tenacityPropertyKey)
+                .build(client));
     }
 }

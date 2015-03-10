@@ -37,8 +37,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -76,7 +78,8 @@ public class TenacityAuthenticatorTest {
 
     @Path("/auth")
     private static class AuthResource {
-        @GET @Produces(MediaType.TEXT_PLAIN)
+        @GET
+        @Produces(MediaType.TEXT_PLAIN)
         public Response alwaysThrow(@Auth String auth) {
             return Response.ok().build();
         }
@@ -91,7 +94,7 @@ public class TenacityAuthenticatorTest {
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.TENACITY_AUTH_TIMEOUT, overrideConfiguration),
                 new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class))
-            .register();
+                .register();
 
         when(mockAuthenticator.authenticate(any(String.class))).thenAnswer(new Answer<Object>() {
             @Override
