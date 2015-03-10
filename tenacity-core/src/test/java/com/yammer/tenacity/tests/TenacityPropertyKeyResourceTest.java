@@ -12,6 +12,7 @@ import javax.ws.rs.core.GenericType;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
 
@@ -26,15 +27,12 @@ public class TenacityPropertyKeyResourceTest {
 
     @Test
     public void testGetKeys() throws Exception {
-        final Iterable<? extends TenacityPropertyKey> iterable =
+        final Iterable<? extends TenacityPropertyKey> returnedKeys =
                 resources.client()
                         .target(PROPERTY_KEY_URI)
                         .request()
                         .get(new GenericType<ArrayList<DependencyKey>>() {
                         });
-        final List<TenacityPropertyKey> properties = Lists.newArrayList(iterable);
-        for (TenacityPropertyKey key : properties) {
-            assertThat(properties, contains(key));
-        }
+        assertThat(returnedKeys, containsInAnyOrder((TenacityPropertyKey)DependencyKey.EXAMPLE, DependencyKey.SLEEP));
     }
 }

@@ -8,7 +8,9 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.client.ResponseProcessingException;
@@ -68,7 +70,7 @@ public class TenacityExceptionMapperTest {
                     .get(String.class);
         } catch (HystrixRuntimeException err) {
             fail("Should not have thrown HystrixRuntimeException");
-        } catch (ResponseProcessingException err) {
+        } catch (ClientErrorException err) {
             assertThat(err.getResponse().getStatus(),
                     is(equalTo(statusCode)));
         }
@@ -85,7 +87,7 @@ public class TenacityExceptionMapperTest {
                     .target("/random")
                     .request()
                     .get(String.class);
-        } catch (ResponseProcessingException err) {
+        } catch (InternalServerErrorException err) {
             assertThat(err.getResponse().getStatus(),
                     is(equalTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())));
         }
