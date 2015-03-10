@@ -11,6 +11,7 @@ import org.junit.Test;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
 import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
 import static org.junit.Assert.assertThat;
@@ -98,7 +99,7 @@ public class TenacityCircuitBreakersResourceTest {
         tryToOpenCircuitBreaker(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK);
 
         assertThat(resource.circuitBreakers(),
-                contains(
+                containsInAnyOrder(
                         CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK),
                         CircuitBreaker.open(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK))
         );

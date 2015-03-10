@@ -41,7 +41,7 @@ public class TenacityContainerExceptionMapperTest {
     private final int statusCode = 429;
 
     @Path("/")
-    private static class FakeResource {
+    public static class FakeResource {
         public FakeResource() {
         }
 
