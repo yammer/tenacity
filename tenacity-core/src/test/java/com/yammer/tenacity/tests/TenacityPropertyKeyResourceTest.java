@@ -2,15 +2,19 @@ package com.yammer.tenacity.tests;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.sun.jersey.api.client.GenericType;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
+import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
-import io.dropwizard.testing.junit.ResourceTestRule;
+
+import javax.ws.rs.core.GenericType;
 import java.util.ArrayList;
 import java.util.List;
-import static org.fest.assertions.api.Assertions.assertThat;
+
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.junit.Assert.assertThat;
 
 public class TenacityPropertyKeyResourceTest {
 
@@ -23,10 +27,12 @@ public class TenacityPropertyKeyResourceTest {
 
     @Test
     public void testGetKeys() throws Exception {
-        final Iterable<? extends TenacityPropertyKey> iterable = resources.client().resource(PROPERTY_KEY_URI).get(new GenericType<ArrayList<DependencyKey>>() { });
-        final List<TenacityPropertyKey> properties = Lists.newArrayList(iterable);
-        for (TenacityPropertyKey key : properties) {
-            assertThat(properties).contains(key);
-        }
+        final Iterable<? extends TenacityPropertyKey> returnedKeys =
+                resources.client()
+                        .target(PROPERTY_KEY_URI)
+                        .request()
+                        .get(new GenericType<ArrayList<DependencyKey>>() {
+                        });
+        assertThat(returnedKeys, containsInAnyOrder((TenacityPropertyKey)DependencyKey.EXAMPLE, DependencyKey.SLEEP));
     }
 }

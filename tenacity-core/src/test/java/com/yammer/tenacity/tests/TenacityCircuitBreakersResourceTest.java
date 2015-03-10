@@ -8,7 +8,14 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.collection.IsEmptyIterable.emptyIterable;
+import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
+import static org.junit.Assert.assertThat;
+
 
 public class TenacityCircuitBreakersResourceTest {
     @Rule
@@ -19,7 +26,7 @@ public class TenacityCircuitBreakersResourceTest {
         final TenacityCircuitBreakersResource resource =
                 new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of());
 
-        assertThat(resource.circuitBreakers()).isEmpty();
+        assertThat(resource.circuitBreakers(), is(emptyIterable()));
 
     }
 
@@ -28,7 +35,7 @@ public class TenacityCircuitBreakersResourceTest {
         final TenacityCircuitBreakersResource resource =
                 new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK));
 
-        assertThat(resource.circuitBreakers()).isEmpty();
+        assertThat(resource.circuitBreakers(), is(emptyIterable()));
     }
 
     @Test
@@ -38,8 +45,8 @@ public class TenacityCircuitBreakersResourceTest {
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
-        assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK)));
+        assertThat(resource.circuitBreakers(),
+                is(equalTo(iterableOf(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK)))));
     }
 
     @Test
@@ -49,8 +56,8 @@ public class TenacityCircuitBreakersResourceTest {
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
-        assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK)));
+        assertThat(resource.circuitBreakers(),
+                is(equalTo(iterableOf(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK)))));
     }
 
     private static void tryToOpenCircuitBreaker(TenacityPropertyKey key) {
@@ -67,8 +74,8 @@ public class TenacityCircuitBreakersResourceTest {
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
-        assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK)));
+        assertThat(resource.circuitBreakers(),
+                is(equalTo((iterableOf(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK))))));
     }
 
 
@@ -79,8 +86,8 @@ public class TenacityCircuitBreakersResourceTest {
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
-        assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK)));
+        assertThat(resource.circuitBreakers(),
+                is(equalTo(iterableOf(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK)))));
     }
 
     @Test
@@ -91,10 +98,15 @@ public class TenacityCircuitBreakersResourceTest {
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
         tryToOpenCircuitBreaker(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK);
 
-        assertThat(resource.circuitBreakers())
-                .containsAll(
-                        ImmutableList.of(
-                                CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK),
-                                CircuitBreaker.open(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK)));
+        assertThat(resource.circuitBreakers(),
+                containsInAnyOrder(
+                        CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK),
+                        CircuitBreaker.open(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK))
+        );
+    }
+
+    @SafeVarargs
+    private static <T> Iterable<T> iterableOf(T... things) {
+        return asList(things);
     }
 }

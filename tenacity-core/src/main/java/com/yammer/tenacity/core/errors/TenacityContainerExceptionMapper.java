@@ -1,6 +1,7 @@
 package com.yammer.tenacity.core.errors;
 
-import com.sun.jersey.api.container.ContainerException;
+
+import org.glassfish.jersey.server.ContainerException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
