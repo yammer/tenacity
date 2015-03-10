@@ -149,7 +149,7 @@ public class ClientTimeoutTest {
     }
 
     private Client buildClient() {
-        return new JerseyClientBuilder(metricRegistry)
+        return new PatchedJerseyClientBuilder(metricRegistry)
                 .using(executorService, Jackson.newObjectMapper())
                 .using(clientConfiguration)
                 .build("test'");
@@ -413,7 +413,9 @@ public class ClientTimeoutTest {
     public void noTenacityConfigurationSetShouldUseDefault() {
         // this establishes the socket timeout on the http client (connectionTimeout is 100 and unmodified and connectionRequestTimeout is 500)
         clientConfiguration.setTimeout(Duration.milliseconds(1));
-        final Client tenacityClient = tenacityClientBuilder.build(buildClient()); // this casues the property to be udpated, but so far does not seem to propagate in any way to the http client
+        // this casues the property to be udpated, but so far does not seem to propagate in any way to the http client
+        final Client tenacityClient = tenacityClientBuilder.build(buildClient());
+// todo <michal> probably remove this - instead add test that shows that we can generate timeout
 //        final WebTarget spyTarget = spy(tenacityClient.target(uri));
 //        spyTarget.request().post(null);
         tenacityClient.target(uri).request().post(null);
