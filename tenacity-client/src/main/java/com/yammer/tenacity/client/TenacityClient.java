@@ -10,6 +10,7 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.util.Objects;

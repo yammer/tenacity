@@ -1,46 +1,149 @@
 package com.yammer.tenacity.core.http;
 
-import com.sun.jersey.api.client.AsyncWebResource;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.TenacityWebTarget;
+import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import io.dropwizard.util.Duration;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Configuration;
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.util.Objects;
+import java.util.Map;
 
-public class TenacityJerseyClient extends Client {
-    protected final TenacityWebResourceFactory webResourceFactory;
-    protected final Client client;
+public class TenacityJerseyClient implements Client {
+    protected final Client delegate;
+    protected final TenacityPropertyKey tenacityPropertyKey;
+    protected final Duration timeoutPadding;
 
-    public TenacityJerseyClient(TenacityWebResourceFactory webResourceFactory, Client client) {
-        this.webResourceFactory = webResourceFactory;
-        this.client = client;
+    public TenacityJerseyClient(Client client, TenacityPropertyKey tenacityPropertyKey, Duration timeoutPadding) {
+        this.delegate = client;
+        this.tenacityPropertyKey = tenacityPropertyKey;
+        this.timeoutPadding = timeoutPadding;
     }
 
     @Override
-    public WebResource resource(URI u) {
-        return webResourceFactory.webResource(client, u);
+    public void close() {
+        delegate.close();
     }
 
     @Override
-    public AsyncWebResource asyncResource(URI u) {
-        return webResourceFactory.asyncWebResource(client, u);
+    public TenacityWebTarget target(String uri) {
+        return new TenacityWebTarget(
+                delegate.target(uri),
+                tenacityPropertyKey,
+                timeoutPadding
+        );
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(webResourceFactory, client);
+    public TenacityWebTarget target(URI uri) {
+        return new TenacityWebTarget(
+                delegate.target(uri),
+                tenacityPropertyKey,
+                timeoutPadding
+        );
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || getClass() != obj.getClass()) {
-            return false;
-        }
-        final TenacityJerseyClient other = (TenacityJerseyClient) obj;
-        return Objects.equals(this.webResourceFactory, other.webResourceFactory)
-                && Objects.equals(this.client, other.client);
+    public WebTarget target(UriBuilder uriBuilder) {
+        return new TenacityWebTarget(
+                delegate.target(uriBuilder),
+                tenacityPropertyKey,
+                timeoutPadding
+        );
+    }
+
+    @Override
+    public WebTarget target(Link link) {
+        return new TenacityWebTarget(
+                delegate.target(link),
+                tenacityPropertyKey,
+                timeoutPadding
+        );
+    }
+
+    @Override
+    public Invocation.Builder invocation(Link link) {
+        WebTarget t = new TenacityWebTarget(
+                delegate.target(link),
+                tenacityPropertyKey,
+                timeoutPadding
+        );
+        final String acceptType = link.getType();
+        return (acceptType != null) ? t.request(acceptType) : t.request();
+    }
+
+    @Override
+    public SSLContext getSslContext() {
+        return delegate.getSslContext();
+    }
+
+    @Override
+    public HostnameVerifier getHostnameVerifier() {
+        return delegate.getHostnameVerifier();
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return delegate.getConfiguration();
+    }
+
+    @Override
+    public Client property(String name, Object value) {
+        delegate.property(name, value);
+        return this;
+    }
+
+    @Override
+    public Client register(Class<?> componentClass) {
+        delegate.register(componentClass);
+        return this;
+    }
+
+    @Override
+    public Client register(Class<?> componentClass, int priority) {
+        delegate.register(componentClass, priority);
+        return this;
+    }
+
+    @Override
+    public Client register(Class<?> componentClass, Class<?>... contracts) {
+        delegate.register(componentClass, contracts);
+        return this;
+    }
+
+    @Override
+    public Client register(Class<?> componentClass, Map<Class<?>, Integer> contracts) {
+        delegate.register(componentClass, contracts);
+        return this;
+    }
+
+    @Override
+    public Client register(Object component) {
+        delegate.register(component);
+        return this;
+    }
+
+    @Override
+    public Client register(Object component, int priority) {
+        delegate.register(component, priority);
+        return this;
+    }
+
+    @Override
+    public Client register(Object component, Class<?>... contracts) {
+        delegate.register(component, contracts);
+        return this;
+    }
+
+    @Override
+    public Client register(Object component, Map<Class<?>, Integer> contracts) {
+        delegate.register(component, contracts);
+        return this;
     }
 }

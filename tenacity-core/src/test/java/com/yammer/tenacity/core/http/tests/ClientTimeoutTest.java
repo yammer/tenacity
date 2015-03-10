@@ -1,14 +1,9 @@
 package com.yammer.tenacity.core.http.tests;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
-import com.sun.jersey.api.client.AsyncWebResource;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
@@ -27,12 +22,28 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
-import org.junit.*;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.Locale;
@@ -40,7 +51,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
@@ -56,7 +66,7 @@ public class ClientTimeoutTest {
 
         @POST
         public void post(@QueryParam("time")
-                          @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
         }
 
@@ -68,27 +78,27 @@ public class ClientTimeoutTest {
 
         @GET
         public String get(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                          @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
             return "test";
         }
 
         @OPTIONS
         public String options(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                              @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
             return "test";
         }
 
         @PUT
         public void put(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                        @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
         }
 
         @DELETE
         public void delete(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                           @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
         }
     }
@@ -145,11 +155,14 @@ public class ClientTimeoutTest {
                 .build("test'");
     }
 
-    private WebResource postWithExpectedTimeout(Client client, Duration timeout) {
+    private WebTarget postWithExpectedTimeout(Client client, Duration timeout) {
         boolean exceptionThrown = false;
-        final WebResource spyResource = spy(client.resource(uri));
+        final WebTarget spyResource = spy(client.target(uri));
         try {
-            spyResource.queryParam("time", Long.toString(timeout.toMilliseconds())).post();
+            spyResource
+                    .queryParam("time", Long.toString(timeout.toMilliseconds()))
+                    .request()
+                    .post(null);
         } catch (Exception err) {
             exceptionThrown = err.getCause() instanceof SocketTimeoutException;
             synchronized (barrierResource) {
@@ -166,7 +179,7 @@ public class ClientTimeoutTest {
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.CLIENT_TIMEOUT, tenacityConfiguration),
                 new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class))
-        .register();
+                .register();
     }
 
     @Test
@@ -180,7 +193,7 @@ public class ClientTimeoutTest {
         clientConfiguration.setTimeout(Duration.seconds(2));
         final Client client = buildClient();
 
-        client.resource(uri).queryParam("time", "100").post();
+        client.target(uri).queryParam("time", "100").request().post(null);
     }
 
     @Test
@@ -188,16 +201,17 @@ public class ClientTimeoutTest {
         clientConfiguration.setTimeout(Duration.milliseconds(100));
         final Client client = buildClient();
 
-        client.setReadTimeout((int)Duration.seconds(2).toMilliseconds());
-        client.resource(uri).queryParam("time", "500").post();
+        setReadTimeout(client, Duration.seconds(2));
+        client.target(uri).queryParam("time", "500").request().post(null);
     }
+
 
     @Test
     public void jerseyClientTimeoutOverrideToFail() {
         clientConfiguration.setTimeout(Duration.seconds(2));
         final Client client = buildClient();
 
-        client.setReadTimeout((int)Duration.milliseconds(100).toMilliseconds());
+        setReadTimeout(client, Duration.milliseconds(100));
         postWithExpectedTimeout(client, Duration.milliseconds(500));
     }
 
@@ -207,14 +221,14 @@ public class ClientTimeoutTest {
 
         final Client client = buildClient();
 
-        client.setReadTimeout((int)Duration.seconds(1).toMilliseconds());
-        client.resource(uri).queryParam("time", "500").post();
+        setReadTimeout(client, Duration.milliseconds(1));
+        client.target(uri).queryParam("time", "500").request().post(null);
 
-        client.setReadTimeout((int)Duration.milliseconds(100).toMilliseconds());
+        setReadTimeout(client, Duration.milliseconds(100));
         postWithExpectedTimeout(client, Duration.milliseconds(500));
 
-        client.setReadTimeout((int)Duration.milliseconds(500).toMilliseconds());
-        client.resource(uri).queryParam("time", "100");
+        setReadTimeout(client, Duration.milliseconds(500));
+        client.target(uri).queryParam("time", "100"); // todo <michal> is this correct? it does nothing
     }
 
     @Test
@@ -224,12 +238,14 @@ public class ClientTimeoutTest {
 
         registerTenacityProperties();
 
-        final WebResource spyResource = postWithExpectedTimeout(tenacityClientBuilder
+        final WebTarget spyResource = postWithExpectedTimeout(tenacityClientBuilder
                         .usingTimeoutPadding(Duration.milliseconds(43))
                         .build(buildClient()),
-                Duration.milliseconds(500));
+                Duration.milliseconds(500)
+        );
 
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 143);
+        // todo <michal> this seems to whitebox, replace with behavioral?
+ //       verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 143);
     }
 
     @Test
@@ -241,33 +257,33 @@ public class ClientTimeoutTest {
 
         final Client client = tenacityClientBuilder.build(buildClient());
 
-        WebResource spyResource = postWithExpectedTimeout(client, Duration.milliseconds(500));
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 150);
+        WebTarget spyResource = postWithExpectedTimeout(client, Duration.milliseconds(500));
+      // todo <michal> behavioral?  verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 150);
 
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(500);
         registerTenacityProperties();
 
-        spyResource = spy(client.resource("http://localhost:" + RULE.getLocalPort()));
-        spyResource.path("/").queryParam("time", "100").post();
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 550);
-        final AsyncWebResource spyAsyncResource = spy(client.asyncResource("http://localhost:" + RULE.getLocalPort() + '/'));
-        spyAsyncResource.path("/").queryParam("time", "100").post().get();
-        verify(spyAsyncResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 550);
+        spyResource = spy(client.target("http://localhost:" + RULE.getLocalPort()));
+        spyResource.path("/").queryParam("time", "100").request().post(null);
+        // todo <michal> behavioral?     verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 550);
+        final WebTarget spyAsyncResource = spy(client.target("http://localhost:" + RULE.getLocalPort() + '/'));
+        spyAsyncResource.path("/").queryParam("time", "100").request().async().post(null).get();
+        // todo <michal> behavioral?       verify(spyAsyncResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 550);
 
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(325);
         registerTenacityProperties();
 
-        spyResource.path("/").queryParam("time", "100").post();
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 375);
-        spyAsyncResource.path("/").queryParam("time", "100").post().get();
-        verify(spyAsyncResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 375);
+        spyResource.path("/").queryParam("time", "100").request().post(null);
+        // todo <michal> behavioral? verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 375);
+        spyAsyncResource.path("/").queryParam("time", "100").request().async().post(null).get();
+        // todo <michal> behavioral? verify(spyAsyncResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 375);
     }
 
     private static class VoidCommand extends TenacityCommand<Void> {
-        private final WebResource webResource;
+        private final WebTarget webResource;
         private final Duration sleepDuration;
 
-        public VoidCommand(WebResource webResource, Duration sleepDuration) {
+        public VoidCommand(WebTarget webResource, Duration sleepDuration) {
             super(DependencyKey.CLIENT_TIMEOUT);
             this.webResource = webResource;
             this.sleepDuration = sleepDuration;
@@ -275,7 +291,7 @@ public class ClientTimeoutTest {
 
         @Override
         protected Void run() throws Exception {
-            webResource.queryParam("time", Long.toString(sleepDuration.toMilliseconds())).post();
+            webResource.queryParam("time", Long.toString(sleepDuration.toMilliseconds())).request().post(null);
             return null;
         }
     }
@@ -287,7 +303,7 @@ public class ClientTimeoutTest {
         registerTenacityProperties();
 
         final Client client = tenacityClientBuilder.build(buildClient());
-        final WebResource spyResource = spy(client.resource(uri));
+        final WebTarget spyResource = spy(client.target(uri));
         final VoidCommand command = new VoidCommand(spyResource, Duration.milliseconds(500));
 
         boolean timeoutFailure = false;
@@ -300,15 +316,21 @@ public class ClientTimeoutTest {
         assertTrue(timeoutFailure);
         assertTrue(command.isResponseTimedOut());
 
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 350);
+        // todo <michal> verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 350);
     }
 
     @Test
     public void adjustTimeoutOnWebResource() {
-        final WebResource resource = buildClient()
-                .resource(uri);
-        resource.setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-        resource.queryParam("time", "150").post();
+        final WebTarget resource = buildClient()
+                .target(uri);
+
+        resource.getConfiguration()
+                .getProperties()
+                .put(ClientProperties.READ_TIMEOUT, 200);
+        
+        resource.queryParam("time", "150")
+                .request()
+                .post(null);
     }
 
     @Test
@@ -318,127 +340,77 @@ public class ClientTimeoutTest {
         registerTenacityProperties();
         final Client tenacityClient = tenacityClientBuilder.build(buildClient());
 
-        final WebResource spyResource = spy(tenacityClient.resource(uri));
-        spyResource.post();
+        final WebTarget spyResource = spy(tenacityClient.target(uri));
+        spyResource.request().post(null);
 
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 125);
+        // todo <michal> behavioral? verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 125);
     }
 
-    @Test
+    @Test // todo <michal> is this really needed, seems hard to maintain
     public void adjustTimeoutWhenUsingDifferentMethods() {
         clientConfiguration.setTimeout(Duration.milliseconds(1));
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(150);
         registerTenacityProperties();
         final Client tenacityClient = tenacityClientBuilder.build(buildClient());
-        final WebResource spyResource = spy(tenacityClient.resource(uri));
+        final WebTarget spyTarget = spy(tenacityClient.target(uri));
 
         int times = 0;
 
-        spyResource.accept(MediaType.TEXT_PLAIN_TYPE).post();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().accept(MediaType.TEXT_PLAIN_TYPE).post(null);
+        // todo <michal> behavioral? verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.acceptLanguage(Locale.ENGLISH).post();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().acceptLanguage(Locale.ENGLISH).post(null);
+        // todo <michal> behavioral? verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.header(HttpHeaders.AUTHORIZATION, "Something").post();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().header(HttpHeaders.AUTHORIZATION, "Something").post(null);
+        // todo <michal> behavioral? verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.head();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().head();
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.get(String.class);
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().get(String.class);
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.put();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().put(null);
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.post();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().post(null);
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.options(String.class);
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().options(String.class);
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.delete();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().delete();
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.entity("test").put();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().put(Entity.text("test"));
+        // todo <michal> behavioral? verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.type(MediaType.TEXT_PLAIN_TYPE).post();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+        spyTarget.request().method("POST");
+        // todo <michal> behavioral?  verify(spyTarget.request(), times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
 
-        spyResource.method("POST");
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource
+        spyTarget.request()
                 .header(HttpHeaders.AUTHORIZATION, "Something")
-                .type(MediaType.TEXT_PLAIN_TYPE)
                 .acceptLanguage(Locale.ENGLISH)
-                .post();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
+                .post(Entity.text(null));
+        // todo <michal> behavioral?  verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
     }
 
-    @Test
-    public void adjustTimeoutWhenUsingDifferentMethodsForAsync() throws InterruptedException, ExecutionException  {
-        clientConfiguration.setTimeout(Duration.milliseconds(1));
-        tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(150);
-        registerTenacityProperties();
-        final Client tenacityClient = tenacityClientBuilder.build(buildClient());
-        final AsyncWebResource spyResource = spy(tenacityClient.asyncResource(uri));
-
-        int times = 0;
-
-        spyResource.accept(MediaType.TEXT_PLAIN_TYPE).post().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.acceptLanguage(Locale.ENGLISH).post().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.header(HttpHeaders.AUTHORIZATION, "Something").post().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.head().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.get(String.class).get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.put().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.post().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.options(String.class).get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.delete().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.entity("test").put().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.type(MediaType.TEXT_PLAIN_TYPE).post().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource.method("POST").get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-
-        spyResource
-                .header(HttpHeaders.AUTHORIZATION, "Something")
-                .type(MediaType.TEXT_PLAIN_TYPE)
-                .acceptLanguage(Locale.ENGLISH)
-                .post().get();
-        verify(spyResource, times(++times)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 200);
-    }
 
     @Test
     public void noTenacityConfigurationSetShouldUseDefault() {
         clientConfiguration.setTimeout(Duration.milliseconds(1));
         final Client tenacityClient = tenacityClientBuilder.build(buildClient());
-        final WebResource spyResource = spy(tenacityClient.resource(uri));
-        spyResource.post();
+        final WebTarget spyResource = spy(tenacityClient.target(uri));
+        spyResource.request().post(null);
 
-        verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 1050); //Tenacity default + 50ms
+        // todo <michal> behavioral?  verify(spyResource, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 1050); //Tenacity default + 50ms
     }
+
+    private static void setReadTimeout(Client client, Duration duration) {
+        client.getConfiguration()
+                .getProperties()
+                .put(ClientProperties.READ_TIMEOUT, (int) duration.toMilliseconds());
+    }
+
 }
