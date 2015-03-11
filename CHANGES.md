@@ -1,7 +1,7 @@
 0.5.0
 --------------
 * [1.4.0 Hystrix](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-140-maven-central-bintray)
-* TenacityObservableCommand is now available. This is _NOT_ executed on a separate thread, but instead leverages the semaphore-isolated execution strategy. It does support timeouts, and these are handled by
+* TenacityObservableCommand is now available. This is _NOT_ executed on a separate threadpool, like TenacityCommands do, but instead leverage the [semaphore-isolated](https://github.com/Netflix/Hystrix/wiki/Configuration#thread-or-semaphore) execution strategy. It does support timeouts, and these are handled by
   a separate thread `HystrixTimer`. In short, these timeouts will behave exactly like they did with the thread-isolated execution strategy.
   Here you can read more about [Reactive Commands](https://github.com/Netflix/Hystrix/wiki/How-To-Use#reactive-commands)
 
