@@ -41,6 +41,9 @@ public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeEx
             case REJECTED_SEMAPHORE_FALLBACK:
                 return true;
             case COMMAND_EXCEPTION:
+                //TODO: Remove this and set to false by default
+                //SocketTimeoutExceptions should be fixed by the application if they are being thrown within the context
+                //of a TenacityCommand
                 return exception.getCause() instanceof SocketTimeoutException;
             default:
                 return false;
