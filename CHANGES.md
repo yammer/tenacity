@@ -4,8 +4,7 @@
 * TenacityObservableCommand is now available. This is _NOT_ executed on a separate thread, but instead leverages the semaphore-isolated execution strategy. It does support timeouts, and these are handled by
   a separate thread `HystrixTimer`. In short, these timeouts will behave exactly like they did with the thread-isolated execution strategy.
 
-
-0.4.5-SNAPSHOT
+0.4.5
 --------------
 * Added `TenacityJerseyClient` and `TenacityJerseyClientBuilder` to reduce configuration complexity when using Tenacity
   and `JerseyClient`. At the moment these two have competing timeout configurations that can end up looking like application exceptions
