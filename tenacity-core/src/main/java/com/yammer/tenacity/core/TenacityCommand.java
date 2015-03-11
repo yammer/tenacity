@@ -6,9 +6,13 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnType> {
     protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
-        super(HystrixCommand.Setter.withGroupKey(commandGroupKeyFrom("TENACITY"))
+        super(HystrixCommand.Setter.withGroupKey(tenacityGroupKey())
                 .andCommandKey(tenacityPropertyKey)
                 .andThreadPoolKey(tenacityPropertyKey));
+    }
+
+    static HystrixCommandGroupKey tenacityGroupKey() {
+        return commandGroupKeyFrom("TENACITY");
     }
 
     public static HystrixCommandGroupKey commandGroupKeyFrom(String key) {
