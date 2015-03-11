@@ -27,6 +27,6 @@ public class TenacityPropertyStore {
                     commandProperties.circuitBreakerErrorThresholdPercentage().get(),
                     commandProperties.metricsRollingStatisticalWindowInMilliseconds().get(),
                     commandProperties.metricsRollingStatisticalWindowBuckets().get()),
-                commandProperties.executionIsolationThreadTimeoutInMilliseconds().get());
+                commandProperties.executionTimeoutInMilliseconds().get());
     }
 }

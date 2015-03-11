@@ -3,16 +3,12 @@ package com.yammer.tenacity.core;
 import com.netflix.hystrix.*;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import rx.Observable;
 
-public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnType> {
-    protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
-        super(HystrixCommand.Setter.withGroupKey(tenacityGroupKey())
-                .andCommandKey(tenacityPropertyKey)
-                .andThreadPoolKey(tenacityPropertyKey));
-    }
-
-    static HystrixCommandGroupKey tenacityGroupKey() {
-        return commandGroupKeyFrom("TENACITY");
+public abstract class TenacityObservableCommand<ReturnType> extends HystrixObservableCommand<ReturnType> {
+    protected TenacityObservableCommand(TenacityPropertyKey tenacityPropertyKey) {
+        super(HystrixObservableCommand.Setter.withGroupKey(TenacityCommand.tenacityGroupKey())
+                .andCommandKey(tenacityPropertyKey));
     }
 
     public static HystrixCommandGroupKey commandGroupKeyFrom(String key) {
@@ -60,5 +56,5 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
     }
 
     @Override
-    protected abstract ReturnType run() throws Exception;
+    protected abstract Observable<ReturnType> construct();
 }

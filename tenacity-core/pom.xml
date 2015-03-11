@@ -29,6 +29,10 @@
             <artifactId>hystrix-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.netflix.archaius</groupId>
+            <artifactId>archaius-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.netflix.hystrix</groupId>
             <artifactId>hystrix-codahale-metrics-publisher</artifactId>
          </dependency>
@@ -40,6 +44,10 @@
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
         </dependency>
     </dependencies>
 </project>

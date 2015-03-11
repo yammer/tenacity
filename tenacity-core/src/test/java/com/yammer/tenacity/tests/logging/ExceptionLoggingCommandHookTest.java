@@ -46,7 +46,7 @@ public class ExceptionLoggingCommandHookTest {
     public void loggingInFirstLoggerBlocksOthers() throws Exception {
         when(firstLogger.canHandleException(exception)).thenReturn(true);
 
-        assertEquals(exception, hook.onRunError(failedCommand, exception));
+        assertEquals(exception, hook.onExecutionError(failedCommand, exception));
 
         verify(firstLogger, times(1)).log(exception, failedCommand);
         verify(secondLogger, times(0)).canHandleException(exception);
@@ -60,7 +60,7 @@ public class ExceptionLoggingCommandHookTest {
         when(firstLogger.canHandleException(exception)).thenReturn(false);
         when(secondLogger.canHandleException(exception)).thenReturn(true);
 
-        assertEquals(exception, hook.onRunError(failedCommand, exception));
+        assertEquals(exception, hook.onExecutionError(failedCommand, exception));
 
         verify(firstLogger, times(0)).log(exception, failedCommand);
         verify(secondLogger, times(1)).log(exception, failedCommand);
@@ -74,7 +74,7 @@ public class ExceptionLoggingCommandHookTest {
         when(secondLogger.canHandleException(exception)).thenReturn(false);
         when(thirdLogger.canHandleException(exception)).thenReturn(true);
 
-        assertEquals(exception, hook.onRunError(failedCommand, exception));
+        assertEquals(exception, hook.onExecutionError(failedCommand, exception));
 
         verify(firstLogger, times(0)).log(exception, failedCommand);
         verify(secondLogger, times(0)).log(exception, failedCommand);
@@ -87,7 +87,7 @@ public class ExceptionLoggingCommandHookTest {
         when(secondLogger.canHandleException(exception)).thenReturn(false);
         when(thirdLogger.canHandleException(exception)).thenReturn(false);
 
-        assertEquals(exception, hook.onRunError(failedCommand, exception));
+        assertEquals(exception, hook.onExecutionError(failedCommand, exception));
 
         verify(firstLogger, times(0)).log(exception, failedCommand);
         verify(secondLogger, times(0)).log(exception, failedCommand);

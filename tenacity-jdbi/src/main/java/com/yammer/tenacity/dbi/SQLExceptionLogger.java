@@ -2,8 +2,9 @@ package com.yammer.tenacity.dbi;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
-import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixInvokableInfo;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
+
 import java.sql.SQLException;
 
 public class SQLExceptionLogger extends ExceptionLogger<SQLException> {
@@ -15,12 +16,12 @@ public class SQLExceptionLogger extends ExceptionLogger<SQLException> {
     }
     
     @Override
-    protected <T> void logException(SQLException exception, HystrixCommand<T> command) {
+    protected <T> void logException(SQLException exception, HystrixInvokableInfo<T> command) {
         SQL_ERROR.mark();
         logSQLException(exception, command);
     }
 
-    <T> void logSQLException(SQLException exception, HystrixCommand<T> command) {
+    <T> void logSQLException(SQLException exception, HystrixInvokableInfo<T> command) {
         for (Throwable throwable : exception) {
             logger.error("SQL problem running command: {}:{}", command.getCommandKey(), command.getClass().getSimpleName(), throwable);
         }

@@ -3,6 +3,7 @@ package com.yammer.tenacity.core.config;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 public class ThreadPoolConfiguration {
 
@@ -96,32 +97,25 @@ public class ThreadPoolConfiguration {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ThreadPoolConfiguration that = (ThreadPoolConfiguration) o;
-
-        if (keepAliveTimeMinutes != that.keepAliveTimeMinutes) return false;
-        if (maxQueueSize != that.maxQueueSize) return false;
-        if (metricsRollingStatisticalWindowBuckets != that.metricsRollingStatisticalWindowBuckets) return false;
-        if (metricsRollingStatisticalWindowInMilliseconds != that.metricsRollingStatisticalWindowInMilliseconds)
-            return false;
-        if (queueSizeRejectionThreshold != that.queueSizeRejectionThreshold) return false;
-        if (threadPoolCoreSize != that.threadPoolCoreSize) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(threadPoolCoreSize, keepAliveTimeMinutes, maxQueueSize, queueSizeRejectionThreshold, metricsRollingStatisticalWindowInMilliseconds, metricsRollingStatisticalWindowBuckets);
     }
 
     @Override
-    public int hashCode() {
-        int result = threadPoolCoreSize;
-        result = 31 * result + keepAliveTimeMinutes;
-        result = 31 * result + maxQueueSize;
-        result = 31 * result + queueSizeRejectionThreshold;
-        result = 31 * result + metricsRollingStatisticalWindowInMilliseconds;
-        result = 31 * result + metricsRollingStatisticalWindowBuckets;
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final ThreadPoolConfiguration other = (ThreadPoolConfiguration) obj;
+        return Objects.equals(this.threadPoolCoreSize, other.threadPoolCoreSize)
+                && Objects.equals(this.keepAliveTimeMinutes, other.keepAliveTimeMinutes)
+                && Objects.equals(this.maxQueueSize, other.maxQueueSize)
+                && Objects.equals(this.queueSizeRejectionThreshold, other.queueSizeRejectionThreshold)
+                && Objects.equals(this.metricsRollingStatisticalWindowInMilliseconds, other.metricsRollingStatisticalWindowInMilliseconds)
+                && Objects.equals(this.metricsRollingStatisticalWindowBuckets, other.metricsRollingStatisticalWindowBuckets);
     }
 
     @Override

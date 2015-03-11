@@ -1,7 +1,8 @@
 package com.yammer.tenacity.core.logging;
 
 import com.google.common.collect.ImmutableList;
-import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixInvokable;
+import com.netflix.hystrix.HystrixInvokableInfo;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 
 import java.util.List;
@@ -39,12 +40,12 @@ public class ExceptionLoggingCommandHook extends HystrixCommandExecutionHook {
         this.exceptionLoggers = ImmutableList.copyOf(exceptionLoggers);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> Exception onRunError(HystrixCommand<T> commandInstance, Exception exception) {
-
+    public <T> Exception onExecutionError(HystrixInvokable<T> commandInstance, Exception exception) {
         for (ExceptionLogger<? extends Exception> logger: exceptionLoggers) {
-            if (logger.canHandleException(exception)) {
-                logger.log(exception, commandInstance);
+            if (logger.canHandleException(exception) && isHystrixInvokableInfo(commandInstance)) {
+                logger.log(exception, (HystrixInvokableInfo<T>)commandInstance);
                 return exception;
             }
         }
@@ -52,4 +53,7 @@ public class ExceptionLoggingCommandHook extends HystrixCommandExecutionHook {
         return exception;
     }
 
+    private <T> boolean isHystrixInvokableInfo(HystrixInvokable<T> commandInstance) {
+        return commandInstance instanceof HystrixInvokableInfo;
+    }
 }

@@ -5,17 +5,18 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
+import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
-import io.dropwizard.testing.junit.ResourceTestRule;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import java.util.concurrent.TimeoutException;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class TenacityExceptionMapperTest {

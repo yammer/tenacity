@@ -5,7 +5,6 @@ import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.Configuration;
 
-import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Collections;
 import java.util.Map;
 

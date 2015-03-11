@@ -2,6 +2,7 @@ package com.yammer.tenacity.core.config;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Objects;
 
 public class CircuitBreakerConfiguration {
     @Min(value = 0)
@@ -80,29 +81,23 @@ public class CircuitBreakerConfiguration {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CircuitBreakerConfiguration that = (CircuitBreakerConfiguration) o;
-
-        if (errorThresholdPercentage != that.errorThresholdPercentage) return false;
-        if (metricsRollingStatisticalWindowBuckets != that.metricsRollingStatisticalWindowBuckets) return false;
-        if (metricsRollingStatisticalWindowInMilliseconds != that.metricsRollingStatisticalWindowInMilliseconds)
-            return false;
-        if (requestVolumeThreshold != that.requestVolumeThreshold) return false;
-        if (sleepWindowInMillis != that.sleepWindowInMillis) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(requestVolumeThreshold, sleepWindowInMillis, errorThresholdPercentage, metricsRollingStatisticalWindowInMilliseconds, metricsRollingStatisticalWindowBuckets);
     }
 
     @Override
-    public int hashCode() {
-        int result = requestVolumeThreshold;
-        result = 31 * result + sleepWindowInMillis;
-        result = 31 * result + errorThresholdPercentage;
-        result = 31 * result + metricsRollingStatisticalWindowInMilliseconds;
-        result = 31 * result + metricsRollingStatisticalWindowBuckets;
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final CircuitBreakerConfiguration other = (CircuitBreakerConfiguration) obj;
+        return Objects.equals(this.requestVolumeThreshold, other.requestVolumeThreshold)
+                && Objects.equals(this.sleepWindowInMillis, other.sleepWindowInMillis)
+                && Objects.equals(this.errorThresholdPercentage, other.errorThresholdPercentage)
+                && Objects.equals(this.metricsRollingStatisticalWindowInMilliseconds, other.metricsRollingStatisticalWindowInMilliseconds)
+                && Objects.equals(this.metricsRollingStatisticalWindowBuckets, other.metricsRollingStatisticalWindowBuckets);
     }
 }

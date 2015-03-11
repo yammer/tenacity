@@ -3,9 +3,10 @@ package com.yammer.tenacity.dbi;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Throwables;
-import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixInvokableInfo;
 import com.yammer.tenacity.core.logging.ExceptionLogger;
 import org.skife.jdbi.v2.exceptions.DBIException;
+
 import java.sql.SQLException;
 
 public class DBIExceptionLogger extends ExceptionLogger<DBIException> {
@@ -24,7 +25,7 @@ public class DBIExceptionLogger extends ExceptionLogger<DBIException> {
 
     @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Override
-    protected <T> void logException(DBIException exception, HystrixCommand<T> command) {
+    protected <T> void logException(DBIException exception, HystrixInvokableInfo<T> command) {
         DBI_ERRORS.mark();
         final Throwable cause = Throwables.getRootCause(exception);
         if (cause instanceof SQLException) {

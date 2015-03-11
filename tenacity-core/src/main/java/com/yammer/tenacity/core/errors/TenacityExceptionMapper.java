@@ -8,6 +8,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.net.SocketTimeoutException;
+import java.util.Objects;
 
 public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeException> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityExceptionMapper.class);
@@ -58,19 +59,19 @@ public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeEx
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TenacityExceptionMapper that = (TenacityExceptionMapper) o;
-
-        if (statusCode != that.statusCode) return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(statusCode);
     }
 
     @Override
-    public int hashCode() {
-        return statusCode;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final TenacityExceptionMapper other = (TenacityExceptionMapper) obj;
+        return Objects.equals(this.statusCode, other.statusCode);
     }
 }

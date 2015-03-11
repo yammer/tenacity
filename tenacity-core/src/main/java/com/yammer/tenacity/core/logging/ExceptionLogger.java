@@ -1,6 +1,6 @@
 package com.yammer.tenacity.core.logging;
 
-import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.HystrixInvokableInfo;
 import io.dropwizard.util.Generics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ public abstract class ExceptionLogger<E extends Exception> {
      * Actually log the exception
      * @throws IllegalStateException it relieves an exception that it can't log
      */
-    public <T> void log(Exception exception, HystrixCommand<T> commandInstance) {
+    public <T> void log(Exception exception, HystrixInvokableInfo<T> commandInstance) {
         checkState(canHandleException(exception));
 
         logException((E) exception, commandInstance);
@@ -50,5 +50,5 @@ public abstract class ExceptionLogger<E extends Exception> {
      * @param exception the exception that you should log
      * @param commandInstance you get access to the command that failed, so you can specify what kind it was
      */
-    protected abstract <T> void logException(E exception, HystrixCommand<T> commandInstance);
+    protected abstract <T> void logException(E exception, HystrixInvokableInfo<T> commandInstance);
 }

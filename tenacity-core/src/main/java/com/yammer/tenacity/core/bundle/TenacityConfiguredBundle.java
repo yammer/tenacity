@@ -5,6 +5,7 @@ import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServl
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
+import com.yammer.tenacity.core.core.ManagedHystrix;
 import com.yammer.tenacity.core.metrics.YammerMetricsPublisher;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
@@ -91,6 +92,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
 
     protected void configureHystrix(Environment environment) {
         HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
+        environment.lifecycle().manage(new ManagedHystrix());
         environment.servlets()
                 .addServlet("hystrix-metrics", new HystrixMetricsStreamServlet())
                 .addMapping("/tenacity/metrics.stream");

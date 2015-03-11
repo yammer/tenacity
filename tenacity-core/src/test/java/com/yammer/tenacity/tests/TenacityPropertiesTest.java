@@ -68,7 +68,7 @@ public class TenacityPropertiesTest {
         assertEquals(threadIsolationCommand.execute(), "value");
 
         final HystrixCommandProperties commandProperties = threadIsolationCommand.getCommandProperties();
-        assertEquals(commandProperties.executionIsolationThreadTimeoutInMilliseconds().get().intValue(), 987);
+        assertEquals(commandProperties.executionTimeoutInMilliseconds().get().intValue(), 987);
     }
 
     @Test
@@ -90,10 +90,10 @@ public class TenacityPropertiesTest {
 
         final TenacitySuccessCommand successCommand = new TenacitySuccessCommand(DependencyKey.OVERRIDE);
 
-        assertNotEquals(new TenacitySuccessCommand().getCommandProperties().executionIsolationThreadTimeoutInMilliseconds(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+        assertNotEquals(new TenacitySuccessCommand().getCommandProperties().executionTimeoutInMilliseconds(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
 
         final HystrixCommandProperties commandProperties = successCommand.getCommandProperties();
-        assertEquals(commandProperties.executionIsolationThreadTimeoutInMilliseconds().get().intValue(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+        assertEquals(commandProperties.executionTimeoutInMilliseconds().get().intValue(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
         assertEquals(commandProperties.circuitBreakerErrorThresholdPercentage().get().intValue(), overrideConfiguration.getCircuitBreaker().getErrorThresholdPercentage());
         assertEquals(commandProperties.circuitBreakerRequestVolumeThreshold().get().intValue(), overrideConfiguration.getCircuitBreaker().getRequestVolumeThreshold());
         assertEquals(commandProperties.circuitBreakerSleepWindowInMilliseconds().get().intValue(), overrideConfiguration.getCircuitBreaker().getSleepWindowInMillis());
