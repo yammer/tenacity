@@ -57,7 +57,7 @@ public class TenacityCommandFailureCauseTest {
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertFalse(result.get());
+        assertTrue(result.get());
     }
 
     @Test

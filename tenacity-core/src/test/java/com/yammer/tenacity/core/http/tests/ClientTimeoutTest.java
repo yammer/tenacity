@@ -25,6 +25,7 @@ import io.dropwizard.util.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -191,14 +192,6 @@ public class ClientTimeoutTest {
 
     }
 
-    @Test
-    public void noTenacityConfigurationSetShouldUseDefault() {
-        clientConfiguration.setTimeout(Duration.milliseconds(1));
-        final Client tenacityClient = tenacityClientBuilder.build(buildClient());
-
-        tenacityClient.target(uri).request().post(null);
-    }
-    
     @Test
     public void regularClientTimesOut() {
         clientConfiguration.setTimeout(Duration.milliseconds(1));

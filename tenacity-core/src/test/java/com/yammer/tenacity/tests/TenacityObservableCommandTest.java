@@ -16,9 +16,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class TenacityObservableCommandTest {
     @Rule
@@ -28,11 +26,11 @@ public class TenacityObservableCommandTest {
         try {
             assertTrue(timeoutCommand.observe().toBlocking().single());
         } catch (HystrixRuntimeException err) {
-            assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
+            assertEquals(err.getFailureType(), HystrixRuntimeException.FailureType.TIMEOUT);
         }
 
-        assertThat(timeoutCommand.isResponseTimedOut()).isTrue();
-        assertThat(timeoutCommand.getMetrics().getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT)).isEqualTo(1);
+        assertEquals(timeoutCommand.isResponseTimedOut(), true);
+        assertEquals(timeoutCommand.getMetrics().getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT), 1);
     }
 
     @Test
