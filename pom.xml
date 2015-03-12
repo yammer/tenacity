@@ -64,6 +64,12 @@
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-client</artifactId>
                 <version>${dropwizard.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
