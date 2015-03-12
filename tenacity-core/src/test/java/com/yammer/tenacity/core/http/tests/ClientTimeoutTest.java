@@ -218,11 +218,13 @@ public class ClientTimeoutTest {
             this.sleepDuration = sleepDuration;
         }
 
+
         @Override
         protected Void run() throws Exception {
             postSettingTheTimeoutOnResource(webTarget, sleepDuration);
             return null;
         }
+ 
     }
 
     private static void postSettingTheTimeoutOnResource(WebTarget webTarget, Duration timeout) {
