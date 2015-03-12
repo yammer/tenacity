@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
 
 public class TenacityWebTarget implements WebTarget {
     private final WebTarget delegate;
@@ -35,29 +36,22 @@ public class TenacityWebTarget implements WebTarget {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        TenacityWebTarget that = (TenacityWebTarget) o;
-
-        if (delegate != null ? !delegate.equals(that.delegate) : that.delegate != null)
-            return false;
-        if (tenacityPropertyKey != null ? !tenacityPropertyKey.equals(that.tenacityPropertyKey) : that.tenacityPropertyKey != null)
-            return false;
-        //noinspection RedundantIfStatement
-        if (timeoutPadding != null ? !timeoutPadding.equals(that.timeoutPadding) : that.timeoutPadding != null)
-            return false;
-
-        return true;
+    public int hashCode() {
+        return Objects.hash(delegate, tenacityPropertyKey, timeoutPadding);
     }
 
     @Override
-    public int hashCode() {
-        int result = delegate != null ? delegate.hashCode() : 0;
-        result = 31 * result + (tenacityPropertyKey != null ? tenacityPropertyKey.hashCode() : 0);
-        result = 31 * result + (timeoutPadding != null ? timeoutPadding.hashCode() : 0);
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final TenacityWebTarget other = (TenacityWebTarget) obj;
+        return Objects.equals(this.delegate, other.delegate)
+                && Objects.equals(this.tenacityPropertyKey, other.tenacityPropertyKey)
+                && Objects.equals(this.timeoutPadding, other.timeoutPadding);
     }
 
     @Override
