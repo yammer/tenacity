@@ -21,22 +21,11 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
-import org.glassfish.jersey.client.ClientProperties;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.Client;
@@ -215,11 +204,22 @@ public class ClientTimeoutTest {
             this.sleepDuration = sleepDuration;
         }
 
+
         @Override
         protected Void run() throws Exception {
             postSettingTheTimeoutOnResource(webTarget, sleepDuration);
             return null;
         }
+    }
+
+    @Test
+    public void noTenacityConfigurationSetShouldUseDefault() {
+        // this establishes the socket timeout on the http client (connectionTimeout is 100 and unmodified and connectionRequestTimeout is 500)
+        clientConfiguration.setTimeout(Duration.milliseconds(1));
+        final Client tenacityClient = tenacityClientBuilder.build(buildClient()); // this casues the property to be udpated, but so far does not seem to propagate in any way to the http client
+//        final WebTarget spyTarget = spy(tenacityClient.target(uri));
+//        spyTarget.request().post(null);
+            tenacityClient.target(uri).request().post(null);
     }
 
     private static void postSettingTheTimeoutOnResource(WebTarget webTarget, Duration timeout) {
@@ -228,5 +228,4 @@ public class ClientTimeoutTest {
                 .request()
                 .post(Entity.text(null));
     }
-
 }

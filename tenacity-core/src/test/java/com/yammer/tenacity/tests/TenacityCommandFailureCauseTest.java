@@ -21,9 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class tests that the cause for returning a fallback is available from within the fallback execution.
@@ -48,7 +47,7 @@ public class TenacityCommandFailureCauseTest {
     @Test
     public void timedOutAvailableInGetFallbackUsingExecute() {
         setUpTenacityCommand(2, 10);
-        assertThat(timedOutCommand(20).execute(), is(equalTo(true)));
+        assertTrue(timedOutCommand(20).execute());
     }
 
     @Test(timeout = 1000)
@@ -58,14 +57,14 @@ public class TenacityCommandFailureCauseTest {
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get(), is(equalTo(false)));
+        assertFalse(result.get());
     }
 
     @Test
     public void timedOutAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 10);
         final Observable<Boolean> result = timedOutCommand(20).observe();
-        assertThat(result.toBlocking().single(), is(equalTo(true)));
+        assertTrue(result.toBlocking().single());
     }
 
 
@@ -76,7 +75,7 @@ public class TenacityCommandFailureCauseTest {
     @Test
     public void thrownExceptionAvailableInGetFallbackUsingExecute() {
         setUpTenacityCommand(2, 100);
-        assertThat(exceptionCommand().execute(), is(equalTo(true)));
+        assertTrue(exceptionCommand().execute());
     }
 
     @Test(timeout = 1000)
@@ -86,14 +85,14 @@ public class TenacityCommandFailureCauseTest {
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get(), is(equalTo(true)));
+        assertTrue(result.get());
     }
 
     @Test
     public void thrownExceptionAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 100);
         final Observable<Boolean> result = exceptionCommand().observe();
-        assertThat(result.toBlocking().single(), is(equalTo(true)));
+        assertTrue(result.toBlocking().single());
     }
 
 
@@ -108,7 +107,7 @@ public class TenacityCommandFailureCauseTest {
         final TenacityCommand<?> exceptionCommand = exceptionCommand();
         exceptionCommand.execute();
         while (!exceptionCommand.isCircuitBreakerOpen());
-        assertThat(shortCircuitedCommand().execute(), is(equalTo(true)));
+        assertTrue(shortCircuitedCommand().execute());
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -122,7 +121,7 @@ public class TenacityCommandFailureCauseTest {
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get(), is(equalTo(true)));
+        assertTrue(result.get());
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -133,7 +132,7 @@ public class TenacityCommandFailureCauseTest {
         exceptionCommand.execute();
         while (!exceptionCommand.isCircuitBreakerOpen()) ;
         final Observable<Boolean> result = shortCircuitedCommand().observe();
-        assertThat(result.toBlocking().single(), is(equalTo(true)));
+        assertTrue(result.toBlocking().single());
     }
 
 
@@ -168,7 +167,7 @@ public class TenacityCommandFailureCauseTest {
             }
         }
         executorService.shutdownNow();
-        assertThat(rejectionFound, is(equalTo(true)));
+        assertTrue(rejectionFound);
     }
 
     @Test(timeout = 1000)
@@ -188,7 +187,7 @@ public class TenacityCommandFailureCauseTest {
                 rejectionFound = true;
             }
         }
-        assertThat(rejectionFound, is(equalTo(true)));
+        assertTrue(rejectionFound);
     }
 
     @Test
@@ -205,7 +204,7 @@ public class TenacityCommandFailureCauseTest {
                 rejectionFound = true;
             }
         }
-        assertThat(rejectionFound, is(equalTo(true)));
+        assertTrue(rejectionFound);
     }
 
 
