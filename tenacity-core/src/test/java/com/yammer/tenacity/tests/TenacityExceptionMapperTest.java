@@ -8,18 +8,11 @@ import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.client.ResponseProcessingException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.concurrent.TimeoutException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
@@ -71,8 +64,8 @@ public class TenacityExceptionMapperTest {
         } catch (HystrixRuntimeException err) {
             fail("Should not have thrown HystrixRuntimeException");
         } catch (ClientErrorException err) {
-            assertThat(err.getResponse().getStatus(),
-                    is(equalTo(statusCode)));
+            assertThat(err.getResponse().getStatus())
+                    .isEqualTo(statusCode);
         }
 
         verify(mockFactory, times(1)).from(anyString());
@@ -88,8 +81,8 @@ public class TenacityExceptionMapperTest {
                     .request()
                     .get(String.class);
         } catch (InternalServerErrorException err) {
-            assertThat(err.getResponse().getStatus(),
-                    is(equalTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())));
+            assertThat(err.getResponse().getStatus())
+                    .isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
 
         verify(mockFactory, times(1)).from(anyString());
