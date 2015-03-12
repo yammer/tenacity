@@ -81,7 +81,7 @@ When execution fails, it is possible to gracefully degrade with the use of [fall
 Execution Flow
 --------------
 
-![Alt text](https://raw.github.com/wiki/Netflix/Hystrix/images/hystrix-flow-chart-original.png)
+![Alt text](https://raw.githubusercontent.com/wiki/Netflix/Hystrix/images/hystrix-command-flow-chart.png)
 
 
 TenacityCommand Constructor Arguments
