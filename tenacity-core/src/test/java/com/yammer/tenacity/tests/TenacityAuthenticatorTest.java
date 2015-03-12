@@ -1,6 +1,5 @@
 package com.yammer.tenacity.tests;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -47,10 +46,9 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.guava.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -129,10 +127,10 @@ public class TenacityAuthenticatorTest {
         });
 
         try {
-            assertThat(tenacityAuthenticator.authenticate("credentials"),
-                    is(equalTo(Optional.absent())));
+            assertThat(tenacityAuthenticator.authenticate("credentials"))
+                    .isAbsent();
         } catch (HystrixRuntimeException err) {
-            assertThat(err.getFailureType(), is(equalTo((HystrixRuntimeException.FailureType.TIMEOUT))));
+            assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
             throw err;
         }
     }
@@ -168,7 +166,7 @@ public class TenacityAuthenticatorTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer stuff")
                 .get(Response.class);
 
-        assertThat(response.getStatus(), is(equalTo((Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()))));
+        assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         verify(AuthenticatorApp.getMockAuthenticator(), times(1)).authenticate(any(String.class));
         verifyZeroInteractions(AuthenticatorApp.getTenacityContainerExceptionMapper());

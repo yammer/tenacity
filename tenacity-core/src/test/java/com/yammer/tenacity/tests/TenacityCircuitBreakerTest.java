@@ -8,11 +8,8 @@ import org.junit.Test;
 
 import java.net.URISyntaxException;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.core.Is.is;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class TenacityCircuitBreakerTest {
@@ -28,16 +25,14 @@ public class TenacityCircuitBreakerTest {
 
         final HystrixCommandMetrics sleepCommandMetrics = tenacityFailingCommand.getCommandMetrics();
         assertThat(sleepCommandMetrics
-                        .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT),
-                is(equalTo((0L)))
-        );
+                        .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
+                .isEqualTo(0L);
         assertThat(sleepCommandMetrics
-                        .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS),
-                is(equalTo((500L)))
-        );
+                        .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
+                .isEqualTo(500L);
         assertThat(sleepCommandMetrics
-                        .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED),
-                is(greaterThan(50L)));
+                        .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
+                .isGreaterThan(50L);
         assertFalse("Allow request should be false", tenacityFailingCommand.getCircuitBreaker().allowRequest());
         assertTrue("Circuit Breaker should be open", tenacityFailingCommand.isCircuitBreakerOpen());
     }
@@ -53,14 +48,14 @@ public class TenacityCircuitBreakerTest {
 
         final HystrixCommandMetrics sleepCommandMetrics = tenacityFailingCommand.getCommandMetrics();
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT),
-                is(equalTo((0L))));
+                .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
+                .isEqualTo(0L);
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS),
-                is(equalTo((10L))));
+                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
+                .isEqualTo(10L);
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED),
-                is(equalTo((0L))));
+                .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
+                .isEqualTo(0L);
         assertTrue("Allow request should be true", tenacityFailingCommand.getCircuitBreaker().allowRequest());
         assertFalse("Circuit Breaker should not be open", tenacityFailingCommand.isCircuitBreakerOpen());
     }
