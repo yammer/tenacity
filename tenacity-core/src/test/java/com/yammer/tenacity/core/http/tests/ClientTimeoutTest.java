@@ -125,7 +125,7 @@ public class ClientTimeoutTest {
     }
 
     @Test
-    public void tenacityClient_adds_padding_to_the_timeout() {
+    public void tenacityClientAddsPaddingToTheTimeout() {
         clientConfiguration.setTimeout(Duration.seconds(1));
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(480);
         registerTenacityProperties();
@@ -179,7 +179,7 @@ public class ClientTimeoutTest {
     }
 
     @Test
-    public void tenacity_configuration_overrides_default_configuration() {
+    public void tenacityConfigurationOverridesDefaultConfiguration() {
         clientConfiguration.setTimeout(Duration.milliseconds(1));
         final Client tenacityClient = tenacityClientBuilder.build(buildClient());
 
