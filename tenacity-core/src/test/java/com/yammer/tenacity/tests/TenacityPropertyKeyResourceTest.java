@@ -1,7 +1,6 @@
 package com.yammer.tenacity.tests;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 import io.dropwizard.testing.junit.ResourceTestRule;
@@ -10,11 +9,8 @@ import org.junit.Test;
 
 import javax.ws.rs.core.GenericType;
 import java.util.ArrayList;
-import java.util.List;
 
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.hamcrest.collection.IsIterableContainingInOrder.contains;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TenacityPropertyKeyResourceTest {
 
@@ -33,6 +29,7 @@ public class TenacityPropertyKeyResourceTest {
                         .request()
                         .get(new GenericType<ArrayList<DependencyKey>>() {
                         });
-        assertThat(returnedKeys, containsInAnyOrder((TenacityPropertyKey)DependencyKey.EXAMPLE, DependencyKey.SLEEP));
+        assertThat(returnedKeys)
+            .contains(DependencyKey.EXAMPLE, DependencyKey.SLEEP);
     }
 }

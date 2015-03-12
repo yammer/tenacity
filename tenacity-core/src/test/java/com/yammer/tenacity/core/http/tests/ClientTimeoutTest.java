@@ -23,22 +23,9 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 import org.glassfish.jersey.client.ClientProperties;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HEAD;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -416,7 +403,7 @@ public class ClientTimeoutTest {
         final Client tenacityClient = tenacityClientBuilder.build(buildClient()); // this casues the property to be udpated, but so far does not seem to propagate in any way to the http client
 //        final WebTarget spyTarget = spy(tenacityClient.target(uri));
 //        spyTarget.request().post(null);
-        tenacityClient.target(uri).request().post(null);
+            tenacityClient.target(uri).request().post(null);
 
         // this row can be deleted - ultimately we don't care how it is done, but we want the timeout to be updated so that this test passes (we might want to add a timing out test)
         // todo <michal> behavioral?  verify(spyTarget, times(1)).setProperty(ClientConfig.PROPERTY_READ_TIMEOUT, 1050); //Tenacity default + 50ms

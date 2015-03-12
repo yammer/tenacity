@@ -8,12 +8,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNot.not;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.notNull;
 import static org.mockito.Mockito.*;
 
 public class TenacityConfigurationResourceTest {
@@ -39,6 +35,6 @@ public class TenacityConfigurationResourceTest {
                 .request()
                 .get(TenacityConfiguration.class);
 
-        assertThat(tenacityConfiguration, is(not(nullValue())));
+        assertThat(tenacityConfiguration).isNotNull();
     }
 }
