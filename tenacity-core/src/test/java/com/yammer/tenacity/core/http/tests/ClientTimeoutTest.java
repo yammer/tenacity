@@ -22,12 +22,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 
 import javax.ws.rs.DefaultValue;
@@ -233,5 +228,4 @@ public class ClientTimeoutTest {
                 .request()
                 .post(Entity.text(null));
     }
-
 }

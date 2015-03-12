@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -257,6 +256,7 @@ public class TenacityCommandFailureCauseTest {
             }
 
             class TenacityTestException extends Exception {
+                private static final long serialVersionUID = -122837737772919122L;
             }
         };
     }

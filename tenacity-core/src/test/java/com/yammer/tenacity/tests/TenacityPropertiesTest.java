@@ -70,7 +70,7 @@ public class TenacityPropertiesTest {
 
         final HystrixCommandProperties commandProperties = threadIsolationCommand.getCommandProperties();
         assertEquals(commandProperties.executionTimeoutInMilliseconds().get().intValue(), 987);
-        assertThat(commandProperties.executionIsolationThreadTimeoutInMilliseconds().get().intValue()).isEqualTo(987);
+        assertThat(commandProperties.executionTimeoutInMilliseconds().get().intValue()).isEqualTo(987);
     }
 
     @Test

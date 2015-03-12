@@ -30,7 +30,7 @@ public class TenacityWebTarget implements WebTarget {
     protected void setTimeoutWithTenacity() {
         delegate.property(ClientProperties.READ_TIMEOUT, Ints.checkedCast(TenacityCommand
                         .getCommandProperties(tenacityPropertyKey)
-                        .executionIsolationThreadTimeoutInMilliseconds()
+                        .executionTimeoutInMilliseconds()
                         .get() + timeoutPadding.toMilliseconds()));
     }
 

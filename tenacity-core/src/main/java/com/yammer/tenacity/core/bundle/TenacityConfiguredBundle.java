@@ -121,7 +121,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        final TenacityConfiguredBundle other = (TenacityConfiguredBundle) obj;
+        final TenacityConfiguredBundle<?> other = (TenacityConfiguredBundle) obj;
         return Objects.equals(this.tenacityBundleConfigurationFactory, other.tenacityBundleConfigurationFactory) &&
                 Objects.equals(this.executionHook, other.executionHook) &&
                 Objects.equals(this.exceptionMappers, other.exceptionMappers);
