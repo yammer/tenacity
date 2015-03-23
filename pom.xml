@@ -41,7 +41,7 @@
 
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>
-        <hystrix.version>1.4.0</hystrix.version>
+        <hystrix.version>1.4.1</hystrix.version>
 
         <!-- These transitive versions are determined by what Hystrix is dependent on -->
         <archaius.version>0.4.1</archaius.version>

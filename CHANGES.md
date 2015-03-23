@@ -1,3 +1,7 @@
+0.5.1
+--------------
+* [1.4.1 Hystrix](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-141-maven-central-bintray)
+
 0.5.0
 --------------
 * [1.4.0 Hystrix](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-140-maven-central-bintray)
