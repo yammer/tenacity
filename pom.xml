@@ -4,7 +4,7 @@
 
     <groupId>com.yammer.tenacity</groupId>
     <artifactId>tenacity-parent</artifactId>
-    <version>0.5.1-SNAPSHOT</version>
+    <version>0.5.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Tenacity</name>
@@ -41,7 +41,8 @@
 
     <properties>
         <dropwizard.version>0.8.0</dropwizard.version>
-        <hystrix.version>1.4.0</hystrix.version>
+        <hystrix.version>1.4.1</hystrix.version>
+
         <!-- These transitive versions are determined by what Hystrix is dependent on -->
         <archaius.version>0.4.1</archaius.version>
         <rxjava.version>1.0.7</rxjava.version>
