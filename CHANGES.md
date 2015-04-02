@@ -2,7 +2,7 @@
 --------------
 * Added `SemaphoreConfiguration`. This enables the ability to configure semaphore specific parameters for when dealing with
   this type of execution isolation strategy. This is mainly used when leveraging the `TenacityObservableCommand`.
-** [Breakerbox](https://github.com/yammer/breakerbox) will have a corresponding update to this release to enable configuration it as well.
+* [Breakerbox](https://github.com/yammer/breakerbox) will have a corresponding update to this release to enable configuration it as well.
 
 0.5.2
 --------------
