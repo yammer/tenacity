@@ -5,7 +5,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import java.util.Objects;
 
 public class ClientException extends RuntimeException{
-
+    private final static long serialVersionUID = -1237219873892173912L;
     private final int statusCode;
 
     public ClientException(String message, int statusCode) {

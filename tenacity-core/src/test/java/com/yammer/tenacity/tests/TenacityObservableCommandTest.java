@@ -1,10 +1,12 @@
 package com.yammer.tenacity.tests;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
 import com.yammer.tenacity.core.TenacityObservableCommand;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
+import com.yammer.tenacity.core.config.SemaphoreConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
@@ -96,5 +98,90 @@ public class TenacityObservableCommandTest {
                 }
             }).subscribeOn(Schedulers.computation());
         }
+    }
+
+    @Test
+    public void whenUsingObservableCommandsExperienceRejectionsIfSemaphoreLimitBreached() {
+        final TenacityConfiguration tenacityConfiguration = new TenacityConfiguration();
+        tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(3000);
+
+        new TenacityPropertyRegister(
+                ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OBSERVABLE_TIMEOUT, tenacityConfiguration),
+                new BreakerboxConfiguration())
+                .register();
+
+        final int defaultSemaphoreMaxConcurrentRequests = new SemaphoreConfiguration().getMaxConcurrentRequests();
+        final ImmutableList.Builder<Observable<Boolean>> observables = ImmutableList.builder();
+        for (int i = 0; i < defaultSemaphoreMaxConcurrentRequests * 2; ++i) {
+            final TimeoutObservableCommand command = new TimeoutObservableCommand(Duration.milliseconds(500));
+            observables.add(command.observe());
+        }
+
+        for (Observable<Boolean> observable : observables.build()) {
+            try {
+                assertTrue(observable.toBlocking().single());
+            } catch (HystrixRuntimeException err) {
+                assertThat(err).isInstanceOf(HystrixRuntimeException.class);
+                assertThat(err.getFailureType())
+                        .isIn(HystrixRuntimeException.FailureType.REJECTED_SEMAPHORE_EXECUTION,
+                                HystrixRuntimeException.FailureType.TIMEOUT);
+            }
+        }
+
+        assertThat(TenacityObservableCommand
+                .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
+                .getCumulativeCount(HystrixRollingNumberEvent.SEMAPHORE_REJECTED))
+                .isGreaterThan(0);
+        assertThat(TenacityObservableCommand
+                .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
+                .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
+                .isEqualTo(0);
+        assertThat(TenacityObservableCommand
+                .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
+                .getCumulativeCount(HystrixRollingNumberEvent.SUCCESS))
+                .isGreaterThan(0);
+    }
+
+    @Test
+    public void observableCommandCanAdjustSemaphoreMaxConcurrentExecutions() {
+        final SemaphoreConfiguration semaphoreConfiguration = new SemaphoreConfiguration();
+        semaphoreConfiguration.setMaxConcurrentRequests(50);
+
+        final TenacityConfiguration tenacityConfiguration = new TenacityConfiguration();
+        tenacityConfiguration.setSemaphore(semaphoreConfiguration);
+        tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(3000);
+
+        new TenacityPropertyRegister(
+                ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OBSERVABLE_TIMEOUT, tenacityConfiguration),
+                new BreakerboxConfiguration())
+                .register();
+
+        final int defaultSemaphoreMaxConcurrentRequests = new SemaphoreConfiguration().getMaxConcurrentRequests();
+        final ImmutableList.Builder<Observable<Boolean>> observables = ImmutableList.builder();
+        for (int i = 0; i < defaultSemaphoreMaxConcurrentRequests * 2; ++i) {
+            final TimeoutObservableCommand command = new TimeoutObservableCommand(Duration.milliseconds(500));
+            observables.add(command.observe());
+        }
+
+        for (Observable<Boolean> observable : observables.build()) {
+            try {
+                assertTrue(observable.toBlocking().single());
+            } catch (HystrixRuntimeException err) {
+                fail("Failed to execute an observable: " + err);
+            }
+        }
+
+        assertThat(TenacityObservableCommand
+                .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
+                .getCumulativeCount(HystrixRollingNumberEvent.SEMAPHORE_REJECTED))
+                .isEqualTo(0);
+        assertThat(TenacityObservableCommand
+                .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
+                .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
+                .isEqualTo(0);
+        assertThat(TenacityObservableCommand
+                .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
+                .getCumulativeCount(HystrixRollingNumberEvent.SUCCESS))
+                .isEqualTo(observables.build().size());
     }
 }

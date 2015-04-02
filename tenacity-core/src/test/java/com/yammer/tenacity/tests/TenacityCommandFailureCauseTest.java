@@ -3,10 +3,7 @@ package com.yammer.tenacity.tests;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.yammer.tenacity.core.TenacityCommand;
-import com.yammer.tenacity.core.config.BreakerboxConfiguration;
-import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
-import com.yammer.tenacity.core.config.TenacityConfiguration;
-import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
+import com.yammer.tenacity.core.config.*;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.testing.TenacityTestRule;
@@ -247,7 +244,9 @@ public class TenacityCommandFailureCauseTest {
                 final Throwable thrown = getFailedExecutionException();
                 return thrown != null && thrown.getClass().equals(TenacityTestException.class);
             }
-            class TenacityTestException extends Exception {}
+            class TenacityTestException extends Exception {
+                private static final long serialVersionUID = 2183798191010L;
+            }
         };
     }
 
@@ -280,13 +279,16 @@ public class TenacityCommandFailureCauseTest {
     private void setUpTenacityCommand(int poolSize, int timeout) {
         final ThreadPoolConfiguration poolConfig = new ThreadPoolConfiguration();
         poolConfig.setThreadPoolCoreSize(poolSize);
+        final SemaphoreConfiguration semaphoreConfiguration = new SemaphoreConfiguration();
+        semaphoreConfiguration.setMaxConcurrentRequests(poolSize);
+        semaphoreConfiguration.setFallbackMaxConcurrentRequests(poolSize);
         final CircuitBreakerConfiguration circuitConfig = new CircuitBreakerConfiguration();
         circuitConfig.setErrorThresholdPercentage(1);
         circuitConfig.setRequestVolumeThreshold(1);
         new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(
                         DependencyKey.EXAMPLE, new TenacityConfiguration(
-                                poolConfig, circuitConfig, timeout
+                                poolConfig, circuitConfig, semaphoreConfiguration, timeout
                         )
                 ),
                 new BreakerboxConfiguration()

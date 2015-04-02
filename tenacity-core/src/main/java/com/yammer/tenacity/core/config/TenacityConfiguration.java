@@ -6,14 +6,15 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public class TenacityConfiguration {
     @NotNull @Valid
     private ThreadPoolConfiguration threadpool = new ThreadPoolConfiguration();
 
     @NotNull @Valid
     private CircuitBreakerConfiguration circuitBreaker = new CircuitBreakerConfiguration();
+
+    @NotNull @Valid
+    private SemaphoreConfiguration semaphore = new SemaphoreConfiguration();
 
     @Min(value = 0)
     @Max(Integer.MAX_VALUE)
@@ -23,9 +24,11 @@ public class TenacityConfiguration {
 
     public TenacityConfiguration(ThreadPoolConfiguration threadpool,
                                  CircuitBreakerConfiguration circuitBreaker,
+                                 SemaphoreConfiguration semaphore,
                                  int executionIsolationThreadTimeoutInMillis) {
-        this.threadpool = checkNotNull(threadpool);
-        this.circuitBreaker = checkNotNull(circuitBreaker);
+        this.threadpool = threadpool;
+        this.circuitBreaker = circuitBreaker;
+        this.semaphore = semaphore;
         this.executionIsolationThreadTimeoutInMillis = executionIsolationThreadTimeoutInMillis;
     }
 
@@ -53,9 +56,17 @@ public class TenacityConfiguration {
         this.executionIsolationThreadTimeoutInMillis = executionIsolationThreadTimeoutInMillis;
     }
 
+    public SemaphoreConfiguration getSemaphore() {
+        return semaphore;
+    }
+
+    public void setSemaphore(SemaphoreConfiguration semaphore) {
+        this.semaphore = semaphore;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(threadpool, circuitBreaker, executionIsolationThreadTimeoutInMillis);
+        return Objects.hash(threadpool, circuitBreaker, semaphore, executionIsolationThreadTimeoutInMillis);
     }
 
     @Override
@@ -69,6 +80,7 @@ public class TenacityConfiguration {
         final TenacityConfiguration other = (TenacityConfiguration) obj;
         return Objects.equals(this.threadpool, other.threadpool)
                 && Objects.equals(this.circuitBreaker, other.circuitBreaker)
+                && Objects.equals(this.semaphore, other.semaphore)
                 && Objects.equals(this.executionIsolationThreadTimeoutInMillis, other.executionIsolationThreadTimeoutInMillis);
     }
 }
