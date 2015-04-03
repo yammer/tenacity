@@ -281,7 +281,6 @@ public class TenacityCommandFailureCauseTest {
         poolConfig.setThreadPoolCoreSize(poolSize);
         final SemaphoreConfiguration semaphoreConfiguration = new SemaphoreConfiguration();
         semaphoreConfiguration.setMaxConcurrentRequests(poolSize);
-        semaphoreConfiguration.setFallbackMaxConcurrentRequests(poolSize);
         final CircuitBreakerConfiguration circuitConfig = new CircuitBreakerConfiguration();
         circuitConfig.setErrorThresholdPercentage(1);
         circuitConfig.setRequestVolumeThreshold(1);
