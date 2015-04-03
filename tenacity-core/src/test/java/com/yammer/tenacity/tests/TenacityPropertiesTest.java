@@ -10,10 +10,7 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
 import com.yammer.tenacity.core.TenacityCommand;
-import com.yammer.tenacity.core.config.BreakerboxConfiguration;
-import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
-import com.yammer.tenacity.core.config.TenacityConfiguration;
-import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
+import com.yammer.tenacity.core.config.*;
 import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
@@ -78,6 +75,7 @@ public class TenacityPropertiesTest {
         final TenacityConfiguration overrideConfiguration = new TenacityConfiguration(
                 new ThreadPoolConfiguration(50, 3, 27, 57, 2000, 20),
                 new CircuitBreakerConfiguration(1, 2, 3, 2000, 20),
+                new SemaphoreConfiguration(),
                 982);
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
@@ -139,6 +137,7 @@ public class TenacityPropertiesTest {
         final TenacityConfiguration exampleConfiguration = new TenacityConfiguration(
                 new ThreadPoolConfiguration(1, 1, 10, queueMaxSize, 10000, 10),
                 new CircuitBreakerConfiguration(20, 5000, 50, 10000, 10),
+                new SemaphoreConfiguration(),
                 5000);
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(

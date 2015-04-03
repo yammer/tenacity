@@ -115,7 +115,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-core</artifactId>
-        <version>0.5.2</version>
+        <version>0.5.3</version>
     </dependency>
     ```
 
@@ -196,7 +196,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-testing</artifactId>
-        <version>0.5.2</version>
+        <version>0.5.3</version>
         <scope>test</scope>
     </dependency>
     ```
@@ -227,6 +227,9 @@ circuitBreaker:
     sleepWindowInMillis: 5000
     metricsRollingStatisticalWindowInMilliseconds: 10000
     metricsRollingStatisticalWindowBuckets: 10
+semaphore:
+    maxConcurrentRequests: 10
+    fallbackMaxConcurrentRequests: 10
 ```
 
 The following two are the most important and you can probably get by just fine by defining just these two and leveraging the
@@ -243,6 +246,11 @@ Here are the rest of the descriptions:
 -   `requestVolumeThreshold`: The minimum number of requests that need to be received within the `metricsRollingStatisticalWindowInMilliseconds` in order to open a circuit breaker.
 -   `errorThresholdPercentage`: The percentage of errors needed to trip a circuit breaker. In order for this to take effect the `requestVolumeThreshold` must first be satisfied.
 -   `sleepWindowInMillis`: How long to keep the circuit breaker open, before trying again.
+
+Here are the semaphore related items:
+
+-   `maxConcurrentRequests`: The number of concurrent requests for a given key at any given time.
+-   `fallbackMaxConcurrentRequests`: The number of concurrent requests for the fallback at any given time.
 
 These are recommended to be left alone unless you know what you're doing:
 

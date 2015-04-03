@@ -84,6 +84,14 @@ public class TenacityPropertyRegister {
         configInstance.setProperty(
                 threadpoolMetricsRollingStatsTimeInMilliseconds(key),
                 configuration.getThreadpool().getMetricsRollingStatisticalWindowInMilliseconds());
+
+        configInstance.setProperty(
+                semaphoreMaxConcurrentRequests(key),
+                configuration.getSemaphore().getMaxConcurrentRequests());
+
+        configInstance.setProperty(
+                semaphoreFallbackMaxConcurrentRequests(key),
+                configuration.getSemaphore().getFallbackMaxConcurrentRequests());
     }
 
     public static String executionIsolationThreadTimeoutInMilliseconds(TenacityPropertyKey key) {
@@ -132,5 +140,13 @@ public class TenacityPropertyRegister {
 
     public static String threadpoolMaxQueueSize(TenacityPropertyKey key) {
         return String.format("hystrix.threadpool.%s.maxQueueSize", key);
+    }
+
+    public static String semaphoreMaxConcurrentRequests(TenacityPropertyKey key) {
+        return String.format("hystrix.command.%s.execution.isolation.semaphore.maxConcurrentRequests", key);
+    }
+
+    public static String semaphoreFallbackMaxConcurrentRequests(TenacityPropertyKey key) {
+        return String.format("hystrix.command.%s.fallback.isolation.semaphore.maxConcurrentRequests", key);
     }
 }

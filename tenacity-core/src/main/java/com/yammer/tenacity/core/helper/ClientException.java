@@ -5,7 +5,7 @@ import javax.ws.rs.client.ResponseProcessingException;
 import java.util.Objects;
 
 public class ClientException extends RuntimeException{
-    private static final long serialVersionUID = 12886239001277773L;
+    private final static long serialVersionUID = -1237219873892173912L;
     private final int statusCode;
 
     public ClientException(String message, int statusCode) {

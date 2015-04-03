@@ -4,6 +4,7 @@ import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.HystrixThreadPoolProperties;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
+import com.yammer.tenacity.core.config.SemaphoreConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
 
@@ -22,11 +23,14 @@ public class TenacityPropertyStore {
                         threadPoolProperties.metricsRollingStatisticalWindowInMilliseconds().get(),
                         threadPoolProperties.metricsRollingStatisticalWindowBuckets().get()),
                 new CircuitBreakerConfiguration(
-                    commandProperties.circuitBreakerRequestVolumeThreshold().get(),
-                    commandProperties.circuitBreakerSleepWindowInMilliseconds().get(),
-                    commandProperties.circuitBreakerErrorThresholdPercentage().get(),
-                    commandProperties.metricsRollingStatisticalWindowInMilliseconds().get(),
-                    commandProperties.metricsRollingStatisticalWindowBuckets().get()),
+                        commandProperties.circuitBreakerRequestVolumeThreshold().get(),
+                        commandProperties.circuitBreakerSleepWindowInMilliseconds().get(),
+                        commandProperties.circuitBreakerErrorThresholdPercentage().get(),
+                        commandProperties.metricsRollingStatisticalWindowInMilliseconds().get(),
+                        commandProperties.metricsRollingStatisticalWindowBuckets().get()),
+                new SemaphoreConfiguration(
+                        commandProperties.executionIsolationSemaphoreMaxConcurrentRequests().get(),
+                        commandProperties.fallbackIsolationSemaphoreMaxConcurrentRequests().get()),
                 commandProperties.executionTimeoutInMilliseconds().get());
     }
 }

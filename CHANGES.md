@@ -1,3 +1,9 @@
+0.5.3
+--------------
+* Added `SemaphoreConfiguration`. This enables the ability to configure semaphore specific parameters for when dealing with
+  this type of execution isolation strategy. This is mainly used when leveraging the `TenacityObservableCommand`.
+* [Breakerbox](https://github.com/yammer/breakerbox) will have a corresponding update to this release to enable configuration it as well.
+
 0.5.2
 --------------
 * [1.4.3 Hystrix](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-143-maven-central-bintray)
