@@ -43,7 +43,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-@Ignore("Broken with dropwizard 0.8.0, fix submitted")
 public class ClientTimeoutTest {
     @Path("/")
     public static class BarrierTarget {
