@@ -22,12 +22,17 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
@@ -38,6 +43,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.any;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -142,10 +148,16 @@ public class ClientTimeoutTest {
         final Client client = tenacityClientBuilder.build(buildClient());
         final WebTarget webTarget = client.target(uri);
 
+        // with timeout too short, we expect an error
+        boolean timeoutFailure = false;
+        try {
+            postSettingTheTimeoutOnResource(webTarget, Duration.milliseconds(500));
+        } catch (ProcessingException err) {
+            assertThat(err.getCause()).isInstanceOf(SocketTimeoutException.class);
+            timeoutFailure = true;
+        }
+        assertThat(timeoutFailure).isEqualTo(true);
 
-        // with timeout too short
-        thrown.expectCause(any(SocketTimeoutException.class));
-        postSettingTheTimeoutOnResource(webTarget, Duration.milliseconds(500));
 
         // after reconfiguring a longer timeout
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(520);
@@ -153,7 +165,6 @@ public class ClientTimeoutTest {
 
         postSettingTheTimeoutOnResource(webTarget, Duration.milliseconds(500));
     }
-
 
 
     @Test
@@ -218,7 +229,7 @@ public class ClientTimeoutTest {
             postSettingTheTimeoutOnResource(webTarget, sleepDuration);
             return null;
         }
- 
+
     }
 
     private static void postSettingTheTimeoutOnResource(WebTarget webTarget, Duration timeout) {
