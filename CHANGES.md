@@ -1,3 +1,11 @@
+0.5.4
+--------------
+* [Hystrix 1.4.4](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-144-maven-central-bintray)
+* `executionIsolationStrategy` is now a configurable through `TenacityConfiguration`. Defaults to `THREAD` isolation. You'd want to normally
+  set this to `SEMAPHORE` when using `TenacityObservableCommand`.
+  [Breakerbox](https://github.com/yammer/breakerbox) will have a respective update which will also allow you set the `executionIsolationStrategy`.
+* Fixing bug where the `TenacityPropertyRegister` would rely on the `toString()` method of the TenacityPropertyKey instead of `name()`.
+
 0.5.3
 --------------
 * Added `SemaphoreConfiguration`. This enables the ability to configure semaphore specific parameters for when dealing with

@@ -1,5 +1,7 @@
 package com.yammer.tenacity.core.config;
 
+import com.netflix.hystrix.HystrixCommandProperties;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -20,16 +22,29 @@ public class TenacityConfiguration {
     @Max(Integer.MAX_VALUE)
     private int executionIsolationThreadTimeoutInMillis = 1000;
 
+    private HystrixCommandProperties.ExecutionIsolationStrategy executionIsolationStrategy =
+            HystrixCommandProperties.ExecutionIsolationStrategy.THREAD;
+
     public TenacityConfiguration() { /* Jackson */ }
 
     public TenacityConfiguration(ThreadPoolConfiguration threadpool,
                                  CircuitBreakerConfiguration circuitBreaker,
                                  SemaphoreConfiguration semaphore,
                                  int executionIsolationThreadTimeoutInMillis) {
+        this(threadpool, circuitBreaker, semaphore, executionIsolationThreadTimeoutInMillis,
+                HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
+    }
+
+    public TenacityConfiguration(ThreadPoolConfiguration threadpool,
+                                 CircuitBreakerConfiguration circuitBreaker,
+                                 SemaphoreConfiguration semaphore,
+                                 int executionIsolationThreadTimeoutInMillis,
+                                 HystrixCommandProperties.ExecutionIsolationStrategy executionIsolationStrategy) {
         this.threadpool = threadpool;
         this.circuitBreaker = circuitBreaker;
         this.semaphore = semaphore;
         this.executionIsolationThreadTimeoutInMillis = executionIsolationThreadTimeoutInMillis;
+        this.executionIsolationStrategy = executionIsolationStrategy;
     }
 
     public ThreadPoolConfiguration getThreadpool() {
@@ -64,9 +79,17 @@ public class TenacityConfiguration {
         this.semaphore = semaphore;
     }
 
+    public HystrixCommandProperties.ExecutionIsolationStrategy getExecutionIsolationStrategy() {
+        return executionIsolationStrategy;
+    }
+
+    public void setExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy executionIsolationStrategy) {
+        this.executionIsolationStrategy = executionIsolationStrategy;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(threadpool, circuitBreaker, semaphore, executionIsolationThreadTimeoutInMillis);
+        return Objects.hash(threadpool, circuitBreaker, semaphore, executionIsolationThreadTimeoutInMillis, executionIsolationStrategy);
     }
 
     @Override
@@ -81,6 +104,7 @@ public class TenacityConfiguration {
         return Objects.equals(this.threadpool, other.threadpool)
                 && Objects.equals(this.circuitBreaker, other.circuitBreaker)
                 && Objects.equals(this.semaphore, other.semaphore)
-                && Objects.equals(this.executionIsolationThreadTimeoutInMillis, other.executionIsolationThreadTimeoutInMillis);
+                && Objects.equals(this.executionIsolationThreadTimeoutInMillis, other.executionIsolationThreadTimeoutInMillis)
+                && Objects.equals(this.executionIsolationStrategy, other.executionIsolationStrategy);
     }
 }

@@ -23,7 +23,8 @@ import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.guava.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
 
 public class TenacityPropertiesTest {
@@ -90,7 +91,8 @@ public class TenacityPropertiesTest {
 
         final TenacitySuccessCommand successCommand = new TenacitySuccessCommand(DependencyKey.OVERRIDE);
 
-        assertNotEquals(new TenacitySuccessCommand().getCommandProperties().executionTimeoutInMilliseconds(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+        assertThat(new TenacitySuccessCommand().getCommandProperties().executionTimeoutInMilliseconds().get())
+            .isNotEqualTo(overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());
 
         final HystrixCommandProperties commandProperties = successCommand.getCommandProperties();
         assertEquals(commandProperties.executionTimeoutInMilliseconds().get().intValue(), overrideConfiguration.getExecutionIsolationThreadTimeoutInMillis());

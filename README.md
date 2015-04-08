@@ -115,7 +115,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-core</artifactId>
-        <version>0.5.3</version>
+        <version>0.5.4</version>
     </dependency>
     ```
 
@@ -196,7 +196,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-testing</artifactId>
-        <version>0.5.3</version>
+        <version>0.5.4</version>
         <scope>test</scope>
     </dependency>
     ```
@@ -214,6 +214,7 @@ Defaults
 --------
 ```yaml
 executionIsolationThreadTimeoutInMillis: 1000
+executionIsolationStrategy: THREAD
 threadpool:
     threadPoolCoreSize: 10
     keepAliveTimeMinutes: 1
@@ -235,6 +236,7 @@ semaphore:
 The following two are the most important and you can probably get by just fine by defining just these two and leveraging the
 defaults.
 
+-   `executionIsolationStrategy`: Which to use THREAD or SEMAPHORE. Defaults to THREAD. [Execution Isolation Strategy](https://github.com/Netflix/Hystrix/wiki/Configuration#execution.isolation.strategy).
 -   `executionIsolationThreadTimeoutInMillis`: How long the entire dependency command should take.
 -   `threadPoolCoreSize`: Self explanatory.
 

@@ -92,61 +92,69 @@ public class TenacityPropertyRegister {
         configInstance.setProperty(
                 semaphoreFallbackMaxConcurrentRequests(key),
                 configuration.getSemaphore().getFallbackMaxConcurrentRequests());
+
+        configInstance.setProperty(
+                executionIsolationStrategy(key),
+                configuration.getExecutionIsolationStrategy());
     }
 
     public static String executionIsolationThreadTimeoutInMilliseconds(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.execution.isolation.thread.timeoutInMilliseconds", key);
+        return String.format("hystrix.command.%s.execution.isolation.thread.timeoutInMilliseconds", key.name());
     }
 
     public static String circuitBreakerRequestVolumeThreshold(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.circuitBreaker.requestVolumeThreshold", key);
+        return String.format("hystrix.command.%s.circuitBreaker.requestVolumeThreshold", key.name());
     }
 
     public static String circuitBreakerSleepWindowInMilliseconds(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.circuitBreaker.sleepWindowInMilliseconds", key);
+        return String.format("hystrix.command.%s.circuitBreaker.sleepWindowInMilliseconds", key.name());
     }
 
     public static String circuitBreakerErrorThresholdPercentage(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.circuitBreaker.errorThresholdPercentage", key);
+        return String.format("hystrix.command.%s.circuitBreaker.errorThresholdPercentage", key.name());
     }
 
     public static String circuitBreakermetricsRollingStatsTimeInMilliseconds(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.metrics.rollingStats.timeInMilliseconds", key);
+        return String.format("hystrix.command.%s.metrics.rollingStats.timeInMilliseconds", key.name());
     }
 
     public static String circuitBreakermetricsRollingStatsNumBuckets(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.metrics.rollingStats.numBuckets", key);
+        return String.format("hystrix.command.%s.metrics.rollingStats.numBuckets", key.name());
     }
 
     public static String threadpoolMetricsRollingStatsTimeInMilliseconds(TenacityPropertyKey key) {
-        return String.format("hystrix.threadpool.%s.metrics.rollingStats.timeInMilliseconds", key);
+        return String.format("hystrix.threadpool.%s.metrics.rollingStats.timeInMilliseconds", key.name());
     }
 
     public static String threadpoolMetricsRollingStatsNumBuckets(TenacityPropertyKey key) {
-        return String.format("hystrix.threadpool.%s.metrics.rollingStats.numBuckets", key);
+        return String.format("hystrix.threadpool.%s.metrics.rollingStats.numBuckets", key.name());
     }
 
     public static String threadpoolCoreSize(TenacityPropertyKey key) {
-        return String.format("hystrix.threadpool.%s.coreSize", key);
+        return String.format("hystrix.threadpool.%s.coreSize", key.name());
     }
 
     public static String threadpoolKeepAliveTimeMinutes(TenacityPropertyKey key) {
-        return String.format("hystrix.threadpool.%s.keepAliveTimeMinutes", key);
+        return String.format("hystrix.threadpool.%s.keepAliveTimeMinutes", key.name());
     }
 
     public static String threadpoolQueueSizeRejectionThreshold(TenacityPropertyKey key) {
-        return String.format("hystrix.threadpool.%s.queueSizeRejectionThreshold", key);
+        return String.format("hystrix.threadpool.%s.queueSizeRejectionThreshold", key.name());
     }
 
     public static String threadpoolMaxQueueSize(TenacityPropertyKey key) {
-        return String.format("hystrix.threadpool.%s.maxQueueSize", key);
+        return String.format("hystrix.threadpool.%s.maxQueueSize", key.name());
     }
 
     public static String semaphoreMaxConcurrentRequests(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.execution.isolation.semaphore.maxConcurrentRequests", key);
+        return String.format("hystrix.command.%s.execution.isolation.semaphore.maxConcurrentRequests", key.name());
     }
 
     public static String semaphoreFallbackMaxConcurrentRequests(TenacityPropertyKey key) {
-        return String.format("hystrix.command.%s.fallback.isolation.semaphore.maxConcurrentRequests", key);
+        return String.format("hystrix.command.%s.fallback.isolation.semaphore.maxConcurrentRequests", key.name());
+    }
+
+    public static String executionIsolationStrategy(TenacityPropertyKey key) {
+        return String.format("hystrix.command.%s.execution.isolation.strategy", key.name());
     }
 }

@@ -2,6 +2,7 @@ package com.yammer.tenacity.tests;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.netflix.hystrix.HystrixCommandProperties;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.util.HystrixRollingNumberEvent;
 import com.yammer.tenacity.core.TenacityObservableCommand;
@@ -18,10 +19,10 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
 
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class TenacityObservableCommandTest {
     @Rule
@@ -105,6 +106,7 @@ public class TenacityObservableCommandTest {
     public void whenUsingObservableCommandsExperienceRejectionsIfSemaphoreLimitBreached() {
         final TenacityConfiguration tenacityConfiguration = new TenacityConfiguration();
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(3000);
+        tenacityConfiguration.setExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
 
         new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OBSERVABLE_TIMEOUT, tenacityConfiguration),
@@ -184,5 +186,67 @@ public class TenacityObservableCommandTest {
                 .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
                 .getCumulativeCount(HystrixRollingNumberEvent.SUCCESS))
                 .isEqualTo(observables.build().size());
+    }
+
+    private static class RandomTenacityKey implements TenacityPropertyKey {
+        private final String key;
+
+        public RandomTenacityKey(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public String name() {
+            return key;
+        }
+    }
+
+
+    @Test
+    public void executionIsolationStrategyIsThreadByDefault() {
+        final RandomTenacityKey randomTenacityKey = new RandomTenacityKey(UUID.randomUUID().toString());
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionIsolationStrategy().get())
+            .isEqualTo(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
+    }
+
+    @Test
+    public void executionIsolationStrategyCanByChangedByRegister() {
+        final RandomTenacityKey randomTenacityKey = new RandomTenacityKey(UUID.randomUUID().toString());
+        final TenacityConfiguration semaphoreConfiguration = new TenacityConfiguration();
+        semaphoreConfiguration.setExecutionIsolationThreadTimeoutInMillis(912);
+        semaphoreConfiguration.setExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
+
+        new TenacityPropertyRegister(ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(
+                        randomTenacityKey, semaphoreConfiguration), new BreakerboxConfiguration()).register();
+
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionTimeoutInMilliseconds().get())
+                .isEqualTo(semaphoreConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionIsolationStrategy().get())
+                .isEqualTo(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
+    }
+
+    @Test
+    public void executionIsolationStrategyCanBeChangedAtAnyTime() {
+        final RandomTenacityKey randomTenacityKey = new RandomTenacityKey(UUID.randomUUID().toString());
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionIsolationStrategy().get())
+                .isEqualTo(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
+
+        new TenacityPropertyRegister(ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(
+                randomTenacityKey, new TenacityConfiguration()), new BreakerboxConfiguration()).register();
+
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionIsolationStrategy().get())
+                .isEqualTo(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
+
+        final TenacityConfiguration semaphoreConfiguration = new TenacityConfiguration();
+        semaphoreConfiguration.setExecutionIsolationThreadTimeoutInMillis(912);
+        semaphoreConfiguration.setExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
+
+        new TenacityPropertyRegister(ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(
+                randomTenacityKey, semaphoreConfiguration), new BreakerboxConfiguration()).register();
+
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionTimeoutInMilliseconds().get())
+                .isEqualTo(semaphoreConfiguration.getExecutionIsolationThreadTimeoutInMillis());
+        assertThat(TenacityObservableCommand.getCommandProperties(randomTenacityKey).executionIsolationStrategy().get())
+                .isEqualTo(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
     }
 }
