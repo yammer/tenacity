@@ -2,7 +2,6 @@ package com.yammer.tenacity.core.strategies;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
@@ -13,13 +12,15 @@ import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ManagedConcurrencyStrategy extends HystrixConcurrencyStrategy {
     private final Environment environment;
-    private final ConcurrentMap<String, ThreadPoolExecutor> executors = Maps.newConcurrentMap();
 
     public ManagedConcurrencyStrategy(Environment environment) {
         this.environment = checkNotNull(environment);
@@ -36,19 +37,14 @@ public class ManagedConcurrencyStrategy extends HystrixConcurrencyStrategy {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setNameFormat(nameFormat)
                 .build();
-        final String key = threadPoolKey.name();
-        final ThreadPoolExecutor existing =
-                executors.putIfAbsent(key, new ThreadPoolExecutor(
+        final ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                         corePoolSize.get(),
                         maximumPoolSize.get(),
                         keepAliveTime.get(),
                         unit,
                         workQueue,
-                        threadFactory));
-        final ThreadPoolExecutor threadPoolExecutor = executors.get(key);
-        if (existing == null) {
-            environment.lifecycle().manage(new ExecutorServiceManager(threadPoolExecutor, Duration.seconds(5), nameFormat));
-        }
+                        threadFactory);
+        environment.lifecycle().manage(new ExecutorServiceManager(threadPoolExecutor, Duration.seconds(5), nameFormat));
         return threadPoolExecutor;
     }
 
