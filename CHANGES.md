@@ -1,3 +1,11 @@
+0.6.0
+-----
+* Dropwizard 0.8.1 - This was blocked by [Dropwizard 0.8.0 pull-request](https://github.com/dropwizard/dropwizard/pull/939)
+
+
+Dropwizard 0.7.x Releases
+=========================
+
 0.5.4
 --------------
 * [Hystrix 1.4.4](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-144-maven-central-bintray)
