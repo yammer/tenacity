@@ -1,8 +1,9 @@
 package com.yammer.tenacity.core.http;
 
-import com.sun.jersey.api.client.Client;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.util.Duration;
+
+import javax.ws.rs.client.Client;
 
 public class TenacityJerseyClientBuilder {
     protected final TenacityPropertyKey tenacityPropertyKey;
@@ -20,8 +21,10 @@ public class TenacityJerseyClientBuilder {
 
     public Client build(Client client) {
         return new TenacityJerseyClient(
-                new TenacityWebResourceFactory(tenacityPropertyKey, timeoutPadding),
-                client);
+                client,
+                tenacityPropertyKey,
+                timeoutPadding
+        );
     }
 
     public static TenacityJerseyClientBuilder builder(TenacityPropertyKey key) {

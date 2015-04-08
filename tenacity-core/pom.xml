@@ -43,7 +43,6 @@
         <dependency>
             <groupId>com.yammer.tenacity</groupId>
             <artifactId>tenacity-testing</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.reactivex</groupId>

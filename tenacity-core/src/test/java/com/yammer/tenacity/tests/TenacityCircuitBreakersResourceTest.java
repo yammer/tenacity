@@ -8,7 +8,8 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class TenacityCircuitBreakersResourceTest {
     @Rule
@@ -20,7 +21,6 @@ public class TenacityCircuitBreakersResourceTest {
                 new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of());
 
         assertThat(resource.circuitBreakers()).isEmpty();
-
     }
 
     @Test
@@ -39,7 +39,7 @@ public class TenacityCircuitBreakersResourceTest {
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
         assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK)));
+                .containsExactly(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
     }
 
     @Test
@@ -50,7 +50,7 @@ public class TenacityCircuitBreakersResourceTest {
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
         assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK)));
+                .containsExactly(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
     }
 
     private static void tryToOpenCircuitBreaker(TenacityPropertyKey key) {
@@ -68,7 +68,7 @@ public class TenacityCircuitBreakersResourceTest {
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
         assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK)));
+                .containsExactly(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK));
     }
 
 
@@ -80,7 +80,7 @@ public class TenacityCircuitBreakersResourceTest {
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
         assertThat(resource.circuitBreakers())
-                .isEqualTo(ImmutableList.of(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK)));
+                .containsExactly(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK));
     }
 
     @Test
@@ -92,9 +92,8 @@ public class TenacityCircuitBreakersResourceTest {
         tryToOpenCircuitBreaker(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK);
 
         assertThat(resource.circuitBreakers())
-                .containsAll(
-                        ImmutableList.of(
-                                CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK),
-                                CircuitBreaker.open(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK)));
+                .contains(
+                        CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK),
+                        CircuitBreaker.open(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK));
     }
 }

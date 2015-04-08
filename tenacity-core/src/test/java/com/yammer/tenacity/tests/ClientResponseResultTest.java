@@ -1,10 +1,11 @@
 package com.yammer.tenacity.tests;
 
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.yammer.tenacity.core.helper.ClientException;
 import com.yammer.tenacity.core.helper.ClientResponseResult;
 import org.junit.Test;
+
+import javax.ws.rs.client.ResponseProcessingException;
+import javax.ws.rs.core.Response;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -13,7 +14,7 @@ import static org.mockito.Mockito.mock;
 public class ClientResponseResultTest {
 
     @Test
-    public void testResult(){
+    public void testResult() {
         ClientResponseResult<String> successfullResult = ClientResponseResult.create("Hello");
 
         assertThat(successfullResult.isSuccess(), is(true));
@@ -21,9 +22,10 @@ public class ClientResponseResultTest {
         assertThat(successfullResult.getResult().get(), is("Hello"));
     }
 
+    @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
     @Test
-    public void testFallback(){
-        UniformInterfaceException exception = new UniformInterfaceException("failed request", mock(ClientResponse.class));
+    public void testFallback() {
+        ResponseProcessingException exception = new ResponseProcessingException(mock(Response.class), "failed request");
         ClientException clientException = new ClientException(exception);
         ClientResponseResult<String> failedResult = ClientResponseResult.clientFailure(clientException);
 

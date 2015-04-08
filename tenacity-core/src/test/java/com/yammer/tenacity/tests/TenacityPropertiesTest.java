@@ -21,7 +21,8 @@ import org.junit.Test;
 
 import java.util.concurrent.Future;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.guava.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -63,10 +64,11 @@ public class TenacityPropertiesTest {
 
         final ThreadIsolationCommand threadIsolationCommand = new ThreadIsolationCommand();
 
-        assertEquals(threadIsolationCommand.execute(), "value");
+        assertThat(threadIsolationCommand.execute()).isEqualTo("value");
 
         final HystrixCommandProperties commandProperties = threadIsolationCommand.getCommandProperties();
         assertEquals(commandProperties.executionTimeoutInMilliseconds().get().intValue(), 987);
+        assertThat(commandProperties.executionTimeoutInMilliseconds().get().intValue()).isEqualTo(987);
     }
 
     @Test
@@ -84,8 +86,8 @@ public class TenacityPropertiesTest {
 
         tenacityPropertyRegister.register();
 
-        assertEquals(new TenacitySuccessCommand(DependencyKey.OVERRIDE).execute(), "value");
-        assertEquals(new TenacitySuccessCommand(DependencyKey.OVERRIDE).queue().get(), "value");
+        assertThat(new TenacitySuccessCommand(DependencyKey.OVERRIDE).execute()).isEqualTo("value");
+        assertThat(new TenacitySuccessCommand(DependencyKey.OVERRIDE).queue().get()).isEqualTo("value");
 
         final TenacitySuccessCommand successCommand = new TenacitySuccessCommand(DependencyKey.OVERRIDE);
 
@@ -156,25 +158,25 @@ public class TenacityPropertiesTest {
             assertFalse(future.isCancelled());
             final Optional<String> result = future.get();
             if (result.isPresent()) {
-                assertThat(result.get()).isEqualTo("sleep");
+                assertThat(result).contains("sleep");
             } else {
-                assertThat(result).isEqualTo(Optional.<String>absent());
+                assertThat(result).isAbsent();
             }
         }
 
         final HystrixCommandMetrics sleepCommandMetrics = new SleepCommand(DependencyKey.SLEEP).getCommandMetrics();
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
-                .isEqualTo(4);
+                        .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
+                .isEqualTo(4L);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
-                .isEqualTo(0);
+                .isEqualTo(0L);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
-                .isEqualTo(4);
+                .isEqualTo(4L);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
-                .isEqualTo(0);
+                .isEqualTo(0L);
 
         final HystrixThreadPoolProperties threadPoolProperties = new SleepCommand(DependencyKey.SLEEP).getThreadpoolProperties();
 
@@ -196,32 +198,32 @@ public class TenacityPropertiesTest {
             assertFalse(future.isCancelled());
             final Optional<String> result = future.get();
             if (result.isPresent()) {
-                assertThat(result.get()).isEqualTo("sleep");
+                assertThat(result).contains("sleep");
             } else {
-                assertThat(result).isEqualTo(Optional.<String>absent());
+                assertThat(result).isAbsent();
             }
         }
 
         final HystrixCommandMetrics sleepCommandMetrics = new SleepCommand(DependencyKey.EXAMPLE).getCommandMetrics();
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
-                .isGreaterThan(15);
+                        .getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED))
+                .isGreaterThan(15L);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
-                .isEqualTo(0);
+                .isEqualTo(0L);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
-                .isGreaterThanOrEqualTo(40);
+                .isGreaterThanOrEqualTo(40L);
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_FAILURE))
-                .isEqualTo(0);
+                        .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_FAILURE))
+                .isEqualTo(0L);
         assertThat(sleepCommandMetrics
-                .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_REJECTION))
-                .isEqualTo(0);
+                        .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_REJECTION))
+                .isEqualTo(0L);
         assertThat(sleepCommandMetrics
                 .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
                 .isEqualTo(sleepCommandMetrics.getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS) -
-                           sleepCommandMetrics.getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED));
+                        sleepCommandMetrics.getCumulativeCount(HystrixRollingNumberEvent.THREAD_POOL_REJECTED));
 
         final HystrixThreadPoolProperties threadPoolProperties = new SleepCommand(DependencyKey.EXAMPLE).getThreadpoolProperties();
 

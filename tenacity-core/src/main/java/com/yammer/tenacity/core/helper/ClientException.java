@@ -1,7 +1,7 @@
 package com.yammer.tenacity.core.helper;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
 
+import javax.ws.rs.client.ResponseProcessingException;
 import java.util.Objects;
 
 public class ClientException extends RuntimeException{
@@ -13,7 +13,7 @@ public class ClientException extends RuntimeException{
         this.statusCode = statusCode;
     }
 
-    public ClientException(UniformInterfaceException cause) {
+    public ClientException(ResponseProcessingException cause) {
         super(cause);
         this.statusCode = cause.getResponse().getStatus();
     }

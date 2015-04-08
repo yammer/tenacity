@@ -18,17 +18,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This class tests that the cause for returning a fallback is available from within the fallback execution.
- *
+ * <p/>
  * There are 4 possible causes for returning a fallback:
  * - TenacityCommand short circuited
  * - TenacityCommand.run() timed out
  * - TenacityCommand.run() threw an Exception
  * - Tenacity thread pool rejection
- *
+ * <p/>
  * Note: When testing TenacityCommand.queue(), Future.get() should not be used to force the command to complete or
  * it may perform the same as TenacityCommand.execute(); spin on Future.isDone(), then call Future.get().
  */
@@ -43,7 +43,7 @@ public class TenacityCommandFailureCauseTest {
     @Test
     public void timedOutAvailableInGetFallbackUsingExecute() {
         setUpTenacityCommand(2, 10);
-        assertThat(timedOutCommand(20).execute()).isTrue();
+        assertTrue(timedOutCommand(20).execute());
     }
 
     @Test(timeout = 1000)
@@ -53,14 +53,14 @@ public class TenacityCommandFailureCauseTest {
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get()).isTrue();
+        assertTrue(result.get());
     }
 
     @Test
     public void timedOutAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 10);
         final Observable<Boolean> result = timedOutCommand(20).observe();
-        assertThat(result.toBlocking().single()).isTrue();
+        assertTrue(result.toBlocking().single());
     }
 
 
@@ -71,7 +71,7 @@ public class TenacityCommandFailureCauseTest {
     @Test
     public void thrownExceptionAvailableInGetFallbackUsingExecute() {
         setUpTenacityCommand(2, 100);
-        assertThat(exceptionCommand().execute()).isTrue();
+        assertTrue(exceptionCommand().execute());
     }
 
     @Test(timeout = 1000)
@@ -81,14 +81,14 @@ public class TenacityCommandFailureCauseTest {
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get()).isTrue();
+        assertTrue(result.get());
     }
 
     @Test
     public void thrownExceptionAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 100);
         final Observable<Boolean> result = exceptionCommand().observe();
-        assertThat(result.toBlocking().single()).isTrue();
+        assertTrue(result.toBlocking().single());
     }
 
 
@@ -96,36 +96,39 @@ public class TenacityCommandFailureCauseTest {
         Short circuited failure tests
      */
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Test(timeout = 1000)
     public void shortCircuitedAvailableInGetFallbackUsingExecute() {
         setUpTenacityCommand(2, 100);
         final TenacityCommand<?> exceptionCommand = exceptionCommand();
         exceptionCommand.execute();
         while (!exceptionCommand.isCircuitBreakerOpen());
-        assertThat(shortCircuitedCommand().execute()).isTrue();
+        assertTrue(shortCircuitedCommand().execute());
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Test(timeout = 1000)
     public void shortCircuitedAvailableInGetFallbackUsingQueue() throws Exception {
         setUpTenacityCommand(2, 100);
         final TenacityCommand<?> exceptionCommand = exceptionCommand();
         exceptionCommand.execute();
-        while (!exceptionCommand.isCircuitBreakerOpen());
+        while (!exceptionCommand.isCircuitBreakerOpen()) ;
         final Future<Boolean> result = shortCircuitedCommand().queue();
         while (!result.isDone()) {
             Thread.sleep(10);
         }
-        assertThat(result.get()).isTrue();
+        assertTrue(result.get());
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Test(timeout = 1000)
     public void shortCircuitedAvailableInGetFallbackUsingObserve() {
         setUpTenacityCommand(2, 100);
         final TenacityCommand<?> exceptionCommand = exceptionCommand();
         exceptionCommand.execute();
-        while (!exceptionCommand.isCircuitBreakerOpen());
+        while (!exceptionCommand.isCircuitBreakerOpen()) ;
         final Observable<Boolean> result = shortCircuitedCommand().observe();
-        assertThat(result.toBlocking().single()).isTrue();
+        assertTrue(result.toBlocking().single());
     }
 
 
@@ -160,7 +163,7 @@ public class TenacityCommandFailureCauseTest {
             }
         }
         executorService.shutdownNow();
-        assertThat(rejectionFound).isTrue();
+        assertTrue(rejectionFound);
     }
 
     @Test(timeout = 1000)
@@ -173,14 +176,14 @@ public class TenacityCommandFailureCauseTest {
         }
         boolean rejectionFound = false;
         for (final Future<Boolean> future : results) {
-            while(!future.isDone()) {
+            while (!future.isDone()) {
                 Thread.sleep(10);
             }
             if (future.get()) {
                 rejectionFound = true;
             }
         }
-        assertThat(rejectionFound).isTrue();
+        assertTrue(rejectionFound);
     }
 
     @Test
@@ -197,7 +200,7 @@ public class TenacityCommandFailureCauseTest {
                 rejectionFound = true;
             }
         }
-        assertThat(rejectionFound).isTrue();
+        assertTrue(rejectionFound);
     }
 
 
@@ -212,6 +215,7 @@ public class TenacityCommandFailureCauseTest {
                 Thread.sleep(sleepMs);
                 return true;
             }
+
             @Override
             protected Boolean getFallback() {
                 return false;
@@ -226,6 +230,7 @@ public class TenacityCommandFailureCauseTest {
                 Thread.sleep(sleepMs);
                 return false;
             }
+
             @Override
             protected Boolean getFallback() {
                 return isResponseTimedOut();
@@ -239,11 +244,14 @@ public class TenacityCommandFailureCauseTest {
             protected Boolean run() throws Exception {
                 throw new TenacityTestException();
             }
+
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored")
             @Override
             protected Boolean getFallback() {
                 final Throwable thrown = getFailedExecutionException();
                 return thrown != null && thrown.getClass().equals(TenacityTestException.class);
             }
+
             class TenacityTestException extends Exception {
                 private static final long serialVersionUID = 2183798191010L;
             }
@@ -256,6 +264,7 @@ public class TenacityCommandFailureCauseTest {
             protected Boolean run() throws Exception {
                 return false;
             }
+
             @Override
             protected Boolean getFallback() {
                 return isResponseShortCircuited();
@@ -269,6 +278,7 @@ public class TenacityCommandFailureCauseTest {
             protected Boolean run() {
                 return false;
             }
+
             @Override
             protected Boolean getFallback() {
                 return isResponseRejected();
