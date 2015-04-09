@@ -1,4 +1,4 @@
-Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.svg)](https://travis-ci.org/yammer/tenacity)
+Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.svg)](https://travis-ci.org/yammer/tenacity) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core/badge.svg)]
 ========
 
 Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/Netflix/Hystrix).
