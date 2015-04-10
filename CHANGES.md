@@ -1,3 +1,9 @@
+0.6.1
+-----
+* Remove `ManagedConcurrencyStrategy` and revert back to the default. This is replicated through `ManagedHystrix`. 
+  Hystrix also enforces stricter use of `HystrixRequestContext` semantics when using a custom strategy. This broke use of per-request
+  features of Hystrix.
+
 0.6.0
 -----
 * Dropwizard 0.8.1 - This was blocked by [Dropwizard 0.8.0 pull-request](https://github.com/dropwizard/dropwizard/pull/939)

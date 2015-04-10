@@ -2,10 +2,15 @@ package com.yammer.tenacity.core.core;
 
 import com.netflix.hystrix.Hystrix;
 import io.dropwizard.lifecycle.Managed;
-
-import java.util.concurrent.TimeUnit;
+import io.dropwizard.util.Duration;
 
 public class ManagedHystrix implements Managed {
+    protected final Duration shutdownGracePeriod;
+
+    public ManagedHystrix(Duration shutdownGracePeriod) {
+        this.shutdownGracePeriod = shutdownGracePeriod;
+    }
+
     @Override
     public void start() throws Exception {
 
@@ -13,6 +18,6 @@ public class ManagedHystrix implements Managed {
 
     @Override
     public void stop() throws Exception {
-        Hystrix.reset(5, TimeUnit.SECONDS);
+        Hystrix.reset(shutdownGracePeriod.getQuantity(), shutdownGracePeriod.getUnit());
     }
 }
