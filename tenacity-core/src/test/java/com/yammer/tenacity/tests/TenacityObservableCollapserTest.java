@@ -97,7 +97,7 @@ public class TenacityObservableCollapserTest {
             final Observable<Long> o1 = new Collapser(1L).observe();
             final Observable<Long> o2 = new Collapser(2L).observe();
 
-            assertThat(o1.subscribe(new Subscriber<Long>() {
+            o1.subscribe(new Subscriber<Long>() {
                 @Override
                 public void onCompleted() {
                 }
@@ -111,9 +111,9 @@ public class TenacityObservableCollapserTest {
                 public void onNext(Long aLong) {
                     assertThat(aLong).isEqualTo(1L);
                 }
-            }));
+            });
 
-            assertThat(o2.subscribe(new Subscriber<Long>() {
+            o2.subscribe(new Subscriber<Long>() {
                 @Override
                 public void onCompleted() {
                 }
@@ -127,7 +127,7 @@ public class TenacityObservableCollapserTest {
                 public void onNext(Long aLong) {
                     assertThat(aLong).isEqualTo(2L);
                 }
-            }));
+            });
 
             for (HystrixInvokableInfo<?> info : HystrixRequestLog.getCurrentRequest().getAllExecutedCommands()) {
                 assertThat(info.isExecutionComplete()).isTrue();
