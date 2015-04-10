@@ -1,3 +1,12 @@
+Dropwizard 0.7.x Releases
+=========================
+
+0.5.5 ported from 0.6.1
+-----------------------
+* Remove `ManagedConcurrencyStrategy` and revert back to the default. This is replicated through `ManagedHystrix`. 
+  Hystrix also enforces stricter use of `HystrixRequestContext` semantics when using a custom strategy. This broke use of per-request
+  features of Hystrix.
+
 0.5.4
 --------------
 * [Hystrix 1.4.4](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-144-maven-central-bintray)

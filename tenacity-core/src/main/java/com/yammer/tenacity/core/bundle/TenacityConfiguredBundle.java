@@ -13,9 +13,9 @@ import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
 import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
-import com.yammer.tenacity.core.strategies.ManagedConcurrencyStrategy;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -57,7 +57,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations =
                 tenacityBundleConfigurationFactory.getTenacityConfigurations(configuration);
 
-        configureHystrix(environment);
+        configureHystrix(configuration, environment);
         addExceptionMappers(environment);
         addTenacityResources(
                 environment,
@@ -90,9 +90,9 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         }
     }
 
-    protected void configureHystrix(Environment environment) {
-        HystrixPlugins.getInstance().registerConcurrencyStrategy(new ManagedConcurrencyStrategy(environment));
-        environment.lifecycle().manage(new ManagedHystrix());
+    protected void configureHystrix(T configuration, Environment environment) {
+        environment.lifecycle().manage(new ManagedHystrix(
+                ((DefaultServerFactory)configuration.getServerFactory()).getShutdownGracePeriod()));
         environment.servlets()
                 .addServlet("hystrix-metrics", new HystrixMetricsStreamServlet())
                 .addMapping("/tenacity/metrics.stream");
