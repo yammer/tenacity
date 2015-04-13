@@ -31,6 +31,7 @@ public class TenacityPropertyStore {
                 new SemaphoreConfiguration(
                         commandProperties.executionIsolationSemaphoreMaxConcurrentRequests().get(),
                         commandProperties.fallbackIsolationSemaphoreMaxConcurrentRequests().get()),
-                commandProperties.executionTimeoutInMilliseconds().get());
+                commandProperties.executionTimeoutInMilliseconds().get(),
+                commandProperties.executionIsolationStrategy().get());
     }
 }
