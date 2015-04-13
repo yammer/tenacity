@@ -1,3 +1,8 @@
+0.6.2
+-----
+* Fixing bug where `TenacityPropertyStore` wouldn't properly update the `executionIsolationStrategy` to reflect the live configuration value. This only affects Breakerbox's ability to determine
+  if configurations are synchronized or not.
+
 0.6.1
 -----
 * Remove `ManagedConcurrencyStrategy` and revert back to the default. This is replicated through `ManagedHystrix`. 
