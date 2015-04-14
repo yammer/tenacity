@@ -2,7 +2,7 @@ package com.yammer.tenacity.client;
 
 import com.yammer.tenacity.core.http.TenacityJerseyClientBuilder;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
-import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.ForkedJerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
 
@@ -25,7 +25,7 @@ public class TenacityClientBuilder {
     }
 
     public TenacityClient build() {
-        final Client client = new JerseyClientBuilder(environment)
+        final Client client = new ForkedJerseyClientBuilder(environment)
                 .using(jerseyConfiguration)
                 .build("tenacity-" + tenacityPropertyKey);
         return new TenacityClient(environment.metrics(), TenacityJerseyClientBuilder

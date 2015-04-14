@@ -28,8 +28,8 @@ public class TenacityWebTarget implements WebTarget {
     }
 
 
-    protected void setTimeoutWithTenacity() {
-        delegate.property(ClientProperties.READ_TIMEOUT, Ints.checkedCast(TenacityCommand
+    protected void setTimeoutWithTenacity(Invocation.Builder builder) {
+        builder.property(ClientProperties.READ_TIMEOUT, Ints.checkedCast(TenacityCommand
                         .getCommandProperties(tenacityPropertyKey)
                         .executionTimeoutInMilliseconds()
                         .get() + timeoutPadding.toMilliseconds()));
@@ -147,20 +147,23 @@ public class TenacityWebTarget implements WebTarget {
 
     @Override
     public Invocation.Builder request() {
-        setTimeoutWithTenacity();
-        return delegate.request();
+        final Invocation.Builder builder = delegate.request();
+        setTimeoutWithTenacity(builder);
+        return builder;
     }
 
     @Override
     public Invocation.Builder request(String... acceptedResponseTypes) {
-        setTimeoutWithTenacity();
-        return delegate.request(acceptedResponseTypes);
+        final Invocation.Builder builder = delegate.request(acceptedResponseTypes);
+        setTimeoutWithTenacity(builder);
+        return builder;
     }
 
     @Override
     public Invocation.Builder request(MediaType... acceptedResponseTypes) {
-        setTimeoutWithTenacity();
-        return delegate.request(acceptedResponseTypes);
+        final Invocation.Builder builder = delegate.request(acceptedResponseTypes);
+        setTimeoutWithTenacity(builder);
+        return builder;
     }
 
     @Override
