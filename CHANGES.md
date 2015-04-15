@@ -1,3 +1,12 @@
+0.6.3
+-----
+* Fixed a memory-leak when using `TenacityJerseyClient`. It was incorrectly adjusting the timeout for the shared configuration for all WebTargets created from a parent `JerseyClient` instead of 
+  on the per-request configuration that is generated for each invocation of a `WebTarget`. This will be sent to Dropwizard as a pull-request, but for now we have a workaround. You need to create your
+  `JerseyClient` using the `ForkedJerseyClientBuilder` instead of Dropwizard's `JerseyClientBuilder`. Note: this is only necessary when using dropwizard 0.8.0 and 0.8.1
+* Migrated `WebTarget` out of a jersey related namespace. No use of non-public APIs anymore.
+* No backport for this release as it only affects dropwizard 0.8.x
+
+
 0.6.2
 -----
 * Fixing bug where `TenacityPropertyStore` wouldn't properly update the `executionIsolationStrategy` to reflect the live configuration value. This only affects Breakerbox's ability to determine
