@@ -380,8 +380,8 @@ on a per-request basis on the currently set execution timeout value for resource
 `TenacityPropertyKey`.
 
 
-Note: For dropwizard 0.8.1 and earlier releases you'll want to create the JerseyClient with the ForkedJerseyClientBuilder which solves a memory-leak when using 
-per-request configuration changes. You don't need to use the ForkedJerseyClientBuilder in dropwizard0.7.x or earlier releases.
+Note: For dropwizard 0.8.1 and earlier releases you'll want to create `JerseyClient` with `ForkedJerseyClientBuilder` which solves a memory-leak when using 
+per-request configuration changes. You don't need to use the `ForkedJerseyClientBuilder` in dropwizard 0.7.x or earlier releases.
 
 ```java
 Client client = new ForkedJerseyClientBuilder(environment).build("some-external-dependency");
