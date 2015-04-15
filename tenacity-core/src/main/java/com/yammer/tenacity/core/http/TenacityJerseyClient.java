@@ -1,6 +1,5 @@
 package com.yammer.tenacity.core.http;
 
-import com.sun.jersey.api.client.TenacityWebTarget;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.util.Duration;
 

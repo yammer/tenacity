@@ -1,4 +1,4 @@
-package com.sun.jersey.api.client;
+package com.yammer.tenacity.core.http;
 
 import com.google.common.primitives.Ints;
 import com.yammer.tenacity.core.TenacityCommand;
