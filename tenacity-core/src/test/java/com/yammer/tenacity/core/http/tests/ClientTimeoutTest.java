@@ -15,7 +15,7 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import com.yammer.tenacity.tests.DependencyKey;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.ForkedJerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Bootstrap;
@@ -107,7 +107,7 @@ public class ClientTimeoutTest {
     }
 
     private Client buildClient() {
-        return new JerseyClientBuilder(metricRegistry)
+        return new ForkedJerseyClientBuilder(metricRegistry)
                 .using(executorService, Jackson.newObjectMapper())
                 .using(clientConfiguration)
                 .build("test'");
