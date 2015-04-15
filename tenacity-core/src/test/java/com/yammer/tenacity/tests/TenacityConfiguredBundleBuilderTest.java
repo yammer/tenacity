@@ -1,5 +1,6 @@
 package com.yammer.tenacity.tests;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
@@ -13,6 +14,7 @@ import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import io.dropwizard.Configuration;
+import io.dropwizard.servlets.tasks.Task;
 import org.junit.Test;
 
 import javax.ws.rs.ext.ExceptionMapper;
@@ -47,7 +49,9 @@ public class TenacityConfiguredBundleBuilderTest {
                 isEqualTo(new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.<HystrixCommandExecutionHook>absent(),
-                        Collections.<ExceptionMapper<? extends Throwable>>emptyList()
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
+                        Collections.<HealthCheck>emptyList(),
+                        Collections.<Task>emptyList()
                 ));
     }
 
@@ -70,7 +74,9 @@ public class TenacityConfiguredBundleBuilderTest {
                 isEqualTo(new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.<HystrixCommandExecutionHook>absent(),
-                        ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))
+                        ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429)),
+                        Collections.<HealthCheck>emptyList(),
+                        Collections.<Task>emptyList()
                 ));
     }
 
@@ -88,7 +94,9 @@ public class TenacityConfiguredBundleBuilderTest {
                         Optional.<HystrixCommandExecutionHook>absent(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(
                                 new TenacityExceptionMapper(429),
-                                new TenacityContainerExceptionMapper(429))
+                                new TenacityContainerExceptionMapper(429)),
+                        Collections.<HealthCheck>emptyList(),
+                        Collections.<Task>emptyList()
                 ));
     }
 
@@ -105,7 +113,9 @@ public class TenacityConfiguredBundleBuilderTest {
                 isEqualTo(new TenacityConfiguredBundle<>(
                         configurationFactory,
                         Optional.of(hook),
-                        Collections.<ExceptionMapper<? extends Throwable>>emptyList()
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
+                        Collections.<HealthCheck>emptyList(),
+                        Collections.<Task>emptyList()
                 ));
     }
 }
