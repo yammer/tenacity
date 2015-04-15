@@ -72,7 +72,7 @@ public class ForkedJerseyClientBuilder {
     }
 
     /**
-     * Adds the given class as a Jersey provider. <p/><b>N.B.:</b> This class must either have a
+     * Adds the given class as a Jersey provider. <b>N.B.:</b> This class must either have a
      * no-args constructor or use Jersey's built-in dependency injection.
      *
      * @param klass a Jersey provider class
@@ -85,8 +85,8 @@ public class ForkedJerseyClientBuilder {
 
     /**
      * Sets the state of the given Jersey property.
-     * <p/>
-     * <p/><b>WARNING:</b> The default connector ignores Jersey properties.
+     *
+     * <b>WARNING:</b> The default connector ignores Jersey properties.
      * Use {@link JerseyClientConfiguration} instead.
      *
      * @param propertyName  the name of the Jersey property
@@ -149,7 +149,7 @@ public class ForkedJerseyClientBuilder {
 
     /**
      * Use the given {@link ConnectorProvider} instance.
-     * <p/><b>WARNING:</b> Use it with a caution. Most of features will not
+     * <b>WARNING:</b> Use it with a caution. Most of features will not
      * work in a custom connection provider.
      *
      * @param connectorProvider a {@link ConnectorProvider} instance
