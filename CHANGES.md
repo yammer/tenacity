@@ -2,19 +2,19 @@
 -----
 * Fixing bug where `TenacityPropertyStore` wouldn't properly update the `executionIsolationStrategy` to reflect the live configuration value. This only affects Breakerbox's ability to determine
   if configurations are synchronized or not.
-* There is a memory-leak that is found when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
+* There is a memory-leak when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
 
 0.6.1
 -----
 * Remove `ManagedConcurrencyStrategy` and revert back to the default. This is replicated through `ManagedHystrix`. 
   Hystrix also enforces stricter use of `HystrixRequestContext` semantics when using a custom strategy. This broke use of per-request
   features of Hystrix.
-* There is a memory-leak that is found when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
+* There is a memory-leak when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
 
 0.6.0
 -----
 * Dropwizard 0.8.1 - This was blocked by [Dropwizard 0.8.0 pull-request](https://github.com/dropwizard/dropwizard/pull/939)
-* There is a memory-leak that is found when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
+* There is a memory-leak when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
 
 
 Dropwizard 0.7.x Releases
