@@ -7,6 +7,9 @@ import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
+import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
+import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +21,6 @@ import java.util.Objects;
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class TenacityClient {
-    public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/propertykeys";
-    public static final String TENACITY_CONFIGURATION_PATH = "/tenacity/configuration";
-    public static final String TENACITY_CIRCUITBREAKERS_PATH = "/tenacity/circuitbreakers";
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityClient.class);
     protected final Client client;
     protected final Timer fetchPropertyKeys;
@@ -37,10 +37,9 @@ public class TenacityClient {
 
     @SuppressWarnings("UnusedDeclaration")
     public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
-        //noinspection UnusedDeclaration
         try (Timer.Context timerContext = fetchPropertyKeys.time()) {
             return Optional.of(ImmutableList.copyOf(client.target(root)
-                    .path(TENACITY_PROPERTYKEYS_PATH)
+                    .path(TenacityPropertyKeysResource.PATH)
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .get(String[].class)));
         } catch (Exception err) {
@@ -51,11 +50,10 @@ public class TenacityClient {
 
     @SuppressWarnings("UnusedDeclaration")
     public Optional<TenacityConfiguration> getTenacityConfiguration(URI root, TenacityPropertyKey key) {
-        //noinspection UnusedDeclaration
         try (Timer.Context timerContext = fetchConfiguration.time()) {
             return Optional.of(client
                     .target(root)
-                    .path(TENACITY_CONFIGURATION_PATH)
+                    .path(TenacityConfigurationResource.PATH)
                     .path(key.toString())
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .get(TenacityConfiguration.class));
@@ -67,11 +65,10 @@ public class TenacityClient {
 
     @SuppressWarnings("UnusedDeclaration")
     public Optional<ImmutableList<CircuitBreaker>> getCircuitBreakers(URI root) {
-        //noinspection UnusedDeclaration
         try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
             return Optional.of(ImmutableList.copyOf(client
                     .target(root)
-                    .path(TENACITY_CIRCUITBREAKERS_PATH)
+                    .path(TenacityCircuitBreakersResource.PATH)
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .get(CircuitBreaker[].class)));
         } catch (Exception err) {

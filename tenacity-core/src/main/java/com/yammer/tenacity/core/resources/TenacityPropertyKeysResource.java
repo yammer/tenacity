@@ -1,7 +1,7 @@
 package com.yammer.tenacity.core.resources;
 
-import com.google.common.collect.ImmutableList;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import javax.ws.rs.GET;
@@ -11,8 +11,9 @@ import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Path("/tenacity/propertykeys")
+@Path(TenacityPropertyKeysResource.PATH)
 public class TenacityPropertyKeysResource {
+    public static final String PATH = "/tenacity/propertykeys";
     private final Iterable<TenacityPropertyKey> keys;
 
     public TenacityPropertyKeysResource(TenacityPropertyKey[] keys) {

@@ -13,8 +13,9 @@ import javax.ws.rs.core.MediaType;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-@Path("/tenacity/configuration/{key}")
+@Path(TenacityConfigurationResource.PATH)
 public class TenacityConfigurationResource {
+    public static final String PATH = "/tenacity/configuration/{key}";
     private final TenacityPropertyKeyFactory factory;
 
     public TenacityConfigurationResource(TenacityPropertyKeyFactory factory) {
