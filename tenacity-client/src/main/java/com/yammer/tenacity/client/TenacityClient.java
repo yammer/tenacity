@@ -8,6 +8,9 @@ import com.sun.jersey.api.client.Client;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
+import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
+import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +21,6 @@ import java.util.Objects;
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class TenacityClient {
-    public static final String TENACITY_PROPERTYKEYS_PATH = "/tenacity/propertykeys";
-    public static final String TENACITY_CONFIGURATION_PATH = "/tenacity/configuration";
-    public static final String TENACITY_CIRCUITBREAKERS_PATH = "/tenacity/circuitbreakers";
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityClient.class);
     protected final Client client;
     protected final Timer fetchPropertyKeys;
@@ -38,7 +38,7 @@ public class TenacityClient {
     public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
         try (Timer.Context timerContext = fetchPropertyKeys.time()) {
             return Optional.of(ImmutableList.copyOf(client.resource(root)
-                    .path(TENACITY_PROPERTYKEYS_PATH)
+                    .path(TenacityPropertyKeysResource.PATH)
                     .accept(MediaType.APPLICATION_JSON_TYPE)
                     .get(String[].class)));
         } catch (Exception err) {
@@ -51,7 +51,7 @@ public class TenacityClient {
         try (Timer.Context timerContext = fetchConfiguration.time()) {
             return Optional.of(client
                     .resource(root)
-                    .path(TENACITY_CONFIGURATION_PATH)
+                    .path(TenacityConfigurationResource.PATH)
                     .path(key.toString())
                     .accept(MediaType.APPLICATION_JSON_TYPE)
                     .get(TenacityConfiguration.class));
@@ -65,7 +65,7 @@ public class TenacityClient {
         try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
             return Optional.of(ImmutableList.copyOf(client
                     .resource(root)
-                    .path(TENACITY_CIRCUITBREAKERS_PATH)
+                    .path(TenacityCircuitBreakersResource.PATH)
                     .accept(MediaType.APPLICATION_JSON_TYPE)
                     .get(CircuitBreaker[].class)));
         } catch (Exception err) {
