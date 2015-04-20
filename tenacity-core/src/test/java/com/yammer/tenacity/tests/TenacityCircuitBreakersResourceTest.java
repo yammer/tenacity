@@ -3,6 +3,7 @@ package com.yammer.tenacity.tests;
 import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
 import com.yammer.tenacity.testing.TenacityTestRule;
 import org.junit.Rule;
@@ -14,10 +15,12 @@ public class TenacityCircuitBreakersResourceTest {
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
+    private static TenacityPropertyKeyFactory keyFactory = new DependencyKeyFactory();
+
     @Test
     public void healthyWithNoCircuitBreakers() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of());
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(), keyFactory);
 
         assertThat(resource.circuitBreakers()).isEmpty();
 
@@ -26,7 +29,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Test
     public void healthyWithNonExistentCircuitBreakers() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK));
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK), keyFactory);
 
         assertThat(resource.circuitBreakers()).isEmpty();
     }
@@ -34,7 +37,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Test
     public void healthyWithClosedCircuitBreakers() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK));
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK), keyFactory);
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
@@ -45,7 +48,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Test
     public void healthyExistentAgnostic() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK));
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK), keyFactory);
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
@@ -63,7 +66,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Test
     public void unhealthyWithOpenCircuitBreaker() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK));
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK), keyFactory);
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
@@ -75,7 +78,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Test
     public void mixedResults() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK));
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK), keyFactory);
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
@@ -86,7 +89,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Test
     public void multipleOpen() {
         final TenacityCircuitBreakersResource resource =
-                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK));
+                new TenacityCircuitBreakersResource(ImmutableList.<TenacityPropertyKey>of(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK), keyFactory);
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
         tryToOpenCircuitBreaker(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK);

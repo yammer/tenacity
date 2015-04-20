@@ -22,7 +22,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 import javax.ws.rs.ext.ExceptionMapper;
-import java.lang.Iterable;
 import java.util.Map;
 import java.util.Objects;
 
@@ -135,7 +134,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
 
         environment.jersey().register(new TenacityPropertyKeysResource(tenacityPropertyKeys));
         environment.jersey().register(new TenacityConfigurationResource(keyFactory));
-        environment.jersey().register(new TenacityCircuitBreakersResource(tenacityPropertyKeys));
+        environment.jersey().register(new TenacityCircuitBreakersResource(tenacityPropertyKeys, keyFactory));
     }
 
     @Override

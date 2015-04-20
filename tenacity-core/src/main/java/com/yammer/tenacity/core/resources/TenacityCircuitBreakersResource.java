@@ -1,11 +1,14 @@
 package com.yammer.tenacity.core.resources;
 
-import com.google.common.collect.ImmutableList;
-import com.netflix.hystrix.HystrixCircuitBreaker;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import com.netflix.hystrix.HystrixCircuitBreaker;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,14 +16,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 @Path("/tenacity/circuitbreakers")
 public class TenacityCircuitBreakersResource {
     private final Iterable<TenacityPropertyKey> keys;
+    private final TenacityPropertyKeyFactory keyFactory;
 
-    public TenacityCircuitBreakersResource(Iterable<TenacityPropertyKey> keys) {
-        this.keys = checkNotNull(keys);
+    public TenacityCircuitBreakersResource(Iterable<TenacityPropertyKey> keys,
+                                           TenacityPropertyKeyFactory keyFactory) {
+        this.keys = keys;
+        this.keyFactory = keyFactory;
     }
 
     @GET
@@ -31,7 +35,7 @@ public class TenacityCircuitBreakersResource {
         for (TenacityPropertyKey key : keys) {
             final HystrixCircuitBreaker circuitBreaker = TenacityCommand.getCircuitBreaker(key);
             if (circuitBreaker != null) {
-                circuitBreakerBuilder.add(new CircuitBreaker(key, circuitBreaker.isOpen() && !circuitBreaker.allowRequest()));
+                circuitBreakerBuilder.add(new CircuitBreaker(key, !circuitBreaker.allowRequest()));
             }
         }
         return circuitBreakerBuilder.build();
@@ -42,12 +46,8 @@ public class TenacityCircuitBreakersResource {
     @Path("{key}")
     @Produces(MediaType.APPLICATION_JSON)
     public CircuitBreaker getCircuitBreakerStatus(@PathParam("key") String key ) {
-        for (TenacityPropertyKey k : keys ) {
-            if( k.name().equals(key) ) {
-                HystrixCircuitBreaker breaker = TenacityCommand.getCircuitBreaker(k);
-                return new CircuitBreaker(k, (breaker!=null) && !breaker.allowRequest());
-            }
-        }
-        return null;
+        final TenacityPropertyKey foundKey = Iterables.find(keys, Predicates.equalTo(keyFactory.from(key)));
+        final HystrixCircuitBreaker circuitBreaker = TenacityCommand.getCircuitBreaker(foundKey);
+        return new CircuitBreaker(foundKey, !circuitBreaker.allowRequest());
     }
 }
