@@ -1,12 +1,12 @@
 package com.yammer.tenacity.core.bundle;
 
-import com.codahale.metrics.health.HealthCheck;
 import com.google.common.base.Optional;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.core.ManagedHystrix;
+import com.yammer.tenacity.core.healthcheck.TenacityCircuitBreakerHealthCheck;
 import com.yammer.tenacity.core.metrics.YammerMetricsPublisher;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
@@ -30,17 +30,17 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
     protected final TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory;
     protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
     protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
-    protected final Iterable<HealthCheck> healthChecks;
+    protected final boolean usingTenacityCircuitBreakerHealthCheck;
 
     public TenacityConfiguredBundle(
             TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory,
             Optional<HystrixCommandExecutionHook> hystrixCommandExecutionHook,
             Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers,
-            Iterable<HealthCheck> healthChecks) {
+            boolean usingTenacityCircuitBreakerHealthCheck) {
         this.exceptionMappers = exceptionMappers;
         this.tenacityBundleConfigurationFactory = checkNotNull(tenacityBundleConfigurationFactory);
         this.executionHook = hystrixCommandExecutionHook;
-        this.healthChecks = healthChecks;
+        this.usingTenacityCircuitBreakerHealthCheck = usingTenacityCircuitBreakerHealthCheck;
     }
 
     public TenacityBundleConfigurationFactory<T> getTenacityBundleConfigurationFactory() {
@@ -55,10 +55,6 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         return exceptionMappers;
     }
 
-    public Iterable<HealthCheck> getHealthChecks() {
-        return healthChecks;
-    }
-
     @Override
     public void run(T configuration, Environment environment) throws Exception {
         Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations =
@@ -66,7 +62,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
 
         configureHystrix(configuration, environment);
         addExceptionMappers(environment);
-        addHealthChecks(environment);
+        addHealthChecks(tenacityPropertyKeyConfigurations.keySet(), environment);
         addTenacityResources(
                 environment,
                 tenacityBundleConfigurationFactory.getTenacityPropertyKeyFactory(configuration),
@@ -98,9 +94,10 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         }
     }
 
-    protected void addHealthChecks(Environment environment) {
-        for (HealthCheck healthCheck : healthChecks) {
-            environment.healthChecks().register(healthCheck.toString(), healthCheck);
+    protected void addHealthChecks(Iterable<TenacityPropertyKey> keys, Environment environment) {
+        if (usingTenacityCircuitBreakerHealthCheck) {
+            final TenacityCircuitBreakerHealthCheck tenacityCircuitBreakerHealthCheck = new TenacityCircuitBreakerHealthCheck(keys);
+            environment.healthChecks().register(tenacityCircuitBreakerHealthCheck.getName(), tenacityCircuitBreakerHealthCheck);
         }
     }
 
@@ -115,8 +112,6 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
     protected void addTenacityResources(Environment environment,
                                       TenacityPropertyKeyFactory keyFactory,
                                       Iterable<TenacityPropertyKey> tenacityPropertyKeys) {
-
-
         environment.jersey().register(new TenacityPropertyKeysResource(tenacityPropertyKeys));
         environment.jersey().register(new TenacityConfigurationResource(keyFactory));
         environment.jersey().register(new TenacityCircuitBreakersResource(tenacityPropertyKeys, keyFactory));
@@ -124,7 +119,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
 
     @Override
     public int hashCode() {
-        return Objects.hash(tenacityBundleConfigurationFactory, executionHook, exceptionMappers);
+        return Objects.hash(tenacityBundleConfigurationFactory, executionHook, exceptionMappers, usingTenacityCircuitBreakerHealthCheck);
     }
 
     @Override
@@ -136,8 +131,9 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
             return false;
         }
         final TenacityConfiguredBundle<?> other = (TenacityConfiguredBundle) obj;
-        return Objects.equals(this.tenacityBundleConfigurationFactory, other.tenacityBundleConfigurationFactory) &&
-                Objects.equals(this.executionHook, other.executionHook) &&
-                Objects.equals(this.exceptionMappers, other.exceptionMappers);
+        return Objects.equals(this.tenacityBundleConfigurationFactory, other.tenacityBundleConfigurationFactory)
+                && Objects.equals(this.executionHook, other.executionHook)
+                && Objects.equals(this.exceptionMappers, other.exceptionMappers)
+                && Objects.equals(this.usingTenacityCircuitBreakerHealthCheck, other.usingTenacityCircuitBreakerHealthCheck);
     }
 }

@@ -15,6 +15,7 @@ public class TenacityBundleBuilder<T extends Configuration> {
     protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
     protected TenacityBundleConfigurationFactory<T> configurationFactory;
     protected final ImmutableList.Builder<HealthCheck> healthCheckBuilder = ImmutableList.builder();
+    protected boolean usingTenacityCircuitBreakerHealthCheck = false;
 
     public static <T extends Configuration> TenacityBundleBuilder<T> newBuilder() {
         return new TenacityBundleBuilder<>();
@@ -25,8 +26,8 @@ public class TenacityBundleBuilder<T extends Configuration> {
         return this;
     }
 
-    public TenacityBundleBuilder<T> addHealthCheck(HealthCheck healthCheck) {
-        healthCheckBuilder.add(healthCheck);
+    public TenacityBundleBuilder<T> withCircuitBreakerHealthCheck() {
+        usingTenacityCircuitBreakerHealthCheck = true;
         return this;
     }
 
@@ -51,6 +52,10 @@ public class TenacityBundleBuilder<T extends Configuration> {
             throw new IllegalArgumentException("Must supply a Configuration Factory");
         }
 
-        return new TenacityConfiguredBundle<>(configurationFactory, executionHook, exceptionMapperBuilder.build(), healthCheckBuilder.build());
+        return new TenacityConfiguredBundle<>(
+                configurationFactory,
+                executionHook,
+                exceptionMapperBuilder.build(),
+                usingTenacityCircuitBreakerHealthCheck);
     }
 }
