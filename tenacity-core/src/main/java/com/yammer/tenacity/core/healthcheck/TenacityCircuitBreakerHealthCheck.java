@@ -35,10 +35,6 @@ public class TenacityCircuitBreakerHealthCheck extends HealthCheck {
         if (Iterables.isEmpty(openCircuits)) {
             return Result.healthy();
         } else {
-            final ImmutableList.Builder<String> openCircuitNames = ImmutableList.builder();
-            for (CircuitBreaker circuitBreaker : openCircuits) {
-                openCircuitNames.add(circuitBreaker.getId().name());
-            }
             return Result.unhealthy("Open circuit(s): " + Joiner.on(',')
                     .join(Collections2.transform(openCircuits, new Function<CircuitBreaker, String>() {
                         @Nullable
