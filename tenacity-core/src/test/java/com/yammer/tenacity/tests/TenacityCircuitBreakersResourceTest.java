@@ -2,7 +2,6 @@ package com.yammer.tenacity.tests;
 
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.UniformInterfaceException;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
@@ -141,15 +140,14 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void forcedCloseIsIdentifiedCorrectly() {
-        TenacityPropertyRegister.registerCircuitForceClose(DependencyKey.EXISTENT_HEALTHCHECK);
+        TenacityPropertyRegister.registerCircuitForceClosed(DependencyKey.EXISTENT_HEALTHCHECK);
 
         when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
 
-        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
-                .request()
                 .get(CircuitBreaker.class))
                 .isEqualTo(CircuitBreaker.forcedClosed(DependencyKey.EXISTENT_HEALTHCHECK))
                 .isNotEqualTo(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
@@ -163,9 +161,8 @@ public class TenacityCircuitBreakersResourceTest {
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("fallback");
 
-        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
-                .request()
                 .get(CircuitBreaker.class))
                 .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK))
                 .isNotEqualTo(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK));
@@ -175,9 +172,8 @@ public class TenacityCircuitBreakersResourceTest {
     public void forcedOpenCanBeReset() {
         when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
-        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
-                .request()
                 .get(CircuitBreaker.class))
                 .isEqualTo(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
 
@@ -185,9 +181,8 @@ public class TenacityCircuitBreakersResourceTest {
 
         when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("fallback");
-        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
-                .request()
                 .get(CircuitBreaker.class))
                 .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK))
                 .isNotEqualTo(CircuitBreaker.open(DependencyKey.EXISTENT_HEALTHCHECK));
@@ -197,10 +192,52 @@ public class TenacityCircuitBreakersResourceTest {
 
         when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
-        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
-                .request()
                 .get(CircuitBreaker.class))
+                .isEqualTo(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
+    }
+
+    @Test
+    public void canModifyACircuitBreakerToBeForceClosed() {
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
+
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .put(CircuitBreaker.class, CircuitBreaker.State.FORCED_CLOSED.name()))
+                .isEqualTo(CircuitBreaker.forcedClosed(DependencyKey.EXISTENT_HEALTHCHECK));
+    }
+
+    @Test
+    public void canModifyACircuitBreakerToBeForceOpen() {
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
+
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .put(CircuitBreaker.class, CircuitBreaker.State.FORCED_OPEN.name()))
+                .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK));
+    }
+
+    @Test
+    public void canModifyACircuitBreakerToBeForceOpenBackToItsOriginalState() {
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
+
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .put(CircuitBreaker.class, CircuitBreaker.State.FORCED_OPEN.name()))
+                .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK));
+
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(resources.client().resource(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .put(CircuitBreaker.class, CircuitBreaker.State.FORCED_RESET.name()))
                 .isEqualTo(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
     }
 }
