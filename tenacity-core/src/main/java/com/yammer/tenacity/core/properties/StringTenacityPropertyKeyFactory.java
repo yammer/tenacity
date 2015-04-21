@@ -8,6 +8,11 @@ public class StringTenacityPropertyKeyFactory implements TenacityPropertyKeyFact
             public String name() {
                 return value.toUpperCase();
             }
+
+            @Override
+            public String toString() {
+                return name();
+            }
         };
     }
 }
