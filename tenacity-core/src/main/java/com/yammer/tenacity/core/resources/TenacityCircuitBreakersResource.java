@@ -2,11 +2,11 @@ package com.yammer.tenacity.core.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.netflix.hystrix.HystrixCircuitBreaker;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.core.CircuitBreaker;
+import com.yammer.tenacity.core.core.CircuitBreakers;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 
@@ -34,14 +34,7 @@ public class TenacityCircuitBreakersResource {
     @Timed
     @Produces(MediaType.APPLICATION_JSON)
     public Iterable<CircuitBreaker> circuitBreakers() {
-        final ImmutableList.Builder<CircuitBreaker> circuitBreakerBuilder = ImmutableList.builder();
-        for (TenacityPropertyKey key : keys) {
-            final HystrixCircuitBreaker circuitBreaker = TenacityCommand.getCircuitBreaker(key);
-            if (circuitBreaker != null) {
-                circuitBreakerBuilder.add(new CircuitBreaker(key, !circuitBreaker.allowRequest()));
-            }
-        }
-        return circuitBreakerBuilder.build();
+        return CircuitBreakers.all(keys);
     }
 
     @GET
