@@ -332,6 +332,8 @@ Tenacity adds resources under `/tenacity`:
 1. `GET /tenacity/configuration/propertykeys`:  List of strings which are all the registered propertykeys with Tenacity.
 2. `GET /tenacity/configuration/{key}`:         JSON representation of a `TenacityConfiguration` for the supplied {key}.
 3. `GET /tenacity/circuitbreakers`:             Simple JSON representation of all circuitbreakers and their circuitbreaker status.
+   `GET /tenacity/circuitbreakers/{key}`:       Single circuitbreaker status
+   `PUT /tenacity/circuitbreakers/{key}`:       Expected "FORCED_CLOSED, FORCED_OPEN, or FORCED_RESET" as the body.
 4. `GET /tenacity/metrics.stream`:              text/event-stream of Hystrix metrics.
 
 TenacityExceptionMapper
@@ -394,4 +396,18 @@ Client tenacityClient = TenacityJerseyClientBuilder
 
 //Then use tenacityClient the same way as you'd use client. TenacityClient overrides resource/asyncResource and those in turn are Tenacity*Resources.
 //They adjust timeouts on every use or on a per-request basis.
+```
+
+TenacityCircuitBreakerHealthCheck
+=================================
+There is now the ability to add a `HealthCheck` which returns `unhealthy` when any circuit is open. This could be because a circuit is
+forced open or because of environment circumstances. The default is for this not to be turned on. You can enable this `HealthCheck`
+by configuring it on the bundle that is added to your application.
+
+```java
+TenacityBundleBuilder
+                .newBuilder()
+                ...
+                .withCircuitBreakerHealthCheck()
+                .build();
 ```
