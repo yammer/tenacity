@@ -2,6 +2,7 @@ package com.yammer.tenacity.tests;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Resources;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.bundle.BaseTenacityBundleConfigurationFactory;
 import com.yammer.tenacity.core.bundle.TenacityBundleBuilder;
@@ -9,10 +10,17 @@ import com.yammer.tenacity.core.bundle.TenacityBundleConfigurationFactory;
 import com.yammer.tenacity.core.bundle.TenacityConfiguredBundle;
 import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
+import com.yammer.tenacity.core.healthcheck.TenacityCircuitBreakerHealthCheck;
 import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
+import com.yammer.tenacity.core.properties.StringTenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
+import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.ext.ExceptionMapper;
@@ -22,18 +30,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class TenacityConfiguredBundleBuilderTest {
-    private final TenacityPropertyKeyFactory propertyKeyFactory = new TenacityPropertyKeyFactory() {
-        @Override
-        public TenacityPropertyKey from(String value) {
-            return null;
+    public static class TenacityBundleApp extends Application<Configuration> {
+        public static void main(String[] args) throws Exception {
+            new TenacityBundleApp().run(args);
         }
-    };
 
+        @Override
+        public void initialize(Bootstrap<Configuration> bootstrap) {
+            bootstrap.addBundle(TenacityBundleBuilder
+                    .newBuilder()
+                    .configurationFactory(CONFIGURATION_FACTORY)
+                    .withCircuitBreakerHealthCheck()
+                    .build());
+        }
 
-    private final TenacityBundleConfigurationFactory<Configuration> configurationFactory = new BaseTenacityBundleConfigurationFactory<Configuration>() {
+        @Override
+        public void run(Configuration configuration, Environment environment) throws Exception {
+        }
+    }
+
+    @ClassRule
+    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(
+            TenacityBundleApp.class, Resources.getResource("clientTimeoutTest.yml").getPath());
+
+    private static final TenacityBundleConfigurationFactory<Configuration> CONFIGURATION_FACTORY = new BaseTenacityBundleConfigurationFactory<Configuration>() {
         @Override
         public TenacityPropertyKeyFactory getTenacityPropertyKeyFactory(Configuration applicationConfiguration) {
-            return propertyKeyFactory;
+            return new StringTenacityPropertyKeyFactory();
         }
     };
 
@@ -41,14 +64,15 @@ public class TenacityConfiguredBundleBuilderTest {
     public void shouldBuild() {
         TenacityConfiguredBundle<Configuration> bundle =
                 TenacityBundleBuilder.newBuilder()
-                        .configurationFactory(configurationFactory)
+                        .configurationFactory(CONFIGURATION_FACTORY)
                         .build();
 
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
-                        configurationFactory,
+                        CONFIGURATION_FACTORY,
                         Optional.<HystrixCommandExecutionHook>absent(),
-                        Collections.<ExceptionMapper<? extends Throwable>>emptyList()));
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
+                        false));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -62,32 +86,36 @@ public class TenacityConfiguredBundleBuilderTest {
     public void shouldUseExceptionMapper() {
         final TenacityConfiguredBundle<Configuration> bundle = TenacityBundleBuilder
                 .newBuilder()
-                .configurationFactory(configurationFactory)
+                .configurationFactory(CONFIGURATION_FACTORY)
                 .addExceptionMapper(new TenacityExceptionMapper(429))
                 .build();
 
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
-                        configurationFactory,
+                        CONFIGURATION_FACTORY,
                         Optional.<HystrixCommandExecutionHook>absent(),
-                        ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))));
+                        ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429)),
+                        false
+                ));
     }
 
     @Test
     public void useAllExceptionMappers() {
         final TenacityConfiguredBundle<Configuration> bundle = TenacityBundleBuilder
                 .newBuilder()
-                .configurationFactory(configurationFactory)
+                .configurationFactory(CONFIGURATION_FACTORY)
                 .mapAllHystrixRuntimeExceptionsTo(429)
                 .build();
 
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
-                        configurationFactory,
+                        CONFIGURATION_FACTORY,
                         Optional.<HystrixCommandExecutionHook>absent(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(
                                 new TenacityExceptionMapper(429),
-                                new TenacityContainerExceptionMapper(429))));
+                                new TenacityContainerExceptionMapper(429)),
+                        false
+                ));
     }
 
     @Test
@@ -95,14 +123,39 @@ public class TenacityConfiguredBundleBuilderTest {
         final HystrixCommandExecutionHook hook = new ExceptionLoggingCommandHook();
         final TenacityConfiguredBundle<Configuration> bundle = TenacityBundleBuilder
                 .newBuilder()
-                .configurationFactory(configurationFactory)
+                .configurationFactory(CONFIGURATION_FACTORY)
                 .commandExecutionHook(hook)
                 .build();
 
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
-                        configurationFactory,
+                        CONFIGURATION_FACTORY,
                         Optional.of(hook),
-                        Collections.<ExceptionMapper<? extends Throwable>>emptyList()));
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
+                        false
+                ));
+    }
+
+    @Test
+    public void withTenacityCircuitBreakerHealthCheck() {
+        final TenacityConfiguredBundle<Configuration> bundle = TenacityBundleBuilder
+                .newBuilder()
+                .configurationFactory(CONFIGURATION_FACTORY)
+                .withCircuitBreakerHealthCheck()
+                .build();
+
+        assertThat(bundle)
+                .isEqualTo(new TenacityConfiguredBundle<>(
+                        CONFIGURATION_FACTORY,
+                        Optional.<HystrixCommandExecutionHook>absent(),
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
+                        true
+                ));
+    }
+    
+    @Test
+    public void dropwizardClientRuleShouldAddTenacityCircuitBreakerHealthCheck() {
+        assertThat(RULE.getEnvironment().healthChecks().getNames())
+                .contains(new TenacityCircuitBreakerHealthCheck(Collections.<TenacityPropertyKey>emptyList()).getName());
     }
 }

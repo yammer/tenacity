@@ -34,6 +34,20 @@ public class TenacityPropertyRegister {
         }
     }
 
+    public static void registerCircuitForceOpen(TenacityPropertyKey key) {
+        ConfigurationManager.getConfigInstance().setProperty(circuitBreakerForceOpen(key), true);
+    }
+
+    public static void registerCircuitForceClosed(TenacityPropertyKey key) {
+        ConfigurationManager.getConfigInstance().setProperty(circuitBreakerForceClosed(key), true);
+    }
+
+    public static void registerCircuitForceReset(TenacityPropertyKey key) {
+        final AbstractConfiguration configInstance = ConfigurationManager.getConfigInstance();
+        configInstance.setProperty(circuitBreakerForceOpen(key), false);
+        configInstance.setProperty(circuitBreakerForceClosed(key), false);
+    }
+
     private void registerConfiguration(TenacityPropertyKey key,
                                        TenacityConfiguration configuration,
                                        AbstractConfiguration configInstance) {
@@ -156,5 +170,13 @@ public class TenacityPropertyRegister {
 
     public static String executionIsolationStrategy(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.execution.isolation.strategy", key.name());
+    }
+
+    public static String circuitBreakerForceOpen(TenacityPropertyKey key) {
+        return String.format("hystrix.command.%s.circuitBreaker.forceOpen", key.name());
+    }
+
+    public static String circuitBreakerForceClosed(TenacityPropertyKey key) {
+        return String.format("hystrix.command.%s.circuitBreaker.forceClosed", key.name());
     }
 }
