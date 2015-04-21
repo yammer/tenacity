@@ -17,7 +17,6 @@ import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -31,20 +30,17 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
     protected final TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory;
     protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
     protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
-    protected final Iterable<Task> tasks;
     protected final Iterable<HealthCheck> healthChecks;
 
     public TenacityConfiguredBundle(
             TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory,
             Optional<HystrixCommandExecutionHook> hystrixCommandExecutionHook,
             Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers,
-            Iterable<HealthCheck> healthChecks,
-            Iterable<Task> tasks) {
+            Iterable<HealthCheck> healthChecks) {
         this.exceptionMappers = exceptionMappers;
         this.tenacityBundleConfigurationFactory = checkNotNull(tenacityBundleConfigurationFactory);
         this.executionHook = hystrixCommandExecutionHook;
         this.healthChecks = healthChecks;
-        this.tasks = tasks;
     }
 
     public TenacityBundleConfigurationFactory<T> getTenacityBundleConfigurationFactory() {
@@ -59,10 +55,6 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         return exceptionMappers;
     }
 
-    public Iterable<Task> getTasks() {
-        return tasks;
-    }
-
     public Iterable<HealthCheck> getHealthChecks() {
         return healthChecks;
     }
@@ -75,7 +67,6 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
         configureHystrix(configuration, environment);
         addExceptionMappers(environment);
         addHealthChecks(environment);
-        addTasks(environment);
         addTenacityResources(
                 environment,
                 tenacityBundleConfigurationFactory.getTenacityPropertyKeyFactory(configuration),
@@ -110,12 +101,6 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
     protected void addHealthChecks(Environment environment) {
         for (HealthCheck healthCheck : healthChecks) {
             environment.healthChecks().register(healthCheck.toString(), healthCheck);
-        }
-    }
-
-    protected void addTasks(Environment environment) {
-        for (Task task : tasks) {
-            environment.admin().addTask(task);
         }
     }
 

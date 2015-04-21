@@ -14,6 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -142,7 +144,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void forcedCloseIsIdentifiedCorrectly() {
-        TenacityPropertyRegister.registerCircuitForceClose(DependencyKey.EXISTENT_HEALTHCHECK);
+        TenacityPropertyRegister.registerCircuitForceClosed(DependencyKey.EXISTENT_HEALTHCHECK);
 
         when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
 
@@ -202,6 +204,53 @@ public class TenacityCircuitBreakersResourceTest {
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
                 .request()
                 .get(CircuitBreaker.class))
+                .isEqualTo(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
+    }
+
+    @Test
+    public void canModifyACircuitBreakerToBeForceClosed() {
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
+
+        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .put(Entity.entity(CircuitBreaker.State.FORCED_CLOSED.name(), MediaType.APPLICATION_OCTET_STREAM_TYPE), CircuitBreaker.class))
+                .isEqualTo(CircuitBreaker.forcedClosed(DependencyKey.EXISTENT_HEALTHCHECK));
+    }
+
+    @Test
+    public void canModifyACircuitBreakerToBeForceOpen() {
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
+
+        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .put(Entity.entity(CircuitBreaker.State.FORCED_OPEN.name(), MediaType.APPLICATION_OCTET_STREAM_TYPE), CircuitBreaker.class))
+                .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK));
+    }
+
+    @Test
+    public void canModifyACircuitBreakerToBeForceOpenBackToItsOriginalState() {
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
+
+        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .put(Entity.entity(CircuitBreaker.State.FORCED_OPEN.name(), MediaType.APPLICATION_OCTET_STREAM_TYPE), CircuitBreaker.class))
+                .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK));
+
+        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+
+        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+                .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
+                .request(MediaType.APPLICATION_JSON_TYPE)
+                .put(Entity.entity(CircuitBreaker.State.FORCED_RESET.name(), MediaType.APPLICATION_OCTET_STREAM_TYPE), CircuitBreaker.class))
                 .isEqualTo(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
     }
 }

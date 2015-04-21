@@ -38,14 +38,14 @@ public class TenacityPropertyRegister {
         ConfigurationManager.getConfigInstance().setProperty(circuitBreakerForceOpen(key), true);
     }
 
-    public static void registerCircuitForceClose(TenacityPropertyKey key) {
-        ConfigurationManager.getConfigInstance().setProperty(circuitBreakerForceClose(key), true);
+    public static void registerCircuitForceClosed(TenacityPropertyKey key) {
+        ConfigurationManager.getConfigInstance().setProperty(circuitBreakerForceClosed(key), true);
     }
 
     public static void registerCircuitForceReset(TenacityPropertyKey key) {
         final AbstractConfiguration configInstance = ConfigurationManager.getConfigInstance();
         configInstance.setProperty(circuitBreakerForceOpen(key), false);
-        configInstance.setProperty(circuitBreakerForceClose(key), false);
+        configInstance.setProperty(circuitBreakerForceClosed(key), false);
     }
 
     private void registerConfiguration(TenacityPropertyKey key,
@@ -176,7 +176,7 @@ public class TenacityPropertyRegister {
         return String.format("hystrix.command.%s.circuitBreaker.forceOpen", key.name());
     }
 
-    public static String circuitBreakerForceClose(TenacityPropertyKey key) {
+    public static String circuitBreakerForceClosed(TenacityPropertyKey key) {
         return String.format("hystrix.command.%s.circuitBreaker.forceClosed", key.name());
     }
 }
