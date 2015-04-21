@@ -21,7 +21,7 @@ import java.util.Objects;
 public class CircuitBreaker {
     public static class Deserializer extends StdDeserializer<CircuitBreaker> {
         private static final long serialVersionUID = -1293812392173912L;
-        private final TenacityPropertyKeyFactory keyFactory = new StringTenacityPropertyKeyFactory();
+        private transient final TenacityPropertyKeyFactory keyFactory = new StringTenacityPropertyKeyFactory();
 
         public Deserializer() {
             super(CircuitBreaker.class);
