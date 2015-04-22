@@ -2,10 +2,10 @@ package com.yammer.tenacity.core.resources;
 
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.core.CircuitBreakers;
+import com.yammer.tenacity.core.core.TenacityPredicates;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
@@ -43,7 +43,7 @@ public class TenacityCircuitBreakersResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCircuitBreaker(@PathParam("key") String key ) {
         try {
-            final TenacityPropertyKey foundKey = Iterables.find(keys, Predicates.equalTo(keyFactory.from(key)));
+            final TenacityPropertyKey foundKey = Iterables.find(keys, TenacityPredicates.isEqualTo(keyFactory.from(key)));
             final Optional<CircuitBreaker> circuitBreaker = CircuitBreaker.usingHystrix(foundKey);
             if (circuitBreaker.isPresent()) {
                 return Response.ok(circuitBreaker.get()).build();
@@ -61,13 +61,15 @@ public class TenacityCircuitBreakersResource {
     public Response modifyCircuitBreaker(@PathParam("key") String key,
                                          String body) {
         try {
-            final TenacityPropertyKey foundKey = Iterables.find(keys, Predicates.equalTo(keyFactory.from(key)));
+            final TenacityPropertyKey foundKey = Iterables.find(keys, TenacityPredicates.isEqualTo(keyFactory.from(key)));
             final CircuitBreaker.State state = CircuitBreaker.State.valueOf(body.toUpperCase());
             switch (state) {
                 case FORCED_CLOSED:
+                    TenacityPropertyRegister.registerCircuitForceReset(foundKey);
                     TenacityPropertyRegister.registerCircuitForceClosed(foundKey);
                     break;
                 case FORCED_OPEN:
+                    TenacityPropertyRegister.registerCircuitForceReset(foundKey);
                     TenacityPropertyRegister.registerCircuitForceOpen(foundKey);
                     break;
                 case FORCED_RESET:

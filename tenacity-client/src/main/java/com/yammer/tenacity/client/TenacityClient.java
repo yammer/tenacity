@@ -52,11 +52,11 @@ public class TenacityClient {
             return Optional.of(client
                     .resource(root)
                     .path(TenacityConfigurationResource.PATH)
-                    .path(key.toString())
+                    .path(key.name())
                     .accept(MediaType.APPLICATION_JSON_TYPE)
                     .get(TenacityConfiguration.class));
         } catch (Exception err) {
-            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, key, err);
+            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, key.name(), err);
         }
         return Optional.absent();
     }
@@ -68,6 +68,36 @@ public class TenacityClient {
                     .path(TenacityCircuitBreakersResource.PATH)
                     .accept(MediaType.APPLICATION_JSON_TYPE)
                     .get(CircuitBreaker[].class)));
+        } catch (Exception err) {
+            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
+        }
+        return Optional.absent();
+    }
+
+    public Optional<CircuitBreaker> getCircuitBreaker(URI root, TenacityPropertyKey key) {
+        try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
+            return Optional.of(client
+                    .resource(root)
+                    .path(TenacityCircuitBreakersResource.PATH)
+                    .path(key.name())
+                    .accept(MediaType.APPLICATION_JSON_TYPE)
+                    .get(CircuitBreaker.class));
+        } catch (Exception err) {
+            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
+        }
+        return Optional.absent();
+    }
+
+    public Optional<CircuitBreaker> modifyCircuitBreaker(URI root,
+                                                         TenacityPropertyKey key,
+                                                         CircuitBreaker.State state) {
+        try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
+            return Optional.of(client
+                    .resource(root)
+                    .path(TenacityCircuitBreakersResource.PATH)
+                    .path(key.name())
+                    .accept(MediaType.APPLICATION_JSON_TYPE)
+                    .put(CircuitBreaker.class, state.name()));
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
         }

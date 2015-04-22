@@ -18,5 +18,9 @@
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-client</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.yammer.tenacity</groupId>
+            <artifactId>tenacity-testing</artifactId>
+        </dependency>
     </dependencies>
 </project>
