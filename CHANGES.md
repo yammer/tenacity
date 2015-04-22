@@ -39,6 +39,10 @@
 Dropwizard 0.7.x Releases
 =========================
 
+0.5.7
+----
+* Backport of 0.6.4 (0.6.3 was a Dropwizard 0.8.1 fix only)
+
 0.5.6
 -----
 * Backport of 0.6.2
