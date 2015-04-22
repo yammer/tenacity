@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 import java.util.Objects;
@@ -35,10 +36,10 @@ public class TenacityClient {
         this.fetchCircuitBreakers = metricRegistry.timer(name(TenacityClient.class, "fetch-circuit-breakers"));
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
         try (Timer.Context timerContext = fetchPropertyKeys.time()) {
-            return Optional.of(ImmutableList.copyOf(client.target(root)
+            return Optional.of(ImmutableList.copyOf(client
+                    .target(root)
                     .path(TenacityPropertyKeysResource.PATH)
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .get(String[].class)));
@@ -48,22 +49,20 @@ public class TenacityClient {
         return Optional.absent();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Optional<TenacityConfiguration> getTenacityConfiguration(URI root, TenacityPropertyKey key) {
         try (Timer.Context timerContext = fetchConfiguration.time()) {
             return Optional.of(client
                     .target(root)
                     .path(TenacityConfigurationResource.PATH)
-                    .path(key.toString())
+                    .path(key.name())
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .get(TenacityConfiguration.class));
         } catch (Exception err) {
-            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, key, err);
+            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, key.name(), err);
         }
         return Optional.absent();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     public Optional<ImmutableList<CircuitBreaker>> getCircuitBreakers(URI root) {
         try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
             return Optional.of(ImmutableList.copyOf(client
@@ -71,6 +70,36 @@ public class TenacityClient {
                     .path(TenacityCircuitBreakersResource.PATH)
                     .request(MediaType.APPLICATION_JSON_TYPE)
                     .get(CircuitBreaker[].class)));
+        } catch (Exception err) {
+            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
+        }
+        return Optional.absent();
+    }
+
+    public Optional<CircuitBreaker> getCircuitBreaker(URI root, TenacityPropertyKey key) {
+        try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
+            return Optional.of(client
+                    .target(root)
+                    .path(TenacityCircuitBreakersResource.PATH)
+                    .path(key.name())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .get(CircuitBreaker.class));
+        } catch (Exception err) {
+            LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
+        }
+        return Optional.absent();
+    }
+
+    public Optional<CircuitBreaker> modifyCircuitBreaker(URI root,
+                                                         TenacityPropertyKey key,
+                                                         CircuitBreaker.State state) {
+        try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
+            return Optional.of(client
+                    .target(root)
+                    .path(TenacityCircuitBreakersResource.PATH)
+                    .path(key.name())
+                    .request(MediaType.APPLICATION_JSON_TYPE)
+                    .put(Entity.entity(state.name(), MediaType.APPLICATION_OCTET_STREAM_TYPE), CircuitBreaker.class));
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
         }

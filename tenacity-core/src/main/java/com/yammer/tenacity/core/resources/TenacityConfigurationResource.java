@@ -15,14 +15,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 @Path(TenacityConfigurationResource.PATH)
 public class TenacityConfigurationResource {
-    public static final String PATH = "/tenacity/configuration/{key}";
+    public static final String PATH = "/tenacity/configuration";
     private final TenacityPropertyKeyFactory factory;
 
     public TenacityConfigurationResource(TenacityPropertyKeyFactory factory) {
         this.factory = checkNotNull(factory);
     }
 
-    @GET @Timed @Produces(MediaType.APPLICATION_JSON)
+    @GET @Timed @Produces(MediaType.APPLICATION_JSON) @Path("{key}")
     public TenacityConfiguration get(@PathParam("key") String key) {
         return TenacityPropertyStore.getTenacityConfiguration(factory.from(key));
     }
