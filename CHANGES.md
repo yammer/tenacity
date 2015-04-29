@@ -1,3 +1,7 @@
+0.6.5 (next release)
+-----
+* [Hystrix 1.4.6](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-146-maven-central-bintray)
+
 0.6.4
 -----
 * [Hystrix 1.4.5](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-145-maven-central-bintray)
