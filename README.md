@@ -1,4 +1,4 @@
-Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.svg)](https://travis-ci.org/yammer/tenacity) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core)
+Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.svg?style=flat-square)](https://travis-ci.org/yammer/tenacity) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core)
 ========
 
 Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/Netflix/Hystrix).
