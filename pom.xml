@@ -41,7 +41,7 @@
 
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>
-        <hystrix.version>1.4.7</hystrix.version>
+        <hystrix.version>1.4.8</hystrix.version>
 
         <!-- These transitive versions are determined by what Hystrix is dependent on -->
         <archaius.version>0.4.1</archaius.version>
@@ -120,7 +120,7 @@
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>com.codahale.metrics</groupId>
+                        <groupId>io.dropwizard.metrics</groupId>
                         <artifactId>metrics-core</artifactId>
                     </exclusion>
                     <exclusion>
