@@ -1,3 +1,8 @@
+0.6.6 In Progress
+-----
+* [Hystrix 1.4.8](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-148-maven-central-bintray)
+* Exclude the transitive dependency on io.dropwizard.metrics.metrics-core 3.1.2
+
 0.6.5
 -----
 * [Hystrix 1.4.7](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-147-maven-central-bintray)
