@@ -1,4 +1,4 @@
-0.6.6 In Progress
+0.6.6
 -----
 * [Hystrix 1.4.9](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-149-maven-central-bintray)
 * Exclude the transitive dependency on io.dropwizard.metrics.metrics-core 3.1.2
@@ -48,6 +48,10 @@
 
 Dropwizard 0.7.x Releases
 =========================
+
+0.5.9
+-----
+* Backport of 0.6.6
 
 0.5.8
 ----
