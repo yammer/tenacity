@@ -3,7 +3,7 @@
 * [Hystrix 1.4.10](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1410-maven-central-bintray)
 * Hystrix fixing a memory leak that was released in 1.4.8+. This affects Tenacity version 0.6.6.
 
-0.6.6 
+0.6.6 _MEMORY LEAK fixed in 0.6.7_
 -----
 * [Hystrix 1.4.9](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-149-maven-central-bintray)
 * Exclude the transitive dependency on io.dropwizard.metrics.metrics-core 3.1.2
@@ -53,8 +53,11 @@
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.10
+-----
+* Backport of 0.6.7. Fixing a memory leak in 0.5.9.
 
-0.5.9
+0.5.9 _MEMORY LEAK fixed in 0.5.10_
 -----
 * Backport of 0.6.6
 
