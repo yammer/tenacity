@@ -1,3 +1,8 @@
+0.6.8
+----
+* [Hystrix 1.4.11](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1411-maven-central-bintray)
+* RxJava 1.0.12
+
 0.6.7
 ----
 * [Hystrix 1.4.10](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1410-maven-central-bintray)
