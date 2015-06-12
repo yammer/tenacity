@@ -58,6 +58,10 @@
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.11
+-----
+* Backport of 0.6.8
+
 0.5.10
 -----
 * Backport of 0.6.7. Fixing a memory leak in 0.5.9.
