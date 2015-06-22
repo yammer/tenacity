@@ -1,3 +1,6 @@
+Dropwizard 0.8.x releases
+=========================
+
 0.6.9
 ----
 * [Hystrix 1.4.12](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1412-maven-central-bintray)
@@ -62,6 +65,10 @@
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.12
+-----
+* Backport of 0.6.9
+
 0.5.11
 -----
 * Backport of 0.6.8
