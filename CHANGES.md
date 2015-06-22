@@ -1,4 +1,4 @@
-Next
+0.6.9
 ----
 * [Hystrix 1.4.12](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1412-maven-central-bintray)
 
