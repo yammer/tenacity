@@ -16,9 +16,11 @@ import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.server.AbstractServerFactory;
+import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Map;
@@ -102,8 +104,12 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
     }
 
     protected void configureHystrix(T configuration, Environment environment) {
-        environment.lifecycle().manage(new ManagedHystrix(
-                ((DefaultServerFactory) configuration.getServerFactory()).getShutdownGracePeriod()));
+        final ServerFactory serverFactory = configuration.getServerFactory();
+        final Duration shutdownGracePeriod =
+                (serverFactory instanceof AbstractServerFactory)
+                ? ((AbstractServerFactory) serverFactory).getShutdownGracePeriod()
+                : Duration.seconds(30L);
+        environment.lifecycle().manage(new ManagedHystrix(shutdownGracePeriod));
         environment.servlets()
                 .addServlet("hystrix-metrics", new HystrixMetricsStreamServlet())
                 .addMapping("/tenacity/metrics.stream");
