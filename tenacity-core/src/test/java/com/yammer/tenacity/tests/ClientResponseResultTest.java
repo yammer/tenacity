@@ -11,6 +11,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
+@SuppressWarnings("deprecation")
+@Deprecated
 public class ClientResponseResultTest {
 
     @Test

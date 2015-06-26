@@ -4,6 +4,7 @@ package com.yammer.tenacity.core.helper;
 import javax.ws.rs.client.ResponseProcessingException;
 import java.util.Objects;
 
+@Deprecated
 public class ClientException extends RuntimeException{
     private final static long serialVersionUID = -1237219873892173912L;
     private final int statusCode;

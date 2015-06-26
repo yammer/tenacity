@@ -1,5 +1,8 @@
 Dropwizard 0.8.x releases
 =========================
+Next
+----
+* Deprecating `ClientResponseResult` and `ClientException`. These will be removed in the following release. There will be a replacement for this pattern.
 
 0.6.9
 ----

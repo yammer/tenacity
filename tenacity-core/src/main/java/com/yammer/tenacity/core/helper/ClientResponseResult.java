@@ -12,6 +12,7 @@ import javax.ws.rs.client.ResponseProcessingException;
  *
  * @param <Result> The generic type of the Object returned when creating a successful instance
  */
+@Deprecated
 public class ClientResponseResult<Result> {
 
     private final Optional<Result> result;
