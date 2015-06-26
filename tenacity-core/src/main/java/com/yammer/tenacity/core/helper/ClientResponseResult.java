@@ -11,6 +11,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
  *
  * @param <Result> The generic type of the Object returned when creating a successful instance
  */
+@Deprecated
 public class ClientResponseResult<Result> {
 
     private final Optional<Result> result;
