@@ -138,7 +138,7 @@ How to add Tenacity to your Dropwizard Service
     }
     ```
     
-3. Create a `TenacityBundleConfigurationFactory` implementaion - you can use the `BaseTenacityBundleConfigurationFactory` as your starting point. This will be used to register your custom tenacity dependencies and custom configurations.
+3. Create a `TenacityBundleConfigurationFactory` implementation - you can use the `BaseTenacityBundleConfigurationFactory` as your starting point. This will be used to register your custom tenacity dependencies and custom configurations.
 
     ```java
     public class CompletieTenacityBundleConfigurationFactory extends BaseTenacityBundleConfigurationFactory<CompletieConfiguration> {
@@ -354,7 +354,7 @@ TenacityBundleBuilder
 ExceptionLoggingCommandHook
 ===========================
 
-If you don't handle logging exceptions explicatly within each `TenacityCommand`, you can easily miss problems or at-least find them very hard to debug.
+If you don't handle logging exceptions explicitly within each `TenacityCommand`, you can easily miss problems or at-least find them very hard to debug.
 Instead you can add the `ExceptionLoggingCommandHook` to the `TenacityBundle` and register `ExceptionLogger`s to handle the logging of different kinds of Exceptions.
 The `ExecutionLoggingCommandHook` acts as a `HystrixCommandExecutionHook` and intercepts all Exceptions that occur during the `run()` method of your `TenacityCommand`s.
 By sequencing `ExceptionLogger`s from most specific to most general, the `ExceptionLoggingCommandHook` will be able to find the best `ExceptionLogger` for the type of Exception.
