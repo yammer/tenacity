@@ -344,9 +344,8 @@ HTTP status code. A common pattern here is to convert the unhandled `HystrixRunt
 
 ```java
 TenacityBundleBuilder
-                .newBuilder()
-                .propertyKeyFactory(propertyKeyFactory)
-                .propertyKeys(propertyKeys)
+                .<MyConfiguration> newBuilder()
+                .configurationFactory(configurationFactory)
                 .mapAllHystrixRuntimeExceptionsTo(429)
                 .build();
 ```
@@ -361,9 +360,8 @@ By sequencing `ExceptionLogger`s from most specific to most general, the `Except
 
 ```java
 TenacityBundleBuilder
-                .newBuilder()
-                .propertyKeyFactory(propertyKeyFactory)
-                .propertyKeys(propertyKeys)
+                .<MyConfiguration> newBuilder()
+                .configurationFactory(configurationFactory)
                 .mapAllHystrixRuntimeExceptionsTo(429)
                 .commandExecutionHook(new ExceptionLoggingCommandHook(
                     new DBIExceptionLogger(registry),
