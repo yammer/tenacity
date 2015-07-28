@@ -1,9 +1,11 @@
 Dropwizard 0.8.x releases
 =========================
-Next
+0.6.10
 ----
 * Deprecating `ClientResponseResult` and `ClientException`. These will be removed in the following release. There will be a replacement for this pattern.
 * Fixing `DefaultServerFactory` cast in the `TenacityConfigureBundle` [Pull Request #26](https://github.com/yammer/tenacity/pull/26)
+* [Hystrix 1.4.13](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1413-maven-central-bintray)
+* RxJava 1.0.13
 
 0.6.9
 ----
