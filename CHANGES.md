@@ -71,6 +71,10 @@ Dropwizard 0.8.x releases
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.13
+-----
+* Backport of 0.6.10
+
 0.5.12
 -----
 * Backport of 0.6.9
