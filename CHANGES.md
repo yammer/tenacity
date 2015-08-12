@@ -1,5 +1,10 @@
 Dropwizard 0.8.x releases
 =========================
+0.6.11 (next)
+----
+* When registering configuration properties with `Archaius` use its hierarchical system so that multiple clients of `Archaius` can register their configurations as well. 
+  This changes the behavior from before where `Tenacity` would install a custom configuration different than the sharable default.
+
 0.6.10
 ----
 * Deprecating `ClientResponseResult` and `ClientException`. These will be removed in the following release. There will be a replacement for this pattern.
