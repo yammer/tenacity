@@ -4,6 +4,7 @@ Dropwizard 0.8.x releases
 ----
 * When registering configuration properties with `Archaius` use its hierarchical system so that multiple clients of `Archaius` can register their configurations as well. 
   This changes the behavior from before where `Tenacity` would install a custom configuration different than the sharable default.
+* [Hystrix 1.4.14](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1413-maven-central-bintray)
 
 0.6.10
 ----
