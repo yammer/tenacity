@@ -1,5 +1,6 @@
 package com.yammer.tenacity.core.properties;
 
+import com.google.common.primitives.Ints;
 import com.netflix.config.ConfigurationManager;
 import com.netflix.config.DynamicConfiguration;
 import com.netflix.config.FixedDelayPollingScheduler;
@@ -31,12 +32,14 @@ public class ArchaiusPropertyRegister {
         if (breakerboxConfiguration.getUrls().isEmpty()) {
             return;
         }
-        ConfigurationManager.install(
-                new DynamicConfiguration(
-                    new URLConfigurationSource(breakerboxConfiguration.getUrls().split(",")),
-                    new TenacityPollingScheduler(
-                            (int)breakerboxConfiguration.getInitialDelay().toMilliseconds(),
-                            (int)breakerboxConfiguration.getDelay().toMilliseconds(),
-                            true)));
+        final DynamicConfiguration dynConfig = new DynamicConfiguration(
+                new URLConfigurationSource(breakerboxConfiguration.getUrls().split(",")),
+                new TenacityPollingScheduler(
+                        Ints.checkedCast(breakerboxConfiguration.getInitialDelay().toMilliseconds()),
+                        Ints.checkedCast(breakerboxConfiguration.getDelay().toMilliseconds()),
+                        true));
+
+        ConfigurationManager.getConfigInstance();
+        ConfigurationManager.loadPropertiesFromConfiguration(dynConfig);
     }
 }
