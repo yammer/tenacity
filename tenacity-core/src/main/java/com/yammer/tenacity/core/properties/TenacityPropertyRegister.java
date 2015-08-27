@@ -107,9 +107,11 @@ public class TenacityPropertyRegister {
                 semaphoreFallbackMaxConcurrentRequests(key),
                 configuration.getSemaphore().getFallbackMaxConcurrentRequests());
 
-        configInstance.setProperty(
-                executionIsolationStrategy(key),
-                configuration.getExecutionIsolationStrategy());
+        if (configuration.hasExecutionIsolationStrategy()) {
+            configInstance.setProperty(
+                    executionIsolationStrategy(key),
+                    configuration.getExecutionIsolationStrategy());
+        }
     }
 
     public static String executionIsolationThreadTimeoutInMilliseconds(TenacityPropertyKey key) {

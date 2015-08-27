@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import com.netflix.hystrix.HystrixCommandProperties;
 import com.yammer.tenacity.client.TenacityClient;
 import com.yammer.tenacity.client.TenacityClientBuilder;
 import com.yammer.tenacity.core.TenacityCommand;
@@ -42,7 +43,8 @@ public class TenacityClientTest {
             new ThreadPoolConfiguration(),
             new CircuitBreakerConfiguration(),
             new SemaphoreConfiguration(),
-            2000);
+            2000,
+            HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
 
     public static class TenacityClientApp extends Application<Configuration> {
         public static void main(String[] args) throws Exception {
@@ -110,7 +112,12 @@ public class TenacityClientTest {
         assertThat(TENACITYCLIENT.getTenacityConfiguration(ROOT, TenacityClientPropertyKey.CLIENT_KEY))
                 .contains(CLIENT_KEY_CONFIGURATION);
         assertThat(TENACITYCLIENT.getTenacityConfiguration(ROOT, NonExistentKey.NOPE))
-                .contains(new TenacityConfiguration());
+                .contains(new TenacityConfiguration(
+                        new ThreadPoolConfiguration(),
+                        new CircuitBreakerConfiguration(),
+                        new SemaphoreConfiguration(),
+                        1000,
+                        HystrixCommandProperties.ExecutionIsolationStrategy.THREAD));
     }
 
     @Test

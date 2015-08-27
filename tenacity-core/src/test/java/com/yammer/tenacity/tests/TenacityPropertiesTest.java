@@ -75,7 +75,8 @@ public class TenacityPropertiesTest {
                 new ThreadPoolConfiguration(50, 3, 27, 57, 2000, 20),
                 new CircuitBreakerConfiguration(1, 2, 3, 2000, 20),
                 new SemaphoreConfiguration(),
-                982);
+                982,
+                HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OVERRIDE, overrideConfiguration),
@@ -138,7 +139,8 @@ public class TenacityPropertiesTest {
                 new ThreadPoolConfiguration(1, 1, 10, queueMaxSize, 10000, 10),
                 new CircuitBreakerConfiguration(20, 5000, 50, 10000, 10),
                 new SemaphoreConfiguration(),
-                5000);
+                5000,
+                HystrixCommandProperties.ExecutionIsolationStrategy.THREAD);
 
         final TenacityPropertyRegister tenacityPropertyRegister = new TenacityPropertyRegister(
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.SLEEP, exampleConfiguration),
@@ -227,6 +229,8 @@ public class TenacityPropertiesTest {
 
         //-1 means no limit on the number of items in the queue, which uses the SynchronousBlockingQueue
         assertEquals(threadPoolProperties.maxQueueSize().get().intValue(), -1);
-        assertEquals(TenacityPropertyStore.getTenacityConfiguration(DependencyKey.EXAMPLE), new TenacityConfiguration());
+        assertEquals(TenacityPropertyStore.getTenacityConfiguration(DependencyKey.EXAMPLE),
+                new TenacityConfiguration(new ThreadPoolConfiguration(), new CircuitBreakerConfiguration(),
+                        new SemaphoreConfiguration(), 1000, HystrixCommandProperties.ExecutionIsolationStrategy.THREAD));
     }
 }
