@@ -1,7 +1,16 @@
 Dropwizard 0.8.x releases
 =========================
-=======
-0.6.11 (next)
+Next
+----
+* When registering `TenacityConfiguration`s with `Archaius` no longer set the `executionIsolationStrategy` properties, unless
+  specifically set by the user.
+  This was leading to misconfigurations when using `TenacityObservableCommand`s that default to `SEMAPHORE` isolation.
+  This is due to the disconnect between not knowing if a `TenacityConfiguration` is paired with a command that is intended to be used
+  as `THREAD` or `SEMAPHORE` isolation prior.
+  A user must now explicitly set this within the `TenacityConfiguration` or via `Breakerbox` otherwise it takes the default of the
+  command type.
+
+0.6.11
 ----
 * When registering configuration properties with `Archaius` use its hierarchical system so that multiple clients of `Archaius` can register their configurations as well. 
   This changes the behavior from before where `Tenacity` would install a custom configuration different than the sharable default.
