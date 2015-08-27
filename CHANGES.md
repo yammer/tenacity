@@ -1,6 +1,6 @@
 Dropwizard 0.8.x releases
 =========================
-Next
+0.6.12
 ----
 * `TenacityObservables` to help with executing two observables. Intended to help execute the first argument eagerly and only
   execute (lazily) the second argument if the primary fails.
@@ -89,6 +89,10 @@ Next
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.15
+-----
+* Backport of 0.6.12
+
 0.5.14
 -----
 * Backport of 0.6.11
