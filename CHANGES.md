@@ -2,6 +2,8 @@ Dropwizard 0.8.x releases
 =========================
 Next
 ----
+* `TenacityObservables` to help with executing two observables. Intended to help execute the first argument eagerly and only
+  execute (lazily) the second argument if the primary fails.
 * When registering `TenacityConfiguration`s with `Archaius` no longer set the `executionIsolationStrategy` properties, unless
   specifically set by the user.
   This was leading to misconfigurations when using `TenacityObservableCommand`s that default to `SEMAPHORE` isolation.
