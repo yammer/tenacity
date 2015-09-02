@@ -26,7 +26,7 @@ import io.dropwizard.auth.AuthFactory;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.oauth.OAuthFactory;
-import io.dropwizard.client.ForkedJerseyClientBuilder;
+import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -156,7 +156,7 @@ public class TenacityAuthenticatorTest {
     @Test
     public void shouldNotTransformAuthenticationExceptionIntoMappedException() throws AuthenticationException {
         when(AuthenticatorApp.getMockAuthenticator().authenticate(any(String.class))).thenThrow(new AuthenticationException("test"));
-        final Client client = new ForkedJerseyClientBuilder(new MetricRegistry())
+        final Client client = new JerseyClientBuilder(new MetricRegistry())
                 .using(executorService, Jackson.newObjectMapper())
                 .build("dropwizard-app-rule");
 
