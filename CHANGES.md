@@ -1,5 +1,12 @@
 Dropwizard 0.8.x releases
 =========================
+
+0.6.13
+----
+* Dropwizard 0.8.4
+* Removing `ForkedJerseyClientBuilder` since [Dropwizard PR 1137](https://github.com/dropwizard/dropwizard/pull/1137) has been merged into 0.8.2
+* Removing deprecated `ClientException` and `ClientResponseResult`
+
 0.6.12
 ----
 * `TenacityObservables` to help with executing two observables. Intended to help execute the first argument eagerly and only
