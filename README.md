@@ -379,12 +379,8 @@ when they are simply `TimeoutException`s being thrown by JerseyClient. `Tenacity
 on a per-request basis on the currently set execution timeout value for resources built from `TenacityJerseyClient` and its associated
 `TenacityPropertyKey`.
 
-
-Note: For dropwizard 0.8.1 and earlier releases you'll want to create `JerseyClient` with `ForkedJerseyClientBuilder` which solves a memory-leak when using 
-per-request configuration changes. You don't need to use the `ForkedJerseyClientBuilder` in dropwizard 0.7.x or earlier releases.
-
 ```java
-Client client = new ForkedJerseyClientBuilder(environment).build("some-external-dependency");
+Client client = new JerseyClientBuilder(environment).build("some-external-dependency");
 Client tenacityClient = TenacityJerseyClientBuilder
     .builder(YOUR_TENACITY_PROPERTY_KEY)
     .usingTimeoutPadding(Duration.milliseconds(50))
