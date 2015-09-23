@@ -71,8 +71,7 @@ public class TenacityConfiguredBundleBuilderTest {
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
                         Optional.<HystrixCommandExecutionHook>absent(),
-                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
-                        false));
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList()));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -94,8 +93,7 @@ public class TenacityConfiguredBundleBuilderTest {
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
                         Optional.<HystrixCommandExecutionHook>absent(),
-                        ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429)),
-                        false
+                        ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))
                 ));
     }
 
@@ -113,8 +111,7 @@ public class TenacityConfiguredBundleBuilderTest {
                         Optional.<HystrixCommandExecutionHook>absent(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(
                                 new TenacityExceptionMapper(429),
-                                new TenacityContainerExceptionMapper(429)),
-                        false
+                                new TenacityContainerExceptionMapper(429))
                 ));
     }
 
@@ -131,8 +128,7 @@ public class TenacityConfiguredBundleBuilderTest {
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
                         Optional.of(hook),
-                        Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
-                        false
+                        Collections.<ExceptionMapper<? extends Throwable>>emptyList()
                 ));
     }
 
@@ -149,7 +145,8 @@ public class TenacityConfiguredBundleBuilderTest {
                         CONFIGURATION_FACTORY,
                         Optional.<HystrixCommandExecutionHook>absent(),
                         Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
-                        true
+                        true,
+                        false
                 ));
     }
     

@@ -14,6 +14,9 @@ import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
 import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
+import com.yammer.tenacity.core.servlets.TenacityCircuitBreakersServlet;
+import com.yammer.tenacity.core.servlets.TenacityConfigurationServlet;
+import com.yammer.tenacity.core.servlets.TenacityPropertyKeysServlet;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.server.AbstractServerFactory;
@@ -23,6 +26,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,16 +37,26 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
     protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
     protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
     protected final boolean usingTenacityCircuitBreakerHealthCheck;
+    protected final boolean usingAdminPort;
 
     public TenacityConfiguredBundle(
             TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory,
             Optional<HystrixCommandExecutionHook> hystrixCommandExecutionHook,
             Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers,
-            boolean usingTenacityCircuitBreakerHealthCheck) {
+            boolean usingTenacityCircuitBreakerHealthCheck,
+            boolean usingAdminPort) {
         this.exceptionMappers = exceptionMappers;
         this.tenacityBundleConfigurationFactory = checkNotNull(tenacityBundleConfigurationFactory);
         this.executionHook = hystrixCommandExecutionHook;
         this.usingTenacityCircuitBreakerHealthCheck = usingTenacityCircuitBreakerHealthCheck;
+        this.usingAdminPort = usingAdminPort;
+    }
+
+    public TenacityConfiguredBundle(
+            TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory,
+            Optional<HystrixCommandExecutionHook> hystrixCommandExecutionHook,
+            Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers) {
+        this(tenacityBundleConfigurationFactory, hystrixCommandExecutionHook, exceptionMappers, false, false);
     }
 
     public TenacityBundleConfigurationFactory<T> getTenacityBundleConfigurationFactory() {
@@ -110,17 +124,41 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
                 ? ((AbstractServerFactory) serverFactory).getShutdownGracePeriod()
                 : Duration.seconds(30L);
         environment.lifecycle().manage(new ManagedHystrix(shutdownGracePeriod));
-        environment.servlets()
-                .addServlet("hystrix-metrics", new HystrixMetricsStreamServlet())
-                .addMapping("/tenacity/metrics.stream");
     }
 
     protected void addTenacityResources(Environment environment,
-                                      TenacityPropertyKeyFactory keyFactory,
-                                      Iterable<TenacityPropertyKey> tenacityPropertyKeys) {
-        environment.jersey().register(new TenacityPropertyKeysResource(tenacityPropertyKeys));
-        environment.jersey().register(new TenacityConfigurationResource(keyFactory));
-        environment.jersey().register(new TenacityCircuitBreakersResource(tenacityPropertyKeys, keyFactory));
+                                        TenacityPropertyKeyFactory keyFactory,
+                                        Collection<TenacityPropertyKey> tenacityPropertyKeys) {
+        final String tenacityMetricsStream = "/tenacity/metrics.stream";
+        final TenacityConfigurationResource configurationResource = new TenacityConfigurationResource(keyFactory);
+        final TenacityCircuitBreakersResource circuitBreakersResource =
+                new TenacityCircuitBreakersResource(tenacityPropertyKeys, keyFactory);
+        final TenacityPropertyKeysResource propertyKeysResource = new TenacityPropertyKeysResource(tenacityPropertyKeys);
+
+        if (usingAdminPort) {
+            environment.admin()
+                    .addServlet(tenacityMetricsStream, new HystrixMetricsStreamServlet())
+                    .addMapping(tenacityMetricsStream);
+            environment.admin()
+                    .addServlet(TenacityPropertyKeysResource.PATH,
+                            new TenacityPropertyKeysServlet(environment.getObjectMapper(), propertyKeysResource))
+                    .addMapping(TenacityPropertyKeysResource.PATH);
+            environment.admin()
+                    .addServlet(TenacityConfigurationResource.PATH,
+                            new TenacityConfigurationServlet(environment.getObjectMapper(), configurationResource))
+                    .addMapping(TenacityConfigurationResource.PATH + "/*");
+            environment.admin()
+                    .addServlet(TenacityCircuitBreakersResource.PATH,
+                            new TenacityCircuitBreakersServlet(environment.getObjectMapper(), circuitBreakersResource))
+                    .addMapping(TenacityCircuitBreakersResource.PATH + "/*");
+        } else {
+            environment.servlets()
+                    .addServlet(tenacityMetricsStream, new HystrixMetricsStreamServlet())
+                    .addMapping(tenacityMetricsStream);
+            environment.jersey().register(propertyKeysResource);
+            environment.jersey().register(configurationResource);
+            environment.jersey().register(circuitBreakersResource);
+        }
     }
 
     @Override
