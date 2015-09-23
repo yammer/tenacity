@@ -2,6 +2,7 @@ package com.yammer.tenacity.core.core;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import java.util.Collection;
@@ -40,5 +41,10 @@ public class CircuitBreakers {
 
     public static Collection<CircuitBreaker> all(TenacityPropertyKey... keys) {
         return all(ImmutableList.copyOf(keys));
+    }
+
+    public static Optional<CircuitBreaker> find(Iterable<TenacityPropertyKey> keys,
+                                                TenacityPropertyKey key) {
+        return CircuitBreaker.usingHystrix(Iterables.find(keys, TenacityPredicates.isEqualTo(key)));
     }
 }

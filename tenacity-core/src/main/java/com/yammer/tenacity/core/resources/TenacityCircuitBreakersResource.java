@@ -43,8 +43,7 @@ public class TenacityCircuitBreakersResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getCircuitBreaker(@PathParam("key") String key ) {
         try {
-            final TenacityPropertyKey foundKey = Iterables.find(keys, TenacityPredicates.isEqualTo(keyFactory.from(key)));
-            final Optional<CircuitBreaker> circuitBreaker = CircuitBreaker.usingHystrix(foundKey);
+            final Optional<CircuitBreaker> circuitBreaker = CircuitBreakers.find(keys, keyFactory.from(key));
             if (circuitBreaker.isPresent()) {
                 return Response.ok(circuitBreaker.get()).build();
             }
