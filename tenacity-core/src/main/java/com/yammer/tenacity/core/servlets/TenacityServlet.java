@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 abstract class TenacityServlet extends HttpServlet {
+    private static final long serialVersionUID = 0;
     protected final ObjectMapper objectMapper;
 
     public TenacityServlet(ObjectMapper objectMapper) {
