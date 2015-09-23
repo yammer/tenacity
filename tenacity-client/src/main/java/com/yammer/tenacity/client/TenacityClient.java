@@ -35,6 +35,7 @@ public class TenacityClient {
         this.fetchCircuitBreakers = metricRegistry.timer(name(TenacityClient.class, "fetch-circuit-breakers"));
     }
 
+    @SuppressWarnings("unused")
     public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
         try (Timer.Context timerContext = fetchPropertyKeys.time()) {
             return Optional.of(ImmutableList.copyOf(client.resource(root)
@@ -47,6 +48,7 @@ public class TenacityClient {
         return Optional.absent();
     }
 
+    @SuppressWarnings("unused")
     public Optional<TenacityConfiguration> getTenacityConfiguration(URI root, TenacityPropertyKey key) {
         try (Timer.Context timerContext = fetchConfiguration.time()) {
             return Optional.of(client
@@ -61,6 +63,7 @@ public class TenacityClient {
         return Optional.absent();
     }
 
+    @SuppressWarnings("unused")
     public Optional<ImmutableList<CircuitBreaker>> getCircuitBreakers(URI root) {
         try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
             return Optional.of(ImmutableList.copyOf(client
@@ -74,6 +77,7 @@ public class TenacityClient {
         return Optional.absent();
     }
 
+    @SuppressWarnings("unused")
     public Optional<CircuitBreaker> getCircuitBreaker(URI root, TenacityPropertyKey key) {
         try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
             return Optional.of(client
@@ -88,6 +92,7 @@ public class TenacityClient {
         return Optional.absent();
     }
 
+    @SuppressWarnings("unused")
     public Optional<CircuitBreaker> modifyCircuitBreaker(URI root,
                                                          TenacityPropertyKey key,
                                                          CircuitBreaker.State state) {
@@ -97,7 +102,7 @@ public class TenacityClient {
                     .path(TenacityCircuitBreakersResource.PATH)
                     .path(key.name())
                     .accept(MediaType.APPLICATION_JSON_TYPE)
-                    .put(CircuitBreaker.class, state.name()));
+                    .put(CircuitBreaker.class, state.toString()));
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
         }

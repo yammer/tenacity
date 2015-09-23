@@ -16,6 +16,7 @@ public class TenacityBundleBuilder<T extends Configuration> {
     protected TenacityBundleConfigurationFactory<T> configurationFactory;
     protected final ImmutableList.Builder<HealthCheck> healthCheckBuilder = ImmutableList.builder();
     protected boolean usingTenacityCircuitBreakerHealthCheck = false;
+    protected boolean usingAdminPort = false;
 
     public static <T extends Configuration> TenacityBundleBuilder<T> newBuilder() {
         return new TenacityBundleBuilder<>();
@@ -28,6 +29,11 @@ public class TenacityBundleBuilder<T extends Configuration> {
 
     public TenacityBundleBuilder<T> withCircuitBreakerHealthCheck() {
         usingTenacityCircuitBreakerHealthCheck = true;
+        return this;
+    }
+
+    public TenacityBundleBuilder<T> usingAdminPort() {
+        usingAdminPort = true;
         return this;
     }
 
@@ -56,6 +62,7 @@ public class TenacityBundleBuilder<T extends Configuration> {
                 configurationFactory,
                 executionHook,
                 exceptionMapperBuilder.build(),
-                usingTenacityCircuitBreakerHealthCheck);
+                usingTenacityCircuitBreakerHealthCheck,
+                usingAdminPort);
     }
 }

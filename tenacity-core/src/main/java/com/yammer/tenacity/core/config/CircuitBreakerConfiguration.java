@@ -100,4 +100,15 @@ public class CircuitBreakerConfiguration {
                 && Objects.equals(this.metricsRollingStatisticalWindowInMilliseconds, other.metricsRollingStatisticalWindowInMilliseconds)
                 && Objects.equals(this.metricsRollingStatisticalWindowBuckets, other.metricsRollingStatisticalWindowBuckets);
     }
+
+    @Override
+    public String toString() {
+        return "CircuitBreakerConfiguration{" +
+                "requestVolumeThreshold=" + requestVolumeThreshold +
+                ", sleepWindowInMillis=" + sleepWindowInMillis +
+                ", errorThresholdPercentage=" + errorThresholdPercentage +
+                ", metricsRollingStatisticalWindowInMilliseconds=" + metricsRollingStatisticalWindowInMilliseconds +
+                ", metricsRollingStatisticalWindowBuckets=" + metricsRollingStatisticalWindowBuckets +
+                '}';
+    }
 }
