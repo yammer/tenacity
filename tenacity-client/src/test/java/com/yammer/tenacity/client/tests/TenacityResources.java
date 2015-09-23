@@ -2,6 +2,8 @@ package com.yammer.tenacity.client.tests;
 
 import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.HystrixCommandProperties;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.yammer.tenacity.client.TenacityClient;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
@@ -14,7 +16,6 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
@@ -33,7 +34,7 @@ public abstract class TenacityResources {
     protected static URI URI_ROOT;
     protected static Client JERSEY_CLIENT;
 
-    private Response response;
+    private ClientResponse response;
 
     private static void executeAllKeys() {
         for (TenacityPropertyKey key : ServletKeys.values()) {
@@ -46,30 +47,30 @@ public abstract class TenacityResources {
         }
     }
 
-    private static Response circuitBreakers() {
+    private static ClientResponse circuitBreakers() {
         return JERSEY_CLIENT
-                .target(URI_ROOT)
+                .resource(URI_ROOT)
                 .path(TenacityCircuitBreakersResource.PATH)
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get();
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get(ClientResponse.class);
     }
 
-    private static Response circuitBreakersRequest(TenacityPropertyKey key) {
+    private static ClientResponse circuitBreakersRequest(TenacityPropertyKey key) {
         return JERSEY_CLIENT
-                .target(URI_ROOT)
+                .resource(URI_ROOT)
                 .path(TenacityCircuitBreakersResource.PATH)
                 .path(key.toString())
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get();
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get(ClientResponse.class);
     }
 
-    private static Response tenacityConfiguration(TenacityPropertyKey key) {
+    private static ClientResponse tenacityConfiguration(TenacityPropertyKey key) {
         return JERSEY_CLIENT
-                .target(URI_ROOT)
+                .resource(URI_ROOT)
                 .path(TenacityConfigurationResource.PATH)
                 .path(key.toString())
-                .request(MediaType.APPLICATION_JSON_TYPE)
-                .get();
+                .accept(MediaType.APPLICATION_JSON_TYPE)
+                .get(ClientResponse.class);
     }
 
     @After

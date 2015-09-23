@@ -12,7 +12,9 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+import javax.ws.rs.Path;
 import java.util.Map;
+import java.util.concurrent.locks.AbstractOwnableSynchronizer;
 
 public class TenacityServletService extends Application<Configuration> {
     public static void main(String[] args) throws Exception {
@@ -56,5 +58,9 @@ public class TenacityServletService extends Application<Configuration> {
 
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {
+        environment.jersey().register(new BlankResource());
     }
+
+    @Path("/")
+    private static class BlankResource {}
 }
