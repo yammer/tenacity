@@ -1,10 +1,10 @@
 Dropwizard 0.8.x releases
 =========================
 
-Next
+0.6.14
 ----
 * [Hystrix 1.4.15](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1415-maven-central-bintray)
-* Ability to move /tenacity resources to the admin port.
+* Ability to move /tenacity resources to the admin port. This is tunable by using `usingAdminPort()` when building the `Tenacity` bundle.
 
 0.6.13
 ----
