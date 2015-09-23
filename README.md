@@ -329,12 +329,23 @@ Resources
 
 Tenacity adds resources under `/tenacity`:
 
-1. `GET /tenacity/configuration/propertykeys`:  List of strings which are all the registered propertykeys with Tenacity.
+1. `GET /tenacity/propertykeys`:  List of strings which are all the registered propertykeys with Tenacity.
 2. `GET /tenacity/configuration/{key}`:         JSON representation of a `TenacityConfiguration` for the supplied {key}.
 3. `GET /tenacity/circuitbreakers`:             Simple JSON representation of all circuitbreakers and their circuitbreaker status.
    `GET /tenacity/circuitbreakers/{key}`:       Single circuitbreaker status
    `PUT /tenacity/circuitbreakers/{key}`:       Expected "FORCED_CLOSED, FORCED_OPEN, or FORCED_RESET" as the body.
 4. `GET /tenacity/metrics.stream`:              text/event-stream of Hystrix metrics.
+
+By default these are put onto the main application port. If you want to place these instead on the admin port, 
+you can configure this when building the `Tenacity` bundle.
+
+```java
+TenacityBundleBuilder
+                .<MyConfiguration> newBuilder()
+                ...
+                .usingAdminPort()
+                .build();
+```
 
 TenacityExceptionMapper
 =======================
