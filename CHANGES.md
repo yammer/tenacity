@@ -101,6 +101,11 @@ Dropwizard 0.8.x releases
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.17
+-----
+* Backport of 0.6.14
+* Jersey 1.x incompatiblities and DW7 not allowing empty JerseyContextes
+
 0.5.16
 -----
 * Backport of 0.6.13
