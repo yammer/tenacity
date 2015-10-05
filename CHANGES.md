@@ -1,7 +1,7 @@
 Dropwizard 0.8.x releases
 =========================
 
-Next
+0.6.15
 ---
 * [Hystrix 1.4.16](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1416-maven-central-bintray)
 
