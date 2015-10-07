@@ -15,12 +15,14 @@ import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.core.properties.StringTenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javax.ws.rs.ext.ExceptionMapper;
@@ -47,6 +49,9 @@ public class TenacityConfiguredBundleBuilderTest {
         public void run(Configuration configuration, Environment environment) throws Exception {
         }
     }
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @ClassRule
     public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(
