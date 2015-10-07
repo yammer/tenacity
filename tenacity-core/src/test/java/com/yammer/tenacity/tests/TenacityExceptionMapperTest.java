@@ -4,6 +4,7 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,6 +35,9 @@ public class TenacityExceptionMapperTest {
 
     private TenacityPropertyKeyFactory mockFactory = mock(TenacityPropertyKeyFactory.class);
     private final int statusCode = 429; // Too Many Requests http://tools.ietf.org/html/rfc6585#section-4
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()

@@ -3,6 +3,7 @@ package com.yammer.tenacity.tests;
 import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.resources.TenacityPropertyKeysResource;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +17,9 @@ public class TenacityPropertyKeyResourceTest {
 
     public static final String PROPERTY_KEY_URI = "/tenacity/propertykeys";
     private final ImmutableList<TenacityPropertyKey> keys = ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXAMPLE, DependencyKey.SLEEP);
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()

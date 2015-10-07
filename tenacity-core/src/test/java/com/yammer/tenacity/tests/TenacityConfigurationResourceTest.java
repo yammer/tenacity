@@ -3,6 +3,7 @@ package com.yammer.tenacity.tests;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.resources.TenacityConfigurationResource;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,6 +17,9 @@ public class TenacityConfigurationResourceTest {
 
     public static final String TENACITY_CONFIGURATION_URI = "/tenacity/configuration";
     private TenacityPropertyKeyFactory tenacityPropertyKeyFactoryMock = mock(TenacityPropertyKeyFactory.class);
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()

@@ -6,9 +6,11 @@ import com.yammer.tenacity.core.config.CircuitBreakerConfiguration;
 import com.yammer.tenacity.core.config.SemaphoreConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
+import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
+import org.junit.Rule;
 import org.junit.Test;
 
 import javax.validation.Validation;
@@ -38,6 +40,9 @@ public class TenacityConfigurationModelTest {
             .addValidatedValueHandler(new OptionalValidatedValueUnwrapper())
             .buildValidatorFactory()
             .getValidator();
+
+    @Rule
+    public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @Test
     public void toJson() throws Exception {
