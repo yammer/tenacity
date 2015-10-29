@@ -1,5 +1,8 @@
 Dropwizard 0.8.x releases
 =========================
+0.6.17
+* [Hystrix 1.4.18](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1418-maven-central-bintray)
+
 0.6.16
 * [Hystrix 1.4.17](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1417-maven-central-bintray)
 * RxJava 1.0.14
