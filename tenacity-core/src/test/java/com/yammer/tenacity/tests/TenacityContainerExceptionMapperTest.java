@@ -1,18 +1,20 @@
 package com.yammer.tenacity.tests;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.tenacity.core.auth.TenacityAuthenticator;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
+import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.auth.Auth;
+import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.basic.BasicCredentials;
-import io.dropwizard.auth.oauth.OAuthFactory;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,14 +22,15 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import java.security.Principal;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.guava.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,7 +40,7 @@ public class TenacityContainerExceptionMapperTest {
     public TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @SuppressWarnings("unchecked")
-    private Authenticator<String, BasicCredentials> mockAuthenticator = mock(Authenticator.class);
+    private Authenticator<String, Principal> mockAuthenticator = mock(Authenticator.class);
     private final int statusCode = 429;
 
     @Path("/")
@@ -46,7 +49,12 @@ public class TenacityContainerExceptionMapperTest {
         }
 
         @GET
-        public Response fakeGet(@Auth BasicCredentials basicCredentials) {
+        public Response fakeGet(@Auth Principal principal) {
+            return Response.ok().build();
+        }
+
+        @POST
+        public Response fakePost() {
             return Response.ok().build();
         }
     }
@@ -54,27 +62,29 @@ public class TenacityContainerExceptionMapperTest {
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new FakeResource())
-            .addProvider(new OAuthFactory<>(TenacityAuthenticator
-                    .wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT), "auth", BasicCredentials.class))
+            .addProvider(new AuthDynamicFeature(
+                    new OAuthCredentialAuthFilter.Builder<>()
+                            .setAuthenticator(TenacityAuthenticator.wrap(
+                                    mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT))
+                            .setPrefix("Bearer")
+                            .buildAuthFilter()))
             .addProvider(new TenacityContainerExceptionMapper(statusCode))
+            .addProvider(new TenacityExceptionMapper(statusCode))
             .build();
 
-    @Test
+    @Test(expected = InternalServerErrorException.class)
     public void exceptionsShouldNotMap() throws AuthenticationException {
-        try {
-            when(mockAuthenticator.authenticate(anyString())).thenThrow(new RuntimeException());
-            resources.client()
-                    .target("/")
-                    .request()
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
-                    .get(String.class);
-        } catch (ResponseProcessingException err) {
-            assertThat(err.getResponse().getStatus(), is(equalTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())));
-        }
+        when(mockAuthenticator.authenticate(anyString())).thenThrow(new RuntimeException());
+        resources.client()
+                .target("/")
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
+                .get(String.class);
     }
 
     @Test
     public void exceptionsShouldMapTimeouts() throws AuthenticationException {
+        Optional<Integer> responseStatus;
         try {
             final TenacityConfiguration timeoutConfiguration = new TenacityConfiguration();
             timeoutConfiguration.setExecutionIsolationThreadTimeoutInMillis(1);
@@ -83,34 +93,32 @@ public class TenacityContainerExceptionMapperTest {
                     new BreakerboxConfiguration())
                     .register();
 
-            when(mockAuthenticator.authenticate(anyString())).thenAnswer(new Answer<Void>() {
+            when(mockAuthenticator.authenticate(anyString())).thenAnswer(new Answer<Optional<Principal>>() {
                 @Override
-                public Void answer(InvocationOnMock invocation) throws Throwable {
+                public Optional<Principal> answer(InvocationOnMock invocation) throws Throwable {
                     Thread.sleep(100);
-                    return null;
+                    return Optional.absent();
                 }
             });
-            resources.client()
+            final Response response = resources.client()
                     .target("/")
                     .request()
                     .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
-                    .get(String.class);
+                    .get(Response.class);
+            responseStatus = Optional.of(response.getStatus());
         } catch (ResponseProcessingException err) {
-            assertThat(err.getResponse().getStatus(), is(equalTo(statusCode)));
+            responseStatus = Optional.of(err.getResponse().getStatus());
         }
+        assertThat(responseStatus).contains(statusCode);
     }
 
-    @Test
+    @Test(expected = InternalServerErrorException.class)
     public void authenticationExceptions() throws AuthenticationException {
-        try {
-            when(mockAuthenticator.authenticate(anyString())).thenThrow(new AuthenticationException("auth error"));
-            resources.client()
-                    .target("/")
-                    .request()
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
-                    .get(String.class);
-        } catch (ResponseProcessingException err) {
-            assertThat(err.getResponse().getStatus(), is(equalTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())));
-        }
+        when(mockAuthenticator.authenticate(anyString())).thenThrow(new AuthenticationException("auth error"));
+        resources.client()
+                .target("/")
+                .request()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
+                .get(String.class);
     }
 }
