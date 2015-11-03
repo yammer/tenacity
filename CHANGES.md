@@ -1,3 +1,10 @@
+Dropwizard 0.9.x releases
+=========================
+0.7.0
+* Dropwizard 0.9.0
+* Findbugs 3.0.2
+* Upgraded maven-*-plugins
+
 Dropwizard 0.8.x releases
 =========================
 0.6.17
