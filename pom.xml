@@ -40,7 +40,7 @@
     </issueManagement>
 
     <properties>
-        <dropwizard.version>0.9.0</dropwizard.version>
+        <dropwizard.version>0.9.1</dropwizard.version>
         <hystrix.version>1.4.18</hystrix.version>
 
         <!-- These transitive versions are determined by what Hystrix is dependent on -->
