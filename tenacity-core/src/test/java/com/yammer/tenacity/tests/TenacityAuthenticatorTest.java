@@ -22,15 +22,17 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.auth.Auth;
-import io.dropwizard.auth.AuthFactory;
+import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.oauth.OAuthFactory;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.*;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -39,10 +41,10 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.security.Principal;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,8 +60,8 @@ public class TenacityAuthenticatorTest {
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     private ExecutorService executorService;
-    private Authenticator<String, Object> mockAuthenticator;
-    private Authenticator<String, Object> tenacityAuthenticator;
+    private Authenticator<BasicCredentials, Principal> mockAuthenticator;
+    private Authenticator<BasicCredentials, Principal> tenacityAuthenticator;
     private TenacityExceptionMapper tenacityExceptionMapper = spy(new TenacityExceptionMapper());
     private TenacityContainerExceptionMapper tenacityContainerExceptionMapper =
             spy(new TenacityContainerExceptionMapper());
@@ -76,7 +78,11 @@ public class TenacityAuthenticatorTest {
         tenacityAuthenticator = TenacityAuthenticator.wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT);
         resources = ResourceTestRule.builder()
                 .addResource(new AuthResource())
-                .addProvider(AuthFactory.binder(new OAuthFactory<>(tenacityAuthenticator, "test-realm", Object.class)))
+                .addProvider(new AuthDynamicFeature(
+                        new BasicCredentialAuthFilter.Builder<>()
+                                .setAuthenticator(tenacityAuthenticator)
+                                .setRealm("test-realm")
+                                .buildAuthFilter()))
                 .addProvider(tenacityExceptionMapper)
                 .addProvider(tenacityContainerExceptionMapper)
                 .build();
@@ -118,7 +124,7 @@ public class TenacityAuthenticatorTest {
                 mock(ArchaiusPropertyRegister.class))
                 .register();
 
-        when(mockAuthenticator.authenticate(any(String.class))).thenAnswer(new Answer<Object>() {
+        when(mockAuthenticator.authenticate(any(BasicCredentials.class))).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 Thread.sleep(50);
@@ -127,7 +133,7 @@ public class TenacityAuthenticatorTest {
         });
 
         try {
-            assertThat(tenacityAuthenticator.authenticate("credentials"))
+            assertThat(tenacityAuthenticator.authenticate(new BasicCredentials("credentials", "credentials")) )
                     .isAbsent();
         } catch (HystrixRuntimeException err) {
             assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
@@ -139,43 +145,47 @@ public class TenacityAuthenticatorTest {
     public void shouldLogWhenExceptionIsThrown() throws AuthenticationException {
         final DefaultExceptionLogger defaultExceptionLogger = spy(new DefaultExceptionLogger());
         HystrixPlugins.getInstance().registerCommandExecutionHook(new ExceptionLoggingCommandHook(defaultExceptionLogger));
-        when(mockAuthenticator.authenticate(any(String.class))).thenThrow(new AuthenticationException("test"));
+        when(mockAuthenticator.authenticate(any(BasicCredentials.class))).thenThrow(new AuthenticationException("test"));
         doCallRealMethod().when(defaultExceptionLogger).log(any(Exception.class), any(HystrixCommand.class));
 
         try {
-            tenacityAuthenticator.authenticate("foo");
+            tenacityAuthenticator.authenticate(new BasicCredentials("foo", "foo"));
         } catch (HystrixRuntimeException err) {
             assertFalse(Iterables.isEmpty(
                     Iterables.filter(Throwables.getCausalChain(err), AuthenticationException.class)));
         }
 
-        verify(mockAuthenticator, times(1)).authenticate(any(String.class));
+        verify(mockAuthenticator, times(1)).authenticate(any(BasicCredentials.class));
         verify(defaultExceptionLogger, times(1)).log(any(Exception.class), any(HystrixCommand.class));
     }
 
     @Test
     public void shouldNotTransformAuthenticationExceptionIntoMappedException() throws AuthenticationException {
-        when(AuthenticatorApp.getMockAuthenticator().authenticate(any(String.class))).thenThrow(new AuthenticationException("test"));
+        when(AuthenticatorApp.getMockAuthenticator().authenticate(any(BasicCredentials.class))).thenThrow(new AuthenticationException("test"));
         final Client client = new JerseyClientBuilder(new MetricRegistry())
                 .using(executorService, Jackson.newObjectMapper())
                 .build("dropwizard-app-rule");
 
+        client.register(HttpAuthenticationFeature.basicBuilder()
+                .nonPreemptive()
+                .credentials("user", "stuff")
+                .build());
+
         final Response response = client
                 .target(URI.create("http://localhost:" + RULE.getLocalPort() + "/auth"))
                 .request()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer stuff")
                 .get(Response.class);
 
         assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
-        verify(AuthenticatorApp.getMockAuthenticator(), times(1)).authenticate(any(String.class));
+        verify(AuthenticatorApp.getMockAuthenticator(), times(1)).authenticate(any(BasicCredentials.class));
         verifyZeroInteractions(AuthenticatorApp.getTenacityContainerExceptionMapper());
         verify(AuthenticatorApp.getTenacityExceptionMapper(), times(1)).toResponse(any(HystrixRuntimeException.class));
     }
 
     public static class AuthenticatorApp extends Application<Configuration> {
-        private static Authenticator<String, Object> mockAuthenticator;
-        private static Authenticator<String, Object> tenacityAuthenticator;
+        private static Authenticator<BasicCredentials, Principal> mockAuthenticator;
+        private static Authenticator<BasicCredentials, Principal> tenacityAuthenticator;
         private static TenacityExceptionMapper tenacityExceptionMapper = spy(new TenacityExceptionMapper());
         private static TenacityContainerExceptionMapper tenacityContainerExceptionMapper =
                 spy(new TenacityContainerExceptionMapper());
@@ -188,17 +198,21 @@ public class TenacityAuthenticatorTest {
         public void run(Configuration configuration, Environment environment) throws Exception {
             mockAuthenticator = mock(Authenticator.class);
             tenacityAuthenticator = TenacityAuthenticator.wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT);
-            environment.jersey().register(AuthFactory.binder(new OAuthFactory<>(tenacityAuthenticator, "test-realm", Object.class)));
+            environment.jersey().register(new AuthDynamicFeature(
+                    new BasicCredentialAuthFilter.Builder<>()
+                            .setAuthenticator(tenacityAuthenticator)
+                            .setRealm("test-realm")
+                            .buildAuthFilter()));
             environment.jersey().register(tenacityExceptionMapper);
             environment.jersey().register(tenacityContainerExceptionMapper);
             environment.jersey().register(new AuthErrorResource());
         }
 
-        public static Authenticator<String, Object> getMockAuthenticator() {
+        public static Authenticator<BasicCredentials, Principal> getMockAuthenticator() {
             return mockAuthenticator;
         }
 
-        public static Authenticator<String, Object> getTenacityAuthenticator() {
+        public static Authenticator<BasicCredentials, Principal> getTenacityAuthenticator() {
             return tenacityAuthenticator;
         }
 
