@@ -1,6 +1,7 @@
 Dropwizard 0.9.x releases
 =========================
-0.7.0
+0.7.0 - Nov 5, 2015
+---
 * Dropwizard 0.9.1
 * Findbugs 3.0.2
 * Upgraded maven-*-plugins
@@ -8,9 +9,11 @@ Dropwizard 0.9.x releases
 Dropwizard 0.8.x releases
 =========================
 0.6.17
+---
 * [Hystrix 1.4.18](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1418-maven-central-bintray)
 
 0.6.16
+---
 * [Hystrix 1.4.17](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1417-maven-central-bintray)
 * RxJava 1.0.14
 
