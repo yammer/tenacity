@@ -41,12 +41,8 @@
 
     <properties>
         <dropwizard.version>0.7.1</dropwizard.version>
-        <hystrix.version>1.4.18</hystrix.version>
+        <hystrix.version>1.4.20</hystrix.version>
 
-        <!-- These transitive versions are determined by what Hystrix is dependent on -->
-        <archaius.version>0.4.1</archaius.version>
-        <rxjava.version>1.0.14</rxjava.version>
-        <!-- // transitive dependency versions in Hystrix -->
         <assertj.core.version>2.0.0</assertj.core.version>
         <assertj.guava.version>1.3.1</assertj.guava.version>
     </properties>
@@ -96,17 +92,6 @@
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
                         <artifactId>jackson-core</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.netflix.archaius</groupId>
-                <artifactId>archaius-core</artifactId>
-                <version>${archaius.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -164,11 +149,6 @@
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-jdbi</artifactId>
                 <version>${dropwizard.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.reactivex</groupId>
-                <artifactId>rxjava</artifactId>
-                <version>${rxjava.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>
