@@ -1,5 +1,10 @@
 Dropwizard 0.9.x releases
 =========================
+0.7.1 - Nov 16, 2015
+---
+* [Hystrix 1.4.20](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1420-maven-central-bintray)
+* Findbugs 3.0.3
+
 0.7.0 - Nov 5, 2015
 ---
 * Dropwizard 0.9.1
