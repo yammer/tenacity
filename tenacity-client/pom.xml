@@ -3,7 +3,7 @@
     <parent>
         <artifactId>tenacity-parent</artifactId>
         <groupId>com.yammer.tenacity</groupId>
-        <version>0.5.21</version>
+        <version>0.5.22-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
