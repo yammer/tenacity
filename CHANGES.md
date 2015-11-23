@@ -1,5 +1,9 @@
 Dropwizard 0.9.x releases
 =========================
+0.7.2 - Nov 23, 2015
+---
+* [Hystrix 1.4.21](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1421-maven-central-bintray)
+
 0.7.1 - Nov 16, 2015
 ---
 * [Hystrix 1.4.20](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1420-maven-central-bintray)
@@ -13,6 +17,10 @@ Dropwizard 0.9.x releases
 
 Dropwizard 0.8.x releases
 =========================
+0.6.19 - Nov 23, 2015
+---
+* Backport of 0.7.2
+
 0.6.18 - Nov 16, 2015
 ---
 * Backport of 0.7.1
@@ -131,6 +139,10 @@ Dropwizard 0.8.x releases
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.22 - Nov 23, 2015
+---
+* Backport of 0.7.2
+
 0.5.21 - Nov 16, 2015
 ----
 * Backport of 0.7.1
