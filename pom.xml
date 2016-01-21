@@ -4,7 +4,7 @@
 
     <groupId>com.yammer.tenacity</groupId>
     <artifactId>tenacity-parent</artifactId>
-    <version>0.6.20-SNAPSHOT</version>
+    <version>0.7.3.dw8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Tenacity</name>
