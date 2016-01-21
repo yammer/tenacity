@@ -1,3 +1,9 @@
+0.7.3, 0.7.3-dw8, 0.7.3-dw7 :: Jan 21, 2016
+---
+* [Hystrix 1.4.23](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1423-maven-central-bintray)
+* Dropwizard 0.9.2
+* New version release strategy. Hopefully it is clearer that 0.7.3 is the latest dropwizard version (0.9.x) while 0.7.3-dw8 supports legacy dropwizard-0.8.5, and 0.7.3-dw7 supports legacy dropwizard 0.7.1
+
 Dropwizard 0.9.x releases
 =========================
 0.7.2 - Nov 23, 2015
