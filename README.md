@@ -118,6 +118,27 @@ How to add Tenacity to your Dropwizard Service
         <version>0.7.3</version>
     </dependency>
     ```
+    
+    Or you can leverage the tenacity-bom:
+    
+    ```xml
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.yammer.tenacity</groupId>
+                <artifactId>tenacity-bom</artifactId>
+                <version>0.7.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    <dependency>
+        <groupId>com.yammer.tenacity</groupId>
+        <artifactId>tenacity-core</artifactId>
+    </dependency>
+    ```
 
 2. Enumerate your dependencies. These will eventually be used as global identifiers in dashboards. We have found that it works best for us when you include the service and the external dependency at a minimum. Here is an example of `completie`'s dependencies. Note we also shave down some characters to save on space, again for UI purposes. In addition, you'll need to have an implementation of a `TenacityPropertyKeyFactory` which you can see an example of below.
 
