@@ -25,6 +25,7 @@
         <module>tenacity-testing</module>
         <module>tenacity-client</module>
         <module>tenacity-jdbi</module>
+        <module>tenacity-bom</module>
     </modules>
 
     <scm>
@@ -39,14 +40,6 @@
         <url>http://github.com/yammer/tenacity/issues</url>
     </issueManagement>
 
-    <properties>
-        <dropwizard.version>0.9.2</dropwizard.version>
-        <hystrix.version>1.4.23</hystrix.version>
-
-        <assertj.core.version>2.3.0</assertj.core.version>
-        <assertj.guava.version>2.0.0</assertj.guava.version>
-    </properties>
-
     <developers>
         <developer>
             <name>Chris Gray</name>
@@ -54,59 +47,6 @@
             <timezone>-8</timezone>
         </developer>
     </developers>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-bom</artifactId>
-                <version>${dropwizard.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.netflix.hystrix</groupId>
-                <artifactId>hystrix-core</artifactId>
-                <version>${hystrix.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.netflix.hystrix</groupId>
-                <artifactId>hystrix-codahale-metrics-publisher</artifactId>
-                <version>${hystrix.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.netflix.hystrix</groupId>
-                <artifactId>hystrix-metrics-event-stream</artifactId>
-                <version>${hystrix.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yammer.tenacity</groupId>
-                <artifactId>tenacity-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.yammer.tenacity</groupId>
-                <artifactId>tenacity-testing</artifactId>
-                <version>${project.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.yammer.tenacity</groupId>
-                <artifactId>tenacity-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>${assertj.core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-guava</artifactId>
-                <version>${assertj.guava.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <distributionManagement>
         <snapshotRepository>
