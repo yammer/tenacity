@@ -2,12 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <prerequisites>
+        <maven>3.0.1</maven>
+    </prerequisites>
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>tenacity-parent</artifactId>
         <groupId>com.yammer.tenacity</groupId>
         <version>0.7.4-SNAPSHOT</version>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tenacity-bom</artifactId>
     <packaging>pom</packaging>
@@ -21,7 +25,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <dropwizard.version>0.9.2</dropwizard.version>
-        <hystrix.version>1.5.0-rc.3</hystrix.version>
+        <hystrix.version>1.5.0-rc.4</hystrix.version>
 
         <assertj.core.version>2.3.0</assertj.core.version>
         <assertj.guava.version>2.0.0</assertj.guava.version>
