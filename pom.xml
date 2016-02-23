@@ -38,6 +38,11 @@
         <tag>HEAD</tag>
     </scm>
 
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/yammer/tenacity</url>
+    </ciManagement>
+
     <issueManagement>
         <system>github</system>
         <url>http://github.com/yammer/tenacity/issues</url>
