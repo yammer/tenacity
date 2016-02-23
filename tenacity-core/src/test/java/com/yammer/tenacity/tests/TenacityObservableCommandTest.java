@@ -138,6 +138,9 @@ public class TenacityObservableCommandTest {
             }
         }
 
+        //Wait for metrics to be available
+        Thread.sleep(1000);
+
         assertThat(TenacityObservableCommand
                 .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
                 .getCumulativeCount(HystrixRollingNumberEvent.SEMAPHORE_REJECTED))
