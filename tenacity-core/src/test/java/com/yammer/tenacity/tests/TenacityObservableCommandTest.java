@@ -28,24 +28,27 @@ public class TenacityObservableCommandTest {
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
-    private static void executeTimeoutAndVerify(final TenacityObservableCommand<Boolean> timeoutCommand) {
+    private static void executeTimeoutAndVerify(final TenacityObservableCommand<Boolean> timeoutCommand) throws InterruptedException {
+        timeoutCommand.getCumulativeCommandEventCounterStream().startCachingStreamValuesIfUnstarted();
         try {
             assertTrue(timeoutCommand.observe().toBlocking().single());
         } catch (HystrixRuntimeException err) {
             assertEquals(err.getFailureType(), HystrixRuntimeException.FailureType.TIMEOUT);
         }
 
+        Thread.sleep(1000);
+
         assertEquals(timeoutCommand.isResponseTimedOut(), true);
         assertEquals(timeoutCommand.getMetrics().getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT), 1);
     }
 
     @Test
-    public void shouldTimeout() {
+    public void shouldTimeout() throws InterruptedException {
         executeTimeoutAndVerify(new TimeoutObservableCommand(Duration.milliseconds(1500)));
     }
 
     @Test
-    public void shouldTimeoutAndRespectsKeyProperties() {
+    public void shouldTimeoutAndRespectsKeyProperties() throws InterruptedException {
         final TenacityConfiguration tenacityConfiguration = new TenacityConfiguration();
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(100);
 
@@ -103,7 +106,7 @@ public class TenacityObservableCommandTest {
     }
 
     @Test
-    public void whenUsingObservableCommandsExperienceRejectionsIfSemaphoreLimitBreached() {
+    public void whenUsingObservableCommandsExperienceRejectionsIfSemaphoreLimitBreached() throws InterruptedException {
         final TenacityConfiguration tenacityConfiguration = new TenacityConfiguration();
         tenacityConfiguration.setExecutionIsolationThreadTimeoutInMillis(3000);
         tenacityConfiguration.setExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
@@ -112,6 +115,10 @@ public class TenacityObservableCommandTest {
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OBSERVABLE_TIMEOUT, tenacityConfiguration),
                 new BreakerboxConfiguration())
                 .register();
+
+        new TimeoutObservableCommand(Duration.milliseconds(500))
+                .getCumulativeCommandEventCounterStream()
+                .startCachingStreamValuesIfUnstarted();
 
         final int defaultSemaphoreMaxConcurrentRequests = new SemaphoreConfiguration().getMaxConcurrentRequests();
         final ImmutableList.Builder<Observable<Boolean>> observables = ImmutableList.builder();
@@ -146,7 +153,7 @@ public class TenacityObservableCommandTest {
     }
 
     @Test
-    public void observableCommandCanAdjustSemaphoreMaxConcurrentExecutions() {
+    public void observableCommandCanAdjustSemaphoreMaxConcurrentExecutions() throws InterruptedException {
         final SemaphoreConfiguration semaphoreConfiguration = new SemaphoreConfiguration();
         semaphoreConfiguration.setMaxConcurrentRequests(50);
 
@@ -159,7 +166,12 @@ public class TenacityObservableCommandTest {
                 new BreakerboxConfiguration())
                 .register();
 
+        new TimeoutObservableCommand(Duration.milliseconds(500))
+                .getCumulativeCommandEventCounterStream()
+                .startCachingStreamValuesIfUnstarted();
+
         final int defaultSemaphoreMaxConcurrentRequests = new SemaphoreConfiguration().getMaxConcurrentRequests();
+
         final ImmutableList.Builder<Observable<Boolean>> observables = ImmutableList.builder();
         for (int i = 0; i < defaultSemaphoreMaxConcurrentRequests * 2; ++i) {
             final TimeoutObservableCommand command = new TimeoutObservableCommand(Duration.milliseconds(500));
@@ -173,6 +185,8 @@ public class TenacityObservableCommandTest {
                 fail("Failed to execute an observable: " + err);
             }
         }
+
+        Thread.sleep(500);
 
         assertThat(TenacityObservableCommand
                 .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)

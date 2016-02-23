@@ -19,17 +19,29 @@ public class TenacityCircuitBreakerTest {
     @Test
     public void circuitBreakerShouldOpen() throws URISyntaxException, InterruptedException {
         final TenacityFailingCommand tenacityFailingCommand = new TenacityFailingCommand();
-        for (int i = 0; i < 500; i++) {
+        tenacityFailingCommand
+                .getCumulativeCommandEventCounterStream()
+                .startCachingStreamValuesIfUnstarted();
+        final int numberOfExecutions = 500;
+
+        for (int i = 0; i < numberOfExecutions; i++) {
             new TenacityFailingCommand().execute();
+
+            //Allow for circuit breaker calculations to take place and open the circuit
+            if (i == (numberOfExecutions / 2)) {
+                Thread.sleep(500);
+            }
         }
+
+        Thread.sleep(1000);
 
         final HystrixCommandMetrics sleepCommandMetrics = tenacityFailingCommand.getCommandMetrics();
         assertThat(sleepCommandMetrics
                         .getCumulativeCount(HystrixRollingNumberEvent.TIMEOUT))
-                .isEqualTo(0L);
+                .isZero();
         assertThat(sleepCommandMetrics
                         .getCumulativeCount(HystrixRollingNumberEvent.FALLBACK_SUCCESS))
-                .isEqualTo(500L);
+                .isEqualTo(numberOfExecutions);
         assertThat(sleepCommandMetrics
                         .getCumulativeCount(HystrixRollingNumberEvent.SHORT_CIRCUITED))
                 .isGreaterThan(50L);
@@ -40,11 +52,18 @@ public class TenacityCircuitBreakerTest {
     @Test
     public void circuitBreakerShouldBeClosed() throws URISyntaxException, InterruptedException {
         final TenacityFailingCommand tenacityFailingCommand = new TenacityFailingCommand();
-        for (int i = 0; i < 10; i++) {
+        tenacityFailingCommand
+                .getCumulativeCommandEventCounterStream()
+                .startCachingStreamValuesIfUnstarted();
+        final int numberOfExecutions = 10;
+
+        for (int i = 0; i < numberOfExecutions; i++) {
             new TenacityFailingCommand().execute();
             assertTrue("Allow request should be true", tenacityFailingCommand.getCircuitBreaker().allowRequest());
             assertFalse("Circuit Breaker should not be open", tenacityFailingCommand.isCircuitBreakerOpen());
         }
+
+        Thread.sleep(1000);
 
         final HystrixCommandMetrics sleepCommandMetrics = tenacityFailingCommand.getCommandMetrics();
         assertThat(sleepCommandMetrics
