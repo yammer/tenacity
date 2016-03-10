@@ -14,7 +14,6 @@
     <artifactId>tenacity-core</artifactId>
     <name>Tenacity Core</name>
 
-    <!--
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -26,7 +25,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    -->
 
     <dependencies>
         <dependency>
