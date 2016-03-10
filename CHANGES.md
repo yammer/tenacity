@@ -1,3 +1,10 @@
+0.8.0, 0.8.0-dw8, 0.8.0-dw7 :: Mar 10, 2016
+---
+* [Hystrix 1.5.1](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-151-maven-central-bintray)
+* Tenacity Bill of Materials (tenacity-bom for dependencyManagement)
+* AssertJ Core 2.3.0
+* AssertJ Guava 2.0.0
+
 0.7.3, 0.7.3-dw8, 0.7.3-dw7 :: Jan 21, 2016
 ---
 * [Hystrix 1.4.23](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1423-maven-central-bintray)
