@@ -189,7 +189,7 @@ public class TenacityObservableCommandTest {
             }
         }
 
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         assertThat(TenacityObservableCommand
                 .getCommandMetrics(DependencyKey.OBSERVABLE_TIMEOUT)
