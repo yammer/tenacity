@@ -11,7 +11,6 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.oauth.OAuthFactory;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.Rule;
@@ -24,10 +23,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import java.security.Principal;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -37,7 +35,7 @@ public class TenacityContainerExceptionMapperTest {
     public TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @SuppressWarnings("unchecked")
-    private Authenticator<String, BasicCredentials> mockAuthenticator = mock(Authenticator.class);
+    private Authenticator<String, Principal> mockAuthenticator = mock(Authenticator.class);
     private final int statusCode = 429;
 
     @Path("/")
@@ -46,7 +44,7 @@ public class TenacityContainerExceptionMapperTest {
         }
 
         @GET
-        public Response fakeGet(@Auth BasicCredentials basicCredentials) {
+        public Response fakeGet(@Auth Principal principal) {
             return Response.ok().build();
         }
     }
@@ -55,7 +53,7 @@ public class TenacityContainerExceptionMapperTest {
     public final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new FakeResource())
             .addProvider(new OAuthFactory<>(TenacityAuthenticator
-                    .wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT), "auth", BasicCredentials.class))
+                    .wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT), "auth", Principal.class))
             .addProvider(new TenacityContainerExceptionMapper(statusCode))
             .build();
 
@@ -69,7 +67,7 @@ public class TenacityContainerExceptionMapperTest {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
                     .get(String.class);
         } catch (ResponseProcessingException err) {
-            assertThat(err.getResponse().getStatus(), is(equalTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())));
+            assertThat(err.getResponse().getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
 
@@ -96,7 +94,7 @@ public class TenacityContainerExceptionMapperTest {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
                     .get(String.class);
         } catch (ResponseProcessingException err) {
-            assertThat(err.getResponse().getStatus(), is(equalTo(statusCode)));
+            assertThat(err.getResponse().getStatus()).isEqualTo(statusCode);
         }
     }
 
@@ -110,7 +108,7 @@ public class TenacityContainerExceptionMapperTest {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer TEST")
                     .get(String.class);
         } catch (ResponseProcessingException err) {
-            assertThat(err.getResponse().getStatus(), is(equalTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())));
+            assertThat(err.getResponse().getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         }
     }
 }

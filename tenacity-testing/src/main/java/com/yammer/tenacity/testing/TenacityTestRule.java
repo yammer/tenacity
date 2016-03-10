@@ -2,6 +2,7 @@ package com.yammer.tenacity.testing;
 
 import com.netflix.config.ConfigurationManager;
 import com.netflix.hystrix.Hystrix;
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -11,9 +12,8 @@ import java.util.concurrent.TimeUnit;
 public class TenacityTestRule implements TestRule {
     private void setup() {
         Hystrix.reset();
-        ConfigurationManager
-                .getConfigInstance()
-                .setProperty("hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds", "1");
+        final AbstractConfiguration configuration = ConfigurationManager.getConfigInstance();
+        configuration.setProperty("hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds", "100");
     }
 
     public void teardown() {

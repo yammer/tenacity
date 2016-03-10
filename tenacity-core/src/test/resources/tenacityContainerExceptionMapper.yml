@@ -1,0 +1,7 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 34390
+  adminConnectors:
+    - type: http
+      port: 34391

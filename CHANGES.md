@@ -1,9 +1,43 @@
+0.7.3, 0.7.3-dw8, 0.7.3-dw7 :: Jan 21, 2016
+---
+* [Hystrix 1.4.23](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1423-maven-central-bintray)
+* Dropwizard 0.9.2
+* New version release strategy. Hopefully it is clearer that 0.7.3 is the latest dropwizard version (0.9.x) while 0.7.3-dw8 supports legacy dropwizard-0.8.5, and 0.7.3-dw7 supports legacy dropwizard 0.7.1
+
+Dropwizard 0.9.x releases
+=========================
+0.7.2 - Nov 23, 2015
+---
+* [Hystrix 1.4.21](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1421-maven-central-bintray)
+
+0.7.1 - Nov 16, 2015
+---
+* [Hystrix 1.4.20](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1420-maven-central-bintray)
+* Findbugs 3.0.3
+
+0.7.0 - Nov 5, 2015
+---
+* Dropwizard 0.9.1
+* Findbugs 3.0.2
+* Upgraded maven-*-plugins
+
 Dropwizard 0.8.x releases
 =========================
+0.6.19 - Nov 23, 2015
+---
+* Backport of 0.7.2
+
+0.6.18 - Nov 16, 2015
+---
+* Backport of 0.7.1
+* Dropwizard 0.8.5
+
 0.6.17
+---
 * [Hystrix 1.4.18](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1418-maven-central-bintray)
 
 0.6.16
+---
 * [Hystrix 1.4.17](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1417-maven-central-bintray)
 * RxJava 1.0.14
 
@@ -111,6 +145,14 @@ Dropwizard 0.8.x releases
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.22 - Nov 23, 2015
+---
+* Backport of 0.7.2
+
+0.5.21 - Nov 16, 2015
+----
+* Backport of 0.7.1
+
 0.5.20
 -----
 * Backport of 0.6.17

@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.netflix.config.ConfigurationManager;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
+import io.dropwizard.util.Duration;
 import org.apache.commons.configuration.AbstractConfiguration;
 
 import java.util.Map;
@@ -112,6 +113,17 @@ public class TenacityPropertyRegister {
                     executionIsolationStrategy(key),
                     configuration.getExecutionIsolationStrategy());
         }
+    }
+
+    public static void setDefaultMetricsHealthSnapshotInterval(Duration duration) {
+        ConfigurationManager
+                .getConfigInstance()
+                .setProperty(defaultMetricsHealthSnapshotIntervalInMilliseconds(),
+                        duration.toMilliseconds());
+    }
+
+    public static String defaultMetricsHealthSnapshotIntervalInMilliseconds() {
+        return "hystrix.command.default.metrics.healthSnapshot.intervalInMilliseconds";
     }
 
     public static String executionIsolationThreadTimeoutInMilliseconds(TenacityPropertyKey key) {

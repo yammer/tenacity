@@ -1,6 +1,8 @@
 package com.yammer.tenacity.core;
 
 import com.netflix.hystrix.*;
+import com.netflix.hystrix.metric.consumer.CumulativeCommandEventCounterStream;
+import com.netflix.hystrix.metric.consumer.RollingCommandEventCounterStream;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
@@ -57,6 +59,14 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
 
     public static HystrixCircuitBreaker getCircuitBreaker(TenacityPropertyKey key) {
         return HystrixCircuitBreaker.Factory.getInstance(key);
+    }
+
+    public CumulativeCommandEventCounterStream getCumulativeCommandEventCounterStream() {
+        return CumulativeCommandEventCounterStream.getInstance(getCommandKey(), getCommandProperties());
+    }
+
+    public RollingCommandEventCounterStream getRollingCommandEventCounterStream() {
+        return RollingCommandEventCounterStream.getInstance(getCommandKey(), getCommandProperties());
     }
 
     @Override
