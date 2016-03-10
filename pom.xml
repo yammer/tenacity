@@ -7,7 +7,7 @@
 
     <groupId>com.yammer.tenacity</groupId>
     <artifactId>tenacity-parent</artifactId>
-    <version>0.8.0.dw8</version>
+    <version>0.8.1.dw8-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Tenacity</name>
@@ -35,7 +35,7 @@
         <connection>scm:git:git://github.int.yammer.com/yammer/tenacityi-dw7.git</connection>
         <developerConnection>scm:git:git@github.int.yammer.com:yammer/tenacity-dw7.git</developerConnection>
         <url>http://github.int.yammer.com/yammer/tenacity-dw7/</url>
-        <tag>tenacity-parent-0.8.0.dw8</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <ciManagement>
