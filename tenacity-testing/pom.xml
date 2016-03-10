@@ -13,8 +13,6 @@
 
     <artifactId>tenacity-testing</artifactId>
 
-
-    <!--
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -26,7 +24,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    -->
 
     <dependencies>
         <dependency>
