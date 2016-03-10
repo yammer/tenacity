@@ -8,7 +8,7 @@
     <parent>
         <artifactId>tenacity-parent</artifactId>
         <groupId>com.yammer.tenacity</groupId>
-        <version>0.8.0.dw7</version>
+        <version>0.8.1.dw7-SNAPSHOT</version>
     </parent>
 
     <artifactId>tenacity-bom</artifactId>
