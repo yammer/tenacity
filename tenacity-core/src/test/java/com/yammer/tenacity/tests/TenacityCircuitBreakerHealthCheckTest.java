@@ -6,7 +6,10 @@ import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.core.CircuitBreakers;
 import com.yammer.tenacity.core.healthcheck.TenacityCircuitBreakerHealthCheck;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.testing.TenacityTestRule;
+import io.dropwizard.util.Duration;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -15,6 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TenacityCircuitBreakerHealthCheckTest {
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
+
+    @Before
+    public void setup() {
+        TenacityPropertyRegister.setDefaultMetricsHealthSnapshotInterval(Duration.milliseconds(10));
+    }
 
     @Test
     public void healthyWhenNoCircuitBreakers() {

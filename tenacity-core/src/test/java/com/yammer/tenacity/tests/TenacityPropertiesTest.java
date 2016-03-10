@@ -19,6 +19,7 @@ import com.yammer.tenacity.testing.TenacityTestRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Collection;
 import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -151,20 +152,14 @@ public class TenacityPropertiesTest {
 
         tenacityPropertyRegister.register();
 
+        new SleepCommand(DependencyKey.SLEEP).getCumulativeCommandEventCounterStream().startCachingStreamValuesIfUnstarted();
+
         final ImmutableList.Builder<Future<Optional<String>>> sleepCommands = ImmutableList.builder();
         for (int i = 0; i < queueMaxSize * 2; i++) {
             sleepCommands.add(new SleepCommand(DependencyKey.SLEEP).queue());
         }
 
-        for (Future<Optional<String>> future : sleepCommands.build()) {
-            assertFalse(future.isCancelled());
-            final Optional<String> result = future.get();
-            if (result.isPresent()) {
-                assertThat(result).contains("sleep");
-            } else {
-                assertThat(result).isAbsent();
-            }
-        }
+        checkFutures(sleepCommands.build());
 
         final HystrixCommandMetrics sleepCommandMetrics = new SleepCommand(DependencyKey.SLEEP).getCommandMetrics();
         assertThat(sleepCommandMetrics
@@ -191,20 +186,18 @@ public class TenacityPropertiesTest {
 
     @Test
     public void queueRejectionWithSynchronousQueue() throws Exception {
+        new SleepCommand(DependencyKey.EXAMPLE)
+                .getCumulativeCommandEventCounterStream()
+                .startCachingStreamValuesIfUnstarted();
+
         final ImmutableCollection.Builder<Future<Optional<String>>> futures = ImmutableList.builder();
         for (int i = 0; i < 50; i++) {
             futures.add(new SleepCommand(DependencyKey.EXAMPLE).queue());
         }
 
-        for (Future<Optional<String>> future : futures.build()) {
-            assertFalse(future.isCancelled());
-            final Optional<String> result = future.get();
-            if (result.isPresent()) {
-                assertThat(result).contains("sleep");
-            } else {
-                assertThat(result).isAbsent();
-            }
-        }
+        checkFutures(futures.build());
+
+        Thread.sleep(500);
 
         final HystrixCommandMetrics sleepCommandMetrics = new SleepCommand(DependencyKey.EXAMPLE).getCommandMetrics();
         assertThat(sleepCommandMetrics
@@ -234,5 +227,17 @@ public class TenacityPropertiesTest {
         assertEquals(TenacityPropertyStore.getTenacityConfiguration(DependencyKey.EXAMPLE),
                 new TenacityConfiguration(new ThreadPoolConfiguration(), new CircuitBreakerConfiguration(),
                         new SemaphoreConfiguration(), 1000, HystrixCommandProperties.ExecutionIsolationStrategy.THREAD));
+    }
+
+    private static void checkFutures(Collection<Future<Optional<String>>> futures) throws Exception {
+        for (Future<Optional<String>> future : futures) {
+            assertFalse(future.isCancelled());
+            final Optional<String> result = future.get();
+            if (result.isPresent()) {
+                assertThat(result).contains("sleep");
+            } else {
+                assertThat(result).isAbsent();
+            }
+        }
     }
 }
