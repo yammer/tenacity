@@ -28,7 +28,7 @@ public class TenacityClientBuilder {
                 .using(jerseyConfiguration)
                 .build("tenacity-" + tenacityPropertyKey);
         return new TenacityClient(environment.metrics(), TenacityJerseyClientBuilder
-            .builder(tenacityPropertyKey)
-            .build(client));
+                .builder(tenacityPropertyKey)
+                .build(client));
     }
 }

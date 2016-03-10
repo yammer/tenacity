@@ -9,31 +9,35 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class TenacityConfigurationResourceTest {
 
     public static final String TENACITY_CONFIGURATION_URI = "/tenacity/configuration";
-    private TenacityPropertyKeyFactory mock = mock(TenacityPropertyKeyFactory.class);
+    private TenacityPropertyKeyFactory tenacityPropertyKeyFactoryMock = mock(TenacityPropertyKeyFactory.class);
 
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @Rule
     public final ResourceTestRule resources = ResourceTestRule.builder()
-            .addResource(new TenacityConfigurationResource(mock)).build();
-    
+            .addResource(new TenacityConfigurationResource(tenacityPropertyKeyFactoryMock)).build();
+
     @Before
     public void setUp() {
-        reset(mock);
+        reset(tenacityPropertyKeyFactoryMock);
     }
 
     @Test
     public void testGet() throws Exception {
-        when(mock.from(anyString())).thenReturn(DependencyKey.EXAMPLE);
-        final TenacityConfiguration tenacityConfiguration = resources.client().resource(TENACITY_CONFIGURATION_URI).path(DependencyKey.EXAMPLE.toString()).get(TenacityConfiguration.class);
+        when(tenacityPropertyKeyFactoryMock.from(anyString())).thenReturn(DependencyKey.EXAMPLE);
+        final TenacityConfiguration tenacityConfiguration = resources.client()
+                .resource(TENACITY_CONFIGURATION_URI)
+                .path(DependencyKey.EXAMPLE.toString())
+                .get(TenacityConfiguration.class);
+
         assertThat(tenacityConfiguration).isNotNull();
     }
 }

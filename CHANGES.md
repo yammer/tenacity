@@ -1,13 +1,54 @@
+0.7.3, 0.7.3-dw8, 0.7.3-dw7 :: Jan 21, 2016
+---
+* [Hystrix 1.4.23](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1423-maven-central-bintray)
+* Dropwizard 0.9.2
+* New version release strategy. Hopefully it is clearer that 0.7.3 is the latest dropwizard version (0.9.x) while 0.7.3-dw8 supports legacy dropwizard-0.8.5, and 0.7.3-dw7 supports legacy dropwizard 0.7.1
+
+Dropwizard 0.9.x releases
+=========================
+0.7.2 - Nov 23, 2015
+---
+* [Hystrix 1.4.21](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1421-maven-central-bintray)
+
+0.7.1 - Nov 16, 2015
+---
+* [Hystrix 1.4.20](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1420-maven-central-bintray)
+* Findbugs 3.0.3
+
+0.7.0 - Nov 5, 2015
+---
+* Dropwizard 0.9.1
+* Findbugs 3.0.2
+* Upgraded maven-*-plugins
+
 Dropwizard 0.8.x releases
 =========================
+0.6.19 - Nov 23, 2015
+---
+* Backport of 0.7.2
+
+0.6.18 - Nov 16, 2015
+---
+* Backport of 0.7.1
+* Dropwizard 0.8.5
+
+0.6.17
+---
+* [Hystrix 1.4.18](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1418-maven-central-bintray)
+
 0.6.16
+---
 * [Hystrix 1.4.17](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1417-maven-central-bintray)
 * RxJava 1.0.14
 
-Next
+0.6.15
+---
+* [Hystrix 1.4.16](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1416-maven-central-bintray)
+
+0.6.14
 ----
 * [Hystrix 1.4.15](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1415-maven-central-bintray)
-* Ability to move /tenacity resources to the admin port.
+* Ability to move /tenacity resources to the admin port. This is tunable by using `usingAdminPort()` when building the `Tenacity` bundle.
 
 0.6.13
 ----
@@ -54,7 +95,7 @@ Next
 * [Hystrix 1.4.10](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1410-maven-central-bintray)
 * Hystrix fixing a memory leak that was released in 1.4.8+. This affects Tenacity version 0.6.6.
 
-0.6.6 
+0.6.6 _MEMORY LEAK fixed in 0.6.7_
 -----
 * [Hystrix 1.4.9](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-149-maven-central-bintray)
 * Exclude the transitive dependency on io.dropwizard.metrics.metrics-core 3.1.2
@@ -82,45 +123,100 @@ Next
 * Migrated `WebTarget` out of a jersey related namespace. No use of non-public APIs anymore.
 * No backport for this release as it only affects dropwizard 0.8.x
 
+
 0.6.2
 -----
 * Fixing bug where `TenacityPropertyStore` wouldn't properly update the `executionIsolationStrategy` to reflect the live configuration value. This only affects Breakerbox's ability to determine
   if configurations are synchronized or not.
+* There is a memory-leak when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
 
 0.6.1
 -----
 * Remove `ManagedConcurrencyStrategy` and revert back to the default. This is replicated through `ManagedHystrix`. 
   Hystrix also enforces stricter use of `HystrixRequestContext` semantics when using a custom strategy. This broke use of per-request
   features of Hystrix.
+* There is a memory-leak when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
 
 0.6.0
 -----
 * Dropwizard 0.8.1 - This was blocked by [Dropwizard 0.8.0 pull-request](https://github.com/dropwizard/dropwizard/pull/939)
+* There is a memory-leak when using `TenacityJerseyClient` and Dropwizard <= 0.8.1. Please avoid using `TenacityJerseyClient` in this release.
 
 
 Dropwizard 0.7.x Releases
 =========================
+0.5.22 - Nov 23, 2015
+---
+* Backport of 0.7.2
 
-0.5.7 ported from 0.6.4 (0.6.3 was a Dropwizard 0.8.1 fix only)
----------------------------------------------------------------
-* [Hystrix 1.4.5](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-145-maven-central-bintray)
-* Added `GET /tenacity/circuitbreaker/{key}`
-* Added `PUT /tenacity/circuitbreaker/{key}`. Accepted bodies are `FORCED_CLOSED`, `FORCED_OPEN`, and `FORCED_RESET`.
-  This allows specific control over a particular circuit breaker. `FORCED_RESET` returns the circuitbreaker to it's original state
-  whether it's neither `FORCED_OPEN` or `FORCED_CLOSED`.
-* Added `TenacityCircuitBreakerHealthCheck` which can be enabled via the `TenacityBundleBuilder`. This fails the `/healthcheck`
-  when any circuitbreaker is in an open state or not accepting requests.
+0.5.21 - Nov 16, 2015
+----
+* Backport of 0.7.1
 
-0.5.6 ported from 0.6.2
------------------------
-* Fixing bug where `TenacityPropertyStore` wouldn't properly update the `executionIsolationStrategy` to reflect the live configuration value. This only affects Breakerbox's ability to determine
-  if configurations are synchronized or not.
+0.5.20
+-----
+* Backport of 0.6.17
 
-0.5.5 ported from 0.6.1
------------------------
-* Remove `ManagedConcurrencyStrategy` and revert back to the default. This is replicated through `ManagedHystrix`. 
-  Hystrix also enforces stricter use of `HystrixRequestContext` semantics when using a custom strategy. This broke use of per-request
-  features of Hystrix.
+0.5.19
+-----
+* Backport of 0.6.16
+
+0.5.18
+-----
+* Backport of 0.6.15
+
+0.5.17
+-----
+* Backport of 0.6.14
+* Jersey 1.x incompatiblities and DW7 not allowing empty JerseyContextes
+
+0.5.16
+-----
+* Backport of 0.6.13
+
+0.5.15
+-----
+* Backport of 0.6.12
+
+0.5.14
+-----
+* Backport of 0.6.11
+
+0.5.13
+-----
+* Backport of 0.6.10
+
+0.5.12
+-----
+* Backport of 0.6.9
+
+0.5.11
+-----
+* Backport of 0.6.8
+
+0.5.10
+-----
+* Backport of 0.6.7. Fixing a memory leak in 0.5.9.
+
+0.5.9 _MEMORY LEAK fixed in 0.5.10_
+-----
+* Backport of 0.6.6
+
+0.5.8
+----
+* Backport of 0.6.5
+
+0.5.7
+----
+* Backport of 0.6.4 (0.6.3 was a Dropwizard 0.8.1 fix only)
+
+0.5.6
+-----
+* Backport of 0.6.2
+
+0.5.5
+-----
+* Backport of 0.6.1
 
 0.5.4
 --------------

@@ -6,6 +6,8 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 
+import java.security.Principal;
+
 public class TenacityAuthenticator<C, P> implements Authenticator<C, P> {
     public static <C, P> Authenticator<C, P> wrap(Authenticator<C, P> authenticator,
                                                   TenacityPropertyKey tenacityPropertyKey) {

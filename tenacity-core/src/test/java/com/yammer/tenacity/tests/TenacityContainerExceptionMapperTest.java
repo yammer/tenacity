@@ -53,7 +53,7 @@ public class TenacityContainerExceptionMapperTest {
     public final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new FakeResource())
             .addProvider(new OAuthProvider<>(TenacityAuthenticator
-                .wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT), "auth"))
+                    .wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT), "auth"))
             .addProvider(new TenacityContainerExceptionMapper(statusCode))
             .build();
 
@@ -78,7 +78,7 @@ public class TenacityContainerExceptionMapperTest {
             new TenacityPropertyRegister(
                     ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.TENACITY_AUTH_TIMEOUT, timeoutConfiguration),
                     new BreakerboxConfiguration())
-            .register();
+                    .register();
 
             when(mockAuthenticator.authenticate(anyString())).thenAnswer(new Answer<Void>() {
                 @Override

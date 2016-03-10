@@ -61,11 +61,11 @@ public class TenacityAuthenticatorTest {
         mockAuthenticator = mock(Authenticator.class);
         tenacityAuthenticator = TenacityAuthenticator.wrap(mockAuthenticator, DependencyKey.TENACITY_AUTH_TIMEOUT);
         resources = ResourceTestRule.builder()
-            .addResource(new AuthResource())
-            .addProvider(new OAuthProvider<>(tenacityAuthenticator, "test-realm"))
-            .addProvider(tenacityExceptionMapper)
-            .addProvider(tenacityContainerExceptionMapper)
-            .build();
+                .addResource(new AuthResource())
+                .addProvider(new OAuthProvider<>(tenacityAuthenticator, "test-realm"))
+                .addProvider(tenacityExceptionMapper)
+                .addProvider(tenacityContainerExceptionMapper)
+                .build();
     }
 
     @Before
@@ -92,7 +92,7 @@ public class TenacityAuthenticatorTest {
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.TENACITY_AUTH_TIMEOUT, overrideConfiguration),
                 new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class))
-            .register();
+                .register();
 
         when(mockAuthenticator.authenticate(any(String.class))).thenAnswer(new Answer<Object>() {
             @Override
@@ -104,7 +104,7 @@ public class TenacityAuthenticatorTest {
 
         try {
             assertThat(tenacityAuthenticator.authenticate("credentials"))
-                .isEqualTo(Optional.absent());
+                    .isEqualTo(Optional.absent());
         } catch (HystrixRuntimeException err) {
             assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
             throw err;

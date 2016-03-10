@@ -1,5 +1,6 @@
 package com.yammer.tenacity.core.errors;
 
+
 import com.sun.jersey.api.container.ContainerException;
 
 import javax.ws.rs.core.Response;

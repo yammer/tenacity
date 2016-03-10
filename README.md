@@ -1,4 +1,4 @@
-Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.png)](https://travis-ci.org/yammer/tenacity)
+Tenacity [![Build Status](https://travis-ci.org/yammer/tenacity.svg?style=flat-square)](https://travis-ci.org/yammer/tenacity) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/com.yammer.tenacity/tenacity-core)
 ========
 
 Tenacity is [Dropwizard](http://www.dropwizard.io)+[Hystrix](https://github.com/Netflix/Hystrix).
@@ -115,7 +115,29 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-core</artifactId>
-        <version>0.5.10</version>
+        <version>0.7.3</version>
+    </dependency>
+    ```
+    
+    Or you can leverage the tenacity-bom:
+    
+    ```xml
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.yammer.tenacity</groupId>
+                <artifactId>tenacity-bom</artifactId>
+                <version>0.7.3</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+    <dependency>
+        <groupId>com.yammer.tenacity</groupId>
+        <artifactId>tenacity-core</artifactId>
+>>>>>>> tenacity-0.8
     </dependency>
     ```
 
@@ -196,7 +218,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-testing</artifactId>
-        <version>0.5.10</version>
+        <version>0.7.3</version>
         <scope>test</scope>
     </dependency>
     ```

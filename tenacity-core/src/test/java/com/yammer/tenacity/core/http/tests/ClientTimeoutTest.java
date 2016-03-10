@@ -53,7 +53,7 @@ public class ClientTimeoutTest {
 
         @POST
         public void post(@QueryParam("time")
-                          @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
         }
 
@@ -65,27 +65,27 @@ public class ClientTimeoutTest {
 
         @GET
         public String get(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                          @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
             return "test";
         }
 
         @OPTIONS
         public String options(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                              @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
             return "test";
         }
 
         @PUT
         public void put(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                        @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
         }
 
         @DELETE
         public void delete(@QueryParam("time")
-                         @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
+                           @DefaultValue("100") long sleepTimeMs) throws InterruptedException {
             doSleep(sleepTimeMs);
         }
     }
@@ -163,7 +163,7 @@ public class ClientTimeoutTest {
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.CLIENT_TIMEOUT, tenacityConfiguration),
                 new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class))
-        .register();
+                .register();
     }
 
     @Test

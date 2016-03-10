@@ -153,7 +153,7 @@ public abstract class TenacityResources {
         response = circuitBreakersRequest(ServletKeys.KEY_ONE);
         assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
     }
-    
+
     @Test
     public void modifyCircuitBreaker() {
         assertThat(CLIENT.modifyCircuitBreaker(URI_ROOT, ServletKeys.KEY_THREE, CircuitBreaker.State.FORCED_OPEN))

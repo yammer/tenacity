@@ -56,11 +56,11 @@ public class TenacityExceptionMapperTest {
                         new TimeoutException(),
                         new TimeoutException()));
     }
-    
+
     @Test
     public void shouldReturnThrottleCodeOnUncaughtTenacityException() {
         setupFailureType(HystrixRuntimeException.FailureType.TIMEOUT);
-        
+
         try {
             resources.client().resource("/random").get(String.class);
         } catch (HystrixRuntimeException err) {

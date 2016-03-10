@@ -8,6 +8,7 @@ import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
 import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import io.dropwizard.util.Duration;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -33,6 +34,7 @@ public class TenacityCircuitBreakersResourceTest {
     @Before @SuppressWarnings("unchecked")
     public void setup() {
         reset(keysMock);
+        TenacityPropertyRegister.setDefaultMetricsHealthSnapshotInterval(Duration.milliseconds(10));
     }
 
     @Test

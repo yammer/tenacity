@@ -28,7 +28,8 @@ import org.junit.Test;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Collections;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class TenacityConfiguredBundleBuilderTest {
     public static class TenacityBundleApp extends Application<Configuration> {
