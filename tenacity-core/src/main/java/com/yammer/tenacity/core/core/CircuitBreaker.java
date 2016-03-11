@@ -37,7 +37,7 @@ public class CircuitBreaker {
         }
 
         @Override
-        public CircuitBreaker deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        public CircuitBreaker deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             final ObjectNode objectNode = p.readValueAsTree();
             final TenacityPropertyKey key  = keyFactory.from(objectNode.get("id").asText());
             return new CircuitBreaker(key, State.valueOf(objectNode.get("state").asText().toUpperCase()));

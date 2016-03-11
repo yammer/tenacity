@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 public class TenacityCircuitBreakersServlet extends TenacityServlet {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TenacityCircuitBreakersServlet.class);
     private static final long serialVersionUID = 0;
     private transient final TenacityCircuitBreakersResource circuitBreakersResource;
     private final Pattern byName = Pattern.compile("^/[\\d\\w\\s]*$");
