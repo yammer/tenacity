@@ -6,26 +6,26 @@ import rx.Observable;
 public class TenacityObservables {
     private TenacityObservables() {}
 
-    public static <ReturnType> ReturnType execute(Observable<ReturnType> primary,
-                                                  Observable<ReturnType> secondary) {
+    public static <R> R execute(Observable<R> primary,
+                                                  Observable<R> secondary) {
         return primary
                 .onErrorResumeNext(secondary)
                 .toBlocking()
                 .single();
     }
 
-    public static <ReturnType> ReturnType execute(HystrixObservable<ReturnType> primary,
-                                                  HystrixObservable<ReturnType> secondary) {
+    public static <R> R execute(HystrixObservable<R> primary,
+                                                  HystrixObservable<R> secondary) {
         return execute(primary.observe(), secondary.toObservable());
     }
 
-    public static <ReturnType> ReturnType execute(Observable<ReturnType> primary,
-                                                  HystrixObservable<ReturnType> secondary) {
+    public static <R> R execute(Observable<R> primary,
+                                                  HystrixObservable<R> secondary) {
         return execute(primary, secondary.toObservable());
     }
 
-    public static <ReturnType> ReturnType execute(HystrixObservable<ReturnType> primary,
-                                                  Observable<ReturnType> secondary) {
+    public static <R> R execute(HystrixObservable<R> primary,
+                                                  Observable<R> secondary) {
         return execute(primary.observe(), secondary);
     }
 }
