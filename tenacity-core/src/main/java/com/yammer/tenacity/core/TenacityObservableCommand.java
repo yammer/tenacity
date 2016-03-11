@@ -7,7 +7,7 @@ import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import rx.Observable;
 
-public abstract class TenacityObservableCommand<ReturnType> extends HystrixObservableCommand<ReturnType> {
+public abstract class TenacityObservableCommand<R> extends HystrixObservableCommand<R> {
     protected TenacityObservableCommand(TenacityPropertyKey tenacityPropertyKey) {
         super(HystrixObservableCommand.Setter.withGroupKey(TenacityCommand.tenacityGroupKey())
                 .andCommandKey(tenacityPropertyKey));
@@ -66,5 +66,5 @@ public abstract class TenacityObservableCommand<ReturnType> extends HystrixObser
     }
 
     @Override
-    protected abstract Observable<ReturnType> construct();
+    protected abstract Observable<R> construct();
 }
