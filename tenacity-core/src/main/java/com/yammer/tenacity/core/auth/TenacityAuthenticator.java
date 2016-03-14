@@ -9,17 +9,17 @@ import io.dropwizard.auth.Authenticator;
 import java.security.Principal;
 
 public class TenacityAuthenticator<C, P extends Principal> implements Authenticator<C, P> {
-    public static <C, P extends Principal> Authenticator<C, P> wrap(Authenticator<C, P> authenticator,
-                                                  TenacityPropertyKey tenacityPropertyKey) {
-        return new TenacityAuthenticator<>(authenticator, tenacityPropertyKey);
-    }
-
     private final Authenticator<C, P> underlying;
     private final TenacityPropertyKey tenacityPropertyKey;
 
     private TenacityAuthenticator(Authenticator<C, P> underlying, TenacityPropertyKey tenacityPropertyKey) {
         this.underlying = underlying;
         this.tenacityPropertyKey = tenacityPropertyKey;
+    }
+
+    public static <C, P extends Principal> Authenticator<C, P> wrap(Authenticator<C, P> authenticator,
+            TenacityPropertyKey tenacityPropertyKey) {
+        return new TenacityAuthenticator<>(authenticator, tenacityPropertyKey);
     }
 
     @Override
