@@ -6,7 +6,7 @@ import com.netflix.hystrix.metric.consumer.RollingCommandEventCounterStream;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
-public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnType> {
+public abstract class TenacityCommand<R> extends HystrixCommand<R> {
     protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
         super(HystrixCommand.Setter.withGroupKey(tenacityGroupKey())
                 .andCommandKey(tenacityPropertyKey)
@@ -70,5 +70,5 @@ public abstract class TenacityCommand<ReturnType> extends HystrixCommand<ReturnT
     }
 
     @Override
-    protected abstract ReturnType run() throws Exception;
+    protected abstract R run() throws Exception;
 }
