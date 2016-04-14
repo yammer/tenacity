@@ -1,3 +1,11 @@
+0.8.1, 0.8.1-dw8, 0.8.1-dw7 :: Apr 14, 2016
+---
+* [Hystrix 1.5.2](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-152-maven-central-bintray)
+* AssertJ Core 2.4.1
+* TenacityCommand now accepts a `TenacityPropertyKey` if you want to control which threadpool is associated with your command
+* [Type parameter names should comply with a naming conversion PR #34](https://github.com/yammer/tenacity/pull/34)
+* [Multiple code improvements PR #33](https://github.com/yammer/tenacity/pull/33)
+
 0.8.0, 0.8.0-dw8, 0.8.0-dw7 :: Mar 10, 2016
 ---
 * [Hystrix 1.5.1](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-151-maven-central-bintray)
