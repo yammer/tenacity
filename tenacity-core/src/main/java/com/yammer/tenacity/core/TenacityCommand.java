@@ -8,9 +8,14 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 public abstract class TenacityCommand<R> extends HystrixCommand<R> {
     protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
+        this(tenacityPropertyKey, tenacityPropertyKey);
+    }
+
+    protected TenacityCommand(TenacityPropertyKey commandKey,
+                              TenacityPropertyKey threadpoolKey) {
         super(HystrixCommand.Setter.withGroupKey(tenacityGroupKey())
-                .andCommandKey(tenacityPropertyKey)
-                .andThreadPoolKey(tenacityPropertyKey));
+                .andCommandKey(commandKey)
+                .andThreadPoolKey(threadpoolKey));
     }
 
     static HystrixCommandGroupKey tenacityGroupKey() {
