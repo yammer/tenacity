@@ -1,3 +1,7 @@
+0.8.2, 0.8.2-dw8, 0.8.2-dw7 :: Apr 14, 2016
+---
+* Removing calculating `latencyTotal_percentile_98` and `latencyExecute_percentile_98` as they are no longer available in HystrixCommands
+
 0.8.1, 0.8.1-dw8, 0.8.1-dw7 :: Apr 14, 2016
 ---
 * [Hystrix 1.5.2](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-152-maven-central-bintray)
