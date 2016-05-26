@@ -1,3 +1,26 @@
+Next :: TBD
+---
+* [Hystrix 1.5.3](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-153-maven-central-bintray)
+
+0.8.2, 0.8.2-dw8, 0.8.2-dw7 :: Apr 14, 2016
+---
+* Removing calculating `latencyTotal_percentile_98` and `latencyExecute_percentile_98` as they are no longer available in HystrixCommands
+
+0.8.1, 0.8.1-dw8, 0.8.1-dw7 :: Apr 14, 2016
+---
+* [Hystrix 1.5.2](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-152-maven-central-bintray)
+* AssertJ Core 2.4.1
+* TenacityCommand now accepts a `TenacityPropertyKey` if you want to control which threadpool is associated with your command
+* [Type parameter names should comply with a naming conversion PR #34](https://github.com/yammer/tenacity/pull/34)
+* [Multiple code improvements PR #33](https://github.com/yammer/tenacity/pull/33)
+
+0.8.0, 0.8.0-dw8, 0.8.0-dw7 :: Mar 10, 2016
+---
+* [Hystrix 1.5.1](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-151-maven-central-bintray)
+* Tenacity Bill of Materials (tenacity-bom for dependencyManagement)
+* AssertJ Core 2.3.0
+* AssertJ Guava 2.0.0
+
 0.7.3, 0.7.3-dw8, 0.7.3-dw7 :: Jan 21, 2016
 ---
 * [Hystrix 1.4.23](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1423-maven-central-bintray)
