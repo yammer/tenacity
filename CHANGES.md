@@ -1,4 +1,4 @@
-Next :: TBD
+0.8.3, 0.8.3-dw8, 0.8.3-dw7 :: June 10, 2016
 ---
 * [Hystrix 1.5.3](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-153-maven-central-bintray)
 
