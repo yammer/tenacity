@@ -409,7 +409,8 @@ TenacityJerseyClientBuilder
 and `JerseyClient`. At the moment these two have competing timeout configurations that can end up looking like application exceptions
 when they are simply `TimeoutException`s being thrown by JerseyClient. `TenacityJerseyClient` aims to fix this by adjusting the socket read timeout
 on a per-request basis on the currently set execution timeout value for resources built from `TenacityJerseyClient` and its associated
-`TenacityPropertyKey`.
+`TenacityPropertyKey`. Note: Metrics associated with the `TenacityPropertyKey` are *NOT* updated whenever the underlying `Client` is used. The `TenacityPropertyKey` metrics are only
+ever updated when using `TenacityCommand` or `TenacityObservableCommand` at the moment.
 
 ```java
 Client client = new JerseyClientBuilder(environment).build("some-external-dependency");
