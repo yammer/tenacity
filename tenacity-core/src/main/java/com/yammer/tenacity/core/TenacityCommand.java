@@ -5,6 +5,10 @@ import com.netflix.hystrix.metric.consumer.CumulativeCommandEventCounterStream;
 import com.netflix.hystrix.metric.consumer.RollingCommandEventCounterStream;
 import com.netflix.hystrix.strategy.properties.HystrixPropertiesFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import rx.Observable;
+
+import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 public abstract class TenacityCommand<R> extends HystrixCommand<R> {
     protected TenacityCommand(TenacityPropertyKey tenacityPropertyKey) {
@@ -36,6 +40,10 @@ public abstract class TenacityCommand<R> extends HystrixCommand<R> {
 
     public static HystrixThreadPoolProperties getThreadpoolProperties(TenacityPropertyKey key) {
         return HystrixPropertiesFactory.getThreadPoolProperties(key, null);
+    }
+
+    public static <T, R> Builder<T, R> builder(TenacityPropertyKey tenacityPropertyKey) {
+        return new Builder<>(tenacityPropertyKey);
     }
 
     public HystrixThreadPoolProperties getThreadpoolProperties() {
@@ -72,6 +80,64 @@ public abstract class TenacityCommand<R> extends HystrixCommand<R> {
 
     public RollingCommandEventCounterStream getRollingCommandEventCounterStream() {
         return RollingCommandEventCounterStream.getInstance(getCommandKey(), getCommandProperties());
+    }
+
+    public static class Builder<T, R> {
+        protected final TenacityPropertyKey key;
+        protected Supplier<R> run;
+        protected Supplier<R> fallback;
+
+        public Builder(TenacityPropertyKey key) {
+            this.key = key;
+        }
+
+        public Builder<T, R> run(Supplier<R> fun) {
+            run = fun;
+            return this;
+        }
+
+        public Builder<T, R> fallback(Supplier<R> fun) {
+            fallback = fun;
+            return this;
+        }
+
+        public TenacityCommand<R> build() {
+            if (run == null) {
+                throw new IllegalStateException("Run must be supplied.");
+            }
+            if (fallback == null) {
+                return new TenacityCommand<R>(key) {
+                    @Override
+                    protected R run() throws Exception {
+                        return run.get();
+                    }
+                };
+            } else {
+                return new TenacityCommand<R>(key) {
+                    @Override
+                    protected R run() throws Exception {
+                        return run.get();
+                    }
+
+                    @Override
+                    protected R getFallback() {
+                        return fallback.get();
+                    }
+                };
+            }
+        }
+
+        public R execute() {
+            return build().execute();
+        }
+
+        public Future<R> queue() {
+            return build().queue();
+        }
+
+        public Observable<R> observe() {
+            return build().observe();
+        }
     }
 
     @Override

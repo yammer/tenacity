@@ -438,3 +438,22 @@ TenacityBundleBuilder
                 .withCircuitBreakerHealthCheck()
                 .build();
 ```
+
+TenacityCommand.Builder
+=======================
+Java8 brings functional interfaces and `TenacityCommand`/`TenacityObservableCommand` offers support. 
+
+```java
+TenacityCommand
+      .builder(DependencyKey.GENERAL)
+      .run(() -> 1)
+      .fallback(() -> 2)
+      .execute()
+```
+```java
+TenacityObservableCommand
+      .builder(DependencyKey.GENERAL)
+      .run(() -> Observable.just(1))
+      .fallback(() -> Observable.just(2))
+      .observe()
+```

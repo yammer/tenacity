@@ -1,12 +1,12 @@
 package com.yammer.tenacity.core.auth;
 
-import com.google.common.base.Optional;
 import com.yammer.tenacity.core.TenacityCommand;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 
 import java.security.Principal;
+import java.util.Optional;
 
 public class TenacityAuthenticator<C, P extends Principal> implements Authenticator<C, P> {
     private final Authenticator<C, P> underlying;

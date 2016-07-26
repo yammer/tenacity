@@ -3,9 +3,7 @@ package com.yammer.tenacity.core.servlets;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.yammer.tenacity.core.resources.TenacityCircuitBreakersResource;
-import org.eclipse.jetty.servlets.GzipFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +46,7 @@ public class TenacityCircuitBreakersServlet extends TenacityServlet {
         if (path != null && byName.matcher(path).matches()) {
             final String key = path.trim().substring(1);
             InputStream inputStream = req.getInputStream();
-            if (GzipFilter.GZIP.equalsIgnoreCase(req.getHeader(HttpHeaders.CONTENT_ENCODING))) {
+            if (GzipHandler.GZIP.equalsIgnoreCase(req.getHeader(HttpHeaders.CONTENT_ENCODING))) {
                 inputStream = new GZIPInputStream(inputStream);
             }
             try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {

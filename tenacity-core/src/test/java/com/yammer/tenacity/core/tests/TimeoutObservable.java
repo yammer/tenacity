@@ -29,7 +29,7 @@ public class TimeoutObservable extends TenacityObservableCommand<Boolean> {
                         subscriber.onCompleted();
                     } catch (InterruptedException err) {
                         subscriber.onError(err);
-                        fail("Interrupted observable timeout");
+                        fail("Interrupted observe timeout");
                     }
                 }
             }
