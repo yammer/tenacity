@@ -98,7 +98,7 @@ public class TenacityObservableCommandTest {
                         subscriber.onCompleted();
                     } catch (InterruptedException err) {
                         subscriber.onError(err);
-                        fail("Interrupted observable timeout");
+                        fail("Interrupted observe timeout");
                     }
                 }
             }).subscribeOn(Schedulers.computation());
@@ -185,7 +185,7 @@ public class TenacityObservableCommandTest {
             try {
                 assertTrue(observable.toBlocking().single());
             } catch (HystrixRuntimeException err) {
-                fail("Failed to execute an observable: " + err);
+                fail("Failed to execute an observe: " + err);
             }
         }
 
