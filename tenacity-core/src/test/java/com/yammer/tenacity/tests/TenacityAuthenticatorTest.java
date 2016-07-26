@@ -45,6 +45,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -133,8 +134,8 @@ public class TenacityAuthenticatorTest {
         });
 
         try {
-            assertThat(tenacityAuthenticator.authenticate(new BasicCredentials("credentials", "credentials")) )
-                    .isAbsent();
+            assertThat(tenacityAuthenticator.authenticate(new BasicCredentials("credentials", "credentials")))
+                    .isEqualTo(Optional.empty());
         } catch (HystrixRuntimeException err) {
             assertThat(err.getFailureType()).isEqualTo(HystrixRuntimeException.FailureType.TIMEOUT);
             throw err;

@@ -22,11 +22,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <dropwizard.version>0.9.3</dropwizard.version>
+        <dropwizard.version>1.0.0</dropwizard.version>
         <hystrix.version>1.5.3</hystrix.version>
 
-        <assertj.core.version>2.4.1</assertj.core.version>
-        <assertj.guava.version>2.0.0</assertj.guava.version>
+        <assertj.core.version>3.5.2</assertj.core.version>
+        <assertj.guava.version>3.0.0</assertj.guava.version>
     </properties>
 
     <dependencyManagement>
