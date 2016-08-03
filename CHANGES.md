@@ -1,3 +1,10 @@
+1.0.0 :: July 26, 2016
+---
+* [Dropwizard 1.0.0](https://dropwizard.io/1.0.0/docs)
+* Java8
+* `TenacityCommand` and `TenacityObservableCommmand` now have fluent builders that leverage functional interfaces for command construction
+* No planned releases for dw7, dw8, dw9 since this is largely a Dropwizard 1.0.0 release.
+
 0.8.3, 0.8.3-dw8, 0.8.3-dw7 :: June 10, 2016
 ---
 * [Hystrix 1.5.3](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-153-maven-central-bintray)
