@@ -31,7 +31,7 @@ public abstract class TenacityObservableCommand<R> extends HystrixObservableComm
         return HystrixPropertiesFactory.getThreadPoolProperties(key, null);
     }
 
-    public static <T, R> TenacityObservableCommand.Builder<T, R> builder(TenacityPropertyKey tenacityPropertyKey) {
+    public static <R> TenacityObservableCommand.Builder<R> builder(TenacityPropertyKey tenacityPropertyKey) {
         return new TenacityObservableCommand.Builder<>(tenacityPropertyKey);
     }
 
@@ -71,7 +71,7 @@ public abstract class TenacityObservableCommand<R> extends HystrixObservableComm
         return RollingCommandEventCounterStream.getInstance(getCommandKey(), getCommandProperties());
     }
 
-    public static class Builder<T, R> {
+    public static class Builder<R> {
         protected final TenacityPropertyKey key;
         protected Supplier<Observable<R>> run;
         protected Supplier<Observable<R>> fallback;
@@ -80,12 +80,12 @@ public abstract class TenacityObservableCommand<R> extends HystrixObservableComm
             this.key = key;
         }
 
-        public Builder<T, R> run(Supplier<Observable<R>> fun) {
+        public Builder<R> run(Supplier<Observable<R>> fun) {
             run = fun;
             return this;
         }
 
-        public Builder<T, R> fallback(Supplier<Observable<R>> fun) {
+        public Builder<R> fallback(Supplier<Observable<R>> fun) {
             fallback = fun;
             return this;
         }

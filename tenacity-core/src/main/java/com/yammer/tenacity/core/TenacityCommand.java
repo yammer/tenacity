@@ -42,7 +42,7 @@ public abstract class TenacityCommand<R> extends HystrixCommand<R> {
         return HystrixPropertiesFactory.getThreadPoolProperties(key, null);
     }
 
-    public static <T, R> Builder<T, R> builder(TenacityPropertyKey tenacityPropertyKey) {
+    public static <R> Builder<R> builder(TenacityPropertyKey tenacityPropertyKey) {
         return new Builder<>(tenacityPropertyKey);
     }
 
@@ -82,7 +82,7 @@ public abstract class TenacityCommand<R> extends HystrixCommand<R> {
         return RollingCommandEventCounterStream.getInstance(getCommandKey(), getCommandProperties());
     }
 
-    public static class Builder<T, R> {
+    public static class Builder<R> {
         protected final TenacityPropertyKey key;
         protected Supplier<R> run;
         protected Supplier<R> fallback;
@@ -91,12 +91,12 @@ public abstract class TenacityCommand<R> extends HystrixCommand<R> {
             this.key = key;
         }
 
-        public Builder<T, R> run(Supplier<R> fun) {
+        public Builder<R> run(Supplier<R> fun) {
             run = fun;
             return this;
         }
 
-        public Builder<T, R> fallback(Supplier<R> fun) {
+        public Builder<R> fallback(Supplier<R> fun) {
             fallback = fun;
             return this;
         }
