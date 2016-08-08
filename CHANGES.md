@@ -1,3 +1,9 @@
+1.0.1 :: August 8, 2016
+---
+* [Hystrix 1.5.4](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-154-maven-central-bintray)
+* Fixing bug for TenacityCommand/TenacityObservableCommand builders generics. They take two parameters for an expectant Function<T, R> but it actually only ever uses Supplier<R> so the first parameter is completely useless. Removing it entirely.
+* `TenacityTestRule` has additional stream-related resets.
+
 1.0.0 :: July 26, 2016
 ---
 * [Dropwizard 1.0.0](https://dropwizard.io/1.0.0/docs)
