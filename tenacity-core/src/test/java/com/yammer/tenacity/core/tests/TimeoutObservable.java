@@ -5,6 +5,7 @@ import com.yammer.tenacity.tests.DependencyKey;
 import io.dropwizard.util.Duration;
 import rx.Observable;
 import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 import static org.junit.Assert.fail;
 
@@ -33,6 +34,6 @@ public class TimeoutObservable extends TenacityObservableCommand<Boolean> {
                     }
                 }
             }
-        });
+        }).subscribeOn(Schedulers.io());
     }
 }

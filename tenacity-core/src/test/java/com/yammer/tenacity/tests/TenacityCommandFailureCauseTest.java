@@ -139,21 +139,12 @@ public class TenacityCommandFailureCauseTest {
     @Test(timeout = 1000)
     public void threadPoolRejectionAvailableInGetFallbackUsingExecute() throws Exception {
         setUpTenacityCommand(1, 100);
-        final ExecutorService executorService = Executors.newFixedThreadPool(5);
-        executorService.submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() {
-                return sleepCommand(80).execute();
-            }
-        });
-        final List<Callable<Boolean>> rejectCommands = Lists.newArrayListWithExpectedSize(10);
-        for (int i = 0; i < 5; i++) {
-            rejectCommands.add(new Callable<Boolean>() {
-                @Override
-                public Boolean call() {
-                    return threadPoolRejectionCommand().execute();
-                }
-            });
+        sleepCommand(80).observe();
+        final int numberOfRejectCommands = 5;
+        final ExecutorService executorService = Executors.newFixedThreadPool(numberOfRejectCommands);
+        final List<Callable<Boolean>> rejectCommands = Lists.newArrayListWithExpectedSize(numberOfRejectCommands);
+        for (int i = 0; i < numberOfRejectCommands; i++) {
+            rejectCommands.add(() -> threadPoolRejectionCommand().execute());
         }
         final Collection<Future<Boolean>> results = executorService.invokeAll(rejectCommands);
         boolean rejectionFound = false;

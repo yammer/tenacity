@@ -11,13 +11,12 @@ import com.yammer.tenacity.core.config.SemaphoreConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
+import com.yammer.tenacity.core.tests.TimeoutObservable;
 import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.util.Duration;
 import org.junit.Rule;
 import org.junit.Test;
 import rx.Observable;
-import rx.Subscriber;
-import rx.schedulers.Schedulers;
 
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ public class TenacityObservableCommandTest {
 
     @Test
     public void shouldTimeout() throws InterruptedException {
-        executeTimeoutAndVerify(new TimeoutObservableCommand(Duration.milliseconds(1500)));
+        executeTimeoutAndVerify(new TimeoutObservable(Duration.milliseconds(1500)));
     }
 
     @Test
@@ -57,12 +56,12 @@ public class TenacityObservableCommandTest {
                 new BreakerboxConfiguration())
                 .register();
 
-        executeTimeoutAndVerify(new TimeoutObservableCommand(Duration.milliseconds(300)));
+        executeTimeoutAndVerify(new TimeoutObservable(Duration.milliseconds(300)));
     }
 
     @Test
     public void shouldNotTimeout() {
-        final TenacityObservableCommand<Boolean> command = new TimeoutObservableCommand(Duration.milliseconds(100));
+        final TenacityObservableCommand<Boolean> command = new TimeoutObservable(Duration.milliseconds(100));
         assertTrue(command.toObservable().toBlocking().single());
     }
 
@@ -75,34 +74,8 @@ public class TenacityObservableCommandTest {
                 ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.OBSERVABLE_TIMEOUT, tenacityConfiguration),
                 new BreakerboxConfiguration())
                 .register();
-        final TenacityObservableCommand<Boolean> command = new TimeoutObservableCommand(Duration.milliseconds(1250));
+        final TenacityObservableCommand<Boolean> command = new TimeoutObservable(Duration.milliseconds(1250));
         assertTrue(command.toObservable().toBlocking().single());
-    }
-
-    private static class TimeoutObservableCommand extends TenacityObservableCommand<Boolean> {
-        private final Duration sleepDuration;
-
-        public TimeoutObservableCommand(Duration sleepDuration) {
-            super(DependencyKey.OBSERVABLE_TIMEOUT);
-            this.sleepDuration = sleepDuration;
-        }
-
-        @Override
-        protected Observable<Boolean> construct() {
-            return Observable.create(new Observable.OnSubscribe<Boolean>() {
-                @Override
-                public void call(Subscriber<? super Boolean> subscriber) {
-                    try {
-                        Thread.sleep(sleepDuration.toMilliseconds());
-                        subscriber.onNext(true);
-                        subscriber.onCompleted();
-                    } catch (InterruptedException err) {
-                        subscriber.onError(err);
-                        fail("Interrupted observe timeout");
-                    }
-                }
-            }).subscribeOn(Schedulers.computation());
-        }
     }
 
     @Test
@@ -116,14 +89,14 @@ public class TenacityObservableCommandTest {
                 new BreakerboxConfiguration())
                 .register();
 
-        new TimeoutObservableCommand(Duration.milliseconds(500))
+        new TimeoutObservable(Duration.milliseconds(500))
                 .getCumulativeCommandEventCounterStream()
                 .startCachingStreamValuesIfUnstarted();
 
         final int defaultSemaphoreMaxConcurrentRequests = new SemaphoreConfiguration().getMaxConcurrentRequests();
         final ImmutableList.Builder<Observable<Boolean>> observables = ImmutableList.builder();
         for (int i = 0; i < defaultSemaphoreMaxConcurrentRequests * 2; ++i) {
-            final TimeoutObservableCommand command = new TimeoutObservableCommand(Duration.milliseconds(500));
+            final TimeoutObservable command = new TimeoutObservable(Duration.milliseconds(500));
             observables.add(command.observe());
         }
 
@@ -169,7 +142,7 @@ public class TenacityObservableCommandTest {
                 new BreakerboxConfiguration())
                 .register();
 
-        new TimeoutObservableCommand(Duration.milliseconds(500))
+        new TimeoutObservable(Duration.milliseconds(500))
                 .getCumulativeCommandEventCounterStream()
                 .startCachingStreamValuesIfUnstarted();
 
@@ -177,7 +150,7 @@ public class TenacityObservableCommandTest {
 
         final ImmutableList.Builder<Observable<Boolean>> observables = ImmutableList.builder();
         for (int i = 0; i < defaultSemaphoreMaxConcurrentRequests * 2; ++i) {
-            final TimeoutObservableCommand command = new TimeoutObservableCommand(Duration.milliseconds(500));
+            final TimeoutObservable command = new TimeoutObservable(Duration.milliseconds(500));
             observables.add(command.observe());
         }
 
