@@ -1,4 +1,4 @@
-1.0.1 :: August 8, 2016
+1.0.1, 1.0.1.{dw9, dw8, dw7} :: August 8, 2016
 ---
 * [Hystrix 1.5.4](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-154-maven-central-bintray)
 * Fixing bug for TenacityCommand/TenacityObservableCommand builders generics. They take two parameters for an expectant Function<T, R> but it actually only ever uses Supplier<R> so the first parameter is completely useless. Removing it entirely.
