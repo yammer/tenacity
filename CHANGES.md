@@ -1,3 +1,7 @@
+Next
+---
+* [Hystrix 1.5.5](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-155-maven-central-bintray)
+
 1.0.1, 1.0.1.{dw9, dw8, dw7} :: August 8, 2016
 ---
 * [Hystrix 1.5.4](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-154-maven-central-bintray)
