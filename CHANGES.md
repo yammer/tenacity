@@ -1,3 +1,8 @@
+1.0.3, 1.0.3.{dw9, dw8, dw7} :: Oct. 10, 2016
+---
+* Tenacity `ExceptionMapper`s no longer throw exceptions anymore when they don't match a specific requirement. They should always
+resolve the exception gracefully into a `Response`.
+
 1.0.2, 1.0.2.{dw9, dw8, dw7} :: Sept. 28, 2016
 ---
 * [Hystrix 1.5.6](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-156-maven-central-bintray)

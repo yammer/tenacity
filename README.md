@@ -115,7 +115,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-core</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
     </dependency>
     ```
     
@@ -127,7 +127,7 @@ How to add Tenacity to your Dropwizard Service
             <dependency>
                 <groupId>com.yammer.tenacity</groupId>
                 <artifactId>tenacity-bom</artifactId>
-                <version>1.0.2</version>
+                <version>1.0.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -217,7 +217,7 @@ How to add Tenacity to your Dropwizard Service
     <dependency>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-testing</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.3</version>
         <scope>test</scope>
     </dependency>
     ```
