@@ -1,6 +1,5 @@
 package com.yammer.tenacity.core.errors;
 
-
 import org.glassfish.jersey.server.ContainerException;
 
 import javax.ws.rs.core.Response;
@@ -27,7 +26,7 @@ public class TenacityContainerExceptionMapper implements ExceptionMapper<Contain
         if (TenacityExceptionMapper.isTenacityException(exception.getCause())) {
             return Response.status(statusCode).build();
         } else {
-            throw exception;
+            return Response.serverError().build();
         }
     }
 

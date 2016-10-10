@@ -4,7 +4,6 @@ import com.netflix.hystrix.exception.HystrixRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.net.SocketTimeoutException;
@@ -58,7 +57,9 @@ public class TenacityExceptionMapper implements ExceptionMapper<HystrixRuntimeEx
             return Response.status(statusCode).build(); //TODO: Retry-After for 429
         }
 
-        throw new WebApplicationException(exception);
+        LOGGER.warn("HystrixRuntimeException is not mappable to a status code: {}", exception);
+
+        return Response.serverError().build();
     }
 
     @Override
