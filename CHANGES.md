@@ -1,7 +1,7 @@
 Next
 ---
 * `TenacityConfiguredBundle` won't initialize if another `HystrixMetricsPublisher` is registered. This is usually encountered when
-   you try to run multiple `DropwizardAppRule` instances within a given test. Relaxing this constraint to just logging a warning and to
+   you try to run multiple `DropwizardAppRule` instances within a given test. Relaxing this constraint to just log a warning and to
    display the currently registered `HystrixMetricsPublisher` instead of preventing startup.
 
 1.0.3, 1.0.3.{dw9, dw8, dw7} :: Oct. 10, 2016
