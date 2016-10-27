@@ -24,6 +24,8 @@ import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Collection;
@@ -33,6 +35,7 @@ import java.util.Objects;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TenacityConfiguredBundle<T extends Configuration> implements ConfiguredBundle<T> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TenacityConfiguredBundle.class);
     protected final TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory;
     protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
     protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
@@ -90,7 +93,12 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
 
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
-        HystrixPlugins.getInstance().registerMetricsPublisher(new YammerMetricsPublisher(bootstrap.getMetricRegistry()));
+        try {
+            HystrixPlugins.getInstance().registerMetricsPublisher(new YammerMetricsPublisher(bootstrap.getMetricRegistry()));
+        } catch (Exception err) {
+            LOGGER.warn("Failed to register YammerMetricsPublisher with HystrixPlugins. This is what MetricsPublisher is currently registered: {}",
+                    HystrixPlugins.getInstance().getMetricsPublisher().getClass(), err);
+        }
         if (executionHook.isPresent()) {
             HystrixPlugins.getInstance().registerCommandExecutionHook(executionHook.get());
         }
