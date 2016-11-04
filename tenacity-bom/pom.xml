@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <dropwizard.version>1.0.3</dropwizard.version>
-        <hystrix.version>1.5.6</hystrix.version>
+        <hystrix.version>1.5.7</hystrix.version>
 
         <assertj.core.version>3.5.2</assertj.core.version>
         <assertj.guava.version>3.1.0</assertj.guava.version>
