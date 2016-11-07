@@ -1,8 +1,11 @@
-Next
+1.0.4, 1.0.4.{dw9, dw8, dw7} :: Nov. 6, 2016
 ---
 * `TenacityConfiguredBundle` won't initialize if another `HystrixMetricsPublisher` is registered. This is usually encountered when
    you try to run multiple `DropwizardAppRule` instances within a given test. Relaxing this constraint to just log a warning and to
    display the currently registered `HystrixMetricsPublisher` instead of preventing startup.
+* [Hystrix 1.5.7](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-157-maven-central-bintray)
+* [Dropwizard 1.0.3](http://www.dropwizard.io/1.0.3/docs/about/release-notes.html)
+* Assertj-guava 3.1.0
 
 1.0.3, 1.0.3.{dw9, dw8, dw7} :: Oct. 10, 2016
 ---
