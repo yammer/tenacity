@@ -40,10 +40,10 @@ public class TenacityObservableCommandBuilderTest {
 
     @Test(expected = HystrixRuntimeException.class)
     public void commandThatAlwaysShouldCallFallbackAndItDoesntExist() {
-        assertThat(TenacityObservableCommand
+        TenacityObservableCommand
                 .builder(DependencyKey.GENERAL)
                 .run(() -> {throw new RuntimeException();})
-                .observe().toBlocking().single());
+                .observe().toBlocking().single();
     }
 
     @Test

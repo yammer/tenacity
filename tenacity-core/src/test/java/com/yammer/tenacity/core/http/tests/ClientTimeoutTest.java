@@ -45,9 +45,7 @@ public class ClientTimeoutTest {
     @Path("/")
     public static class BarrierTarget {
         private void doSleep(long time) throws InterruptedException {
-            synchronized (this) {
-                wait(time);
-            }
+            Thread.sleep(time);
         }
 
         @POST

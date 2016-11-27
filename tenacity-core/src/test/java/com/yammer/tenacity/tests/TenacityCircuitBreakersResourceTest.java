@@ -52,10 +52,10 @@ public class TenacityCircuitBreakersResourceTest {
     public void notFoundWhenNoCircuitBreakers() {
         when(keysMock.iterator()).thenReturn(Collections.<TenacityPropertyKey>emptyIterator());
 
-        assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
+        resources.client().target(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.NON_EXISTENT_HEALTHCHECK.name())
                 .request()
-                .get(ClientResponse.class));
+                .get(ClientResponse.class);
     }
 
     @Test

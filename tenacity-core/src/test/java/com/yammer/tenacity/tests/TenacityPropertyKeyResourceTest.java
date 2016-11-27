@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.GenericType;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,7 +28,7 @@ public class TenacityPropertyKeyResourceTest {
 
     @Test
     public void testGetKeys() throws Exception {
-        final Iterable<? extends TenacityPropertyKey> returnedKeys =
+        final Collection<DependencyKey> returnedKeys =
                 resources.client()
                         .target(PROPERTY_KEY_URI)
                         .request()

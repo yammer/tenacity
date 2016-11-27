@@ -54,10 +54,10 @@ public class TenacityCommandBuilderTest {
 
     @Test(expected = HystrixRuntimeException.class)
     public void commandThatAlwaysShouldCallFallbackAndItDoesntExist() {
-        assertThat(TenacityCommand
+        TenacityCommand
                 .builder(DependencyKey.GENERAL)
                 .run(() -> {throw new RuntimeException();})
-                .execute());
+                .execute();
     }
 
     @Test
