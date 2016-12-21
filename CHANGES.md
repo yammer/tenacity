@@ -1,3 +1,9 @@
+1.0.5, 1.0.5.{dw9, dw8, dw7} :: Dec. 21, 2016
+---
+* [Hystrix 1.5.9](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-159-maven-central-bintray)
+* [Dropwizard 1.0.5](http://www.dropwizard.io/1.0.5/docs/about/release-notes.html)
+* Added [Google Error-Prone](https://github.com/google/error-prone) to the build
+
 1.0.4, 1.0.4.{dw9, dw8, dw7} :: Nov. 6, 2016
 ---
 * `TenacityConfiguredBundle` won't initialize if another `HystrixMetricsPublisher` is registered. This is usually encountered when
