@@ -7,3 +7,4 @@ target*
 .settings
 .classpath
 *.swp
+release.properties
