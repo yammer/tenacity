@@ -50,9 +50,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.guava.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")

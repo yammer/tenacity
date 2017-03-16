@@ -39,8 +39,7 @@ public class TenacityCircuitBreakerHealthCheckTest {
         assertThat(CircuitBreakers.all(DependencyKey.EXISTENT_HEALTHCHECK))
                 .contains(CircuitBreaker.closed(DependencyKey.EXISTENT_HEALTHCHECK));
 
-        assertThat(healthCheck.execute())
-                .isEqualTo(HealthCheck.Result.healthy());
+        assertThat(healthCheck.execute().isHealthy()).isTrue();
     }
 
     @Test
