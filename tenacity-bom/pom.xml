@@ -8,7 +8,7 @@
     <parent>
         <artifactId>tenacity-parent</artifactId>
         <groupId>com.yammer.tenacity</groupId>
-        <version>1.0.6-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>tenacity-bom</artifactId>
@@ -22,11 +22,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <dropwizard.version>1.0.6</dropwizard.version>
+        <dropwizard.version>1.1.0</dropwizard.version>
         <hystrix.version>1.5.10</hystrix.version>
 
         <assertj.core.version>3.6.2</assertj.core.version>
         <assertj.guava.version>3.1.0</assertj.guava.version>
+        <mockito.version>2.7.19</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -67,6 +68,11 @@
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-guava</artifactId>
                 <version>${assertj.guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
             </dependency>
 
             <!-- Tenacity -->

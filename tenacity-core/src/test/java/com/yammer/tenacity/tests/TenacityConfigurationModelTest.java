@@ -8,12 +8,10 @@ import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.config.ThreadPoolConfiguration;
 import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
-import org.hibernate.validator.HibernateValidator;
+import io.dropwizard.jersey.validation.Validators;
 import org.junit.Rule;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
@@ -34,12 +32,7 @@ public class TenacityConfigurationModelTest {
             new SemaphoreConfiguration(),
             1000,
             HystrixCommandProperties.ExecutionIsolationStrategy.SEMAPHORE);
-    private final Validator validator = Validation
-            .byProvider(HibernateValidator.class)
-            .configure()
-            .addValidatedValueHandler(new OptionalValidatedValueUnwrapper())
-            .buildValidatorFactory()
-            .getValidator();
+    private final Validator validator = Validators.newValidator();
 
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();

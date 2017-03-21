@@ -31,7 +31,7 @@ import javax.ws.rs.core.Response;
 import java.security.Principal;
 
 import static org.assertj.guava.api.Assertions.assertThat;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
