@@ -26,8 +26,7 @@ public class TenacityCircuitBreakerHealthCheckTest {
 
     @Test
     public void healthyWhenNoCircuitBreakers() {
-        assertThat(new TenacityCircuitBreakerHealthCheck().execute())
-                .isEqualTo(HealthCheck.Result.healthy());
+        assertThat(new TenacityCircuitBreakerHealthCheck().execute().isHealthy()).isTrue();
     }
 
     @Test
