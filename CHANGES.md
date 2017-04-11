@@ -1,3 +1,8 @@
+1.1.1, 1.1.1.{dw9, dw8, dw7} :: Apr. 11, 2017
+---
+* [Hystrix 1.5.11](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1511-maven-central-bintray)
+* [COMMAND_MAX_ACTIVE issue](https://github.com/Netflix/Hystrix/pull/1513)
+
 1.1.0, 1.1.0.{dw9, dw8, dw7} :: Mar. 21, 2017
 ---
 * [Hystrix 1.5.10](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1510-maven-central-bintray)
