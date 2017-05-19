@@ -1,3 +1,8 @@
+1.1.2, 1.1.2.{dw9, dw8, dw7} :: May. 19, 2017
+---
+* [Hystrix 1.5.12](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1512-maven-central-bintray)
+* [Dropwizard 1.1.1](https://github.com/dropwizard/dropwizard/releases/tag/v1.1.1)
+
 1.1.1, 1.1.1.{dw9, dw8, dw7} :: Apr. 11, 2017
 ---
 * [Hystrix 1.5.11](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1511-maven-central-bintray)
