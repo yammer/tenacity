@@ -1,3 +1,10 @@
+Next
+---
+* [Dropwizard 1.1.2](https://github.com/dropwizard/dropwizard/releases/tag/v1.1.2)
+* Assertj-core 3.8.0
+* Mockito-core 2.8.47
+* Error-prone-core 2.0.21
+
 1.1.2, 1.1.2.{dw9, dw8, dw7} :: May. 19, 2017
 ---
 * [Hystrix 1.5.12](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1512-maven-central-bintray)
