@@ -1,9 +1,11 @@
-Next
+1.1.3, 1.1.3.{dw9, dw8, dw7} :: July 13, 2017
 ---
+* [Hystrix 1.5.13](https://github.com/Netflix/Hystrix/blob/master/CHANGELOG.md#version-1513-maven-central-bintray)
 * [Dropwizard 1.1.2](https://github.com/dropwizard/dropwizard/releases/tag/v1.1.2)
 * Assertj-core 3.8.0
 * Mockito-core 2.8.47
-* Error-prone-core 2.0.21
+* Error_prone_core 2.0.21
+* Adding jcenter/bintray repository
 
 1.1.2, 1.1.2.{dw9, dw8, dw7} :: May. 19, 2017
 ---

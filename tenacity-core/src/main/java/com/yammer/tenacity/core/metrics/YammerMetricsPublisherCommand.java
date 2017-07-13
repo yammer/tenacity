@@ -10,7 +10,7 @@ public class YammerMetricsPublisherCommand extends HystrixCodaHaleMetricsPublish
     protected final MetricRegistry metricRegistry;
 
     public YammerMetricsPublisherCommand(HystrixCommandKey commandKey, HystrixCommandGroupKey commandGroupKey, HystrixCommandMetrics metrics, HystrixCircuitBreaker circuitBreaker, HystrixCommandProperties properties, MetricRegistry metricRegistry) {
-        super(commandKey, commandGroupKey, metrics, circuitBreaker, properties, metricRegistry);
+        super("", commandKey, commandGroupKey, metrics, circuitBreaker, properties, metricRegistry);
         this.metrics = metrics;
         this.metricRegistry = metricRegistry;
     }

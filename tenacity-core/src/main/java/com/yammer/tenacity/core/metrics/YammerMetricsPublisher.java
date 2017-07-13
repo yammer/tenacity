@@ -21,6 +21,6 @@ public class YammerMetricsPublisher extends HystrixMetricsPublisher {
 
     @Override
     public HystrixMetricsPublisherThreadPool getMetricsPublisherForThreadPool(HystrixThreadPoolKey threadPoolKey, HystrixThreadPoolMetrics metrics, HystrixThreadPoolProperties properties) {
-        return new HystrixCodaHaleMetricsPublisherThreadPool(threadPoolKey, metrics, properties, metricRegistry);
+        return new HystrixCodaHaleMetricsPublisherThreadPool("", threadPoolKey, metrics, properties, metricRegistry);
     }
 }
