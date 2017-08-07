@@ -295,11 +295,13 @@ breakerbox:
   urls: http://breakerbox.yourcompany.com:8080/archaius/{service}
   initialDelay: 0s
   delay: 60s
+  waitForInitialLoad: 0s
 ```
 
 -   `urls` is a list of comma-deliminated list of urls for where to pull tenacity configurations. This will pull override configurations for all dependency keys for requested service.
 -   `initialDelay` how long before the first poll for newer configuration executes.
 -   `delay` the ongoing schedule to poll for newer configurations.
+-   `waitForInitialLoad` is the amount of item to block Dropwizard from starting while waiting for `Breakerbox` configurations.
 
 ![Breakerbox Dashboard](http://yammer.github.io/tenacity/breakerbox_latest.png)
 ![Breakerbox Configure](http://yammer.github.io/tenacity/breakerbox_configure.png)

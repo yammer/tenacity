@@ -1,0 +1,13 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+
+breakerbox:
+  urls: http://127.0.0.1:55789/archaius/test
+  initialDelay: 0s
+  delay: 60s
+  waitForInitialLoad: 5s

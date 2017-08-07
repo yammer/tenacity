@@ -28,11 +28,11 @@ public class TenacityPropertyRegister {
     }
 
     public void register() {
-        archaiusPropertyRegister.register(breakerboxConfiguration);
         final AbstractConfiguration configInstance = ConfigurationManager.getConfigInstance();
         for (Map.Entry<TenacityPropertyKey, TenacityConfiguration> entry : configurations.entrySet()) {
             registerConfiguration(entry.getKey(), entry.getValue(), configInstance);
         }
+        archaiusPropertyRegister.register(breakerboxConfiguration);
     }
 
     public static void registerCircuitForceOpen(TenacityPropertyKey key) {
