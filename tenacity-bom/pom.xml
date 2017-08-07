@@ -56,6 +56,12 @@
                 <groupId>com.netflix.hystrix</groupId>
                 <artifactId>hystrix-metrics-event-stream</artifactId>
                 <version>${hystrix.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- Testing -->
