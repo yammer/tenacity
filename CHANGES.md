@@ -1,6 +1,8 @@
-Next
+1.1.4, 1.1.4.{dw9, dw8, dw7} :: Aug. 7, 2017
 ---
 * [Dropwizard 1.1.3](https://github.com/dropwizard/dropwizard/releases/tag/v1.1.3)
+* `waitForInitialLoad` blocks an application from starting until Breakerbox configurations are fetched.
+* Fixing `hystrix-metrics-event-stream` from pulling in an older version of servlet-api
 
 1.1.3, 1.1.3.{dw9, dw8, dw7} :: July 13, 2017
 ---
