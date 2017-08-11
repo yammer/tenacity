@@ -1,11 +1,11 @@
 package com.yammer.tenacity.core.core;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class CircuitBreakers {
     private CircuitBreakers() {}

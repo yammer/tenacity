@@ -3,12 +3,11 @@ package com.yammer.tenacity.core.core;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.base.Optional;
+import com.google.common.base.MoreObjects;
 import com.netflix.hystrix.HystrixCircuitBreaker;
 import com.netflix.hystrix.HystrixCommandProperties;
 import com.yammer.tenacity.core.TenacityCommand;
@@ -20,6 +19,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 @JsonDeserialize(using = CircuitBreaker.Deserializer.class)
 public class CircuitBreaker {
@@ -76,7 +76,7 @@ public class CircuitBreaker {
         final HystrixCircuitBreaker circuitBreaker = TenacityCommand.getCircuitBreaker(id);
 
         if (circuitBreaker == null) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         final HystrixCommandProperties commandProperties = TenacityCommand.getCommandProperties(id);
@@ -124,9 +124,9 @@ public class CircuitBreaker {
 
     @Override
     public String toString() {
-        return "CircuitBreaker{" +
-                "id=" + id +
-                ", state=" + state +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("state", state)
+                .toString();
     }
 }

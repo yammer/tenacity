@@ -21,7 +21,6 @@ import java.net.URI;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.guava.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -96,7 +95,7 @@ public abstract class TenacityResources {
                 return "none";
             }
         };
-        assertThat(CLIENT.getTenacityConfiguration(URI_ROOT, nonExistentKey)).isAbsent();
+        assertThat(CLIENT.getTenacityConfiguration(URI_ROOT, nonExistentKey)).isEmpty();
 
         response = tenacityConfiguration(nonExistentKey);
         assertThat(response.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
@@ -136,7 +135,7 @@ public abstract class TenacityResources {
     @Test
     public void circuitBreakerFetchNonExistent() {
         assertThat(CLIENT.getCircuitBreaker(URI_ROOT, ServletKeys.KEY_ONE))
-                .isAbsent();
+                .isEmpty();
 
         response = circuitBreakersRequest(ServletKeys.KEY_ONE);
         assertThat(response.getStatus()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
@@ -156,7 +155,7 @@ public abstract class TenacityResources {
     @Test
     public void modifyCircuitBreaker() {
         assertThat(CLIENT.modifyCircuitBreaker(URI_ROOT, ServletKeys.KEY_THREE, CircuitBreaker.State.FORCED_OPEN))
-                .isAbsent();
+                .isEmpty();
 
         assertThat(CLIENT.getCircuitBreakers(URI_ROOT))
                 .contains(Collections.emptyList());

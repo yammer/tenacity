@@ -1,13 +1,13 @@
 package com.yammer.tenacity.core.bundle;
 
 import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -19,7 +19,7 @@ public abstract class AbstractTenacityPropertyKeys {
 
     public AbstractTenacityPropertyKeys(TenacityPropertyKeyFactory keyFactory,
                                         Iterable<TenacityPropertyKey> keys) {
-        this(keyFactory, keys, ImmutableList.<ExceptionMapper<? extends Throwable>>of(), Optional.<HystrixCommandExecutionHook>absent());
+        this(keyFactory, keys, ImmutableList.<ExceptionMapper<? extends Throwable>>of(), Optional.empty());
     }
 
     public AbstractTenacityPropertyKeys(TenacityPropertyKeyFactory keyFactory,

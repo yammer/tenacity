@@ -2,7 +2,6 @@ package com.yammer.tenacity.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.core.CircuitBreaker;
@@ -17,7 +16,9 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -37,7 +38,7 @@ public class TenacityClient {
     }
 
     @SuppressWarnings("unused")
-    public Optional<ImmutableList<String>> getTenacityPropertyKeys(URI root) {
+    public Optional<Collection<String>> getTenacityPropertyKeys(URI root) {
         try (Timer.Context timerContext = fetchPropertyKeys.time()) {
             return Optional.of(ImmutableList.copyOf(client
                     .target(root)
@@ -47,7 +48,7 @@ public class TenacityClient {
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve property keys for {}", root, err);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @SuppressWarnings("unused")
@@ -62,11 +63,11 @@ public class TenacityClient {
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, key.name(), err);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @SuppressWarnings("unused")
-    public Optional<ImmutableList<CircuitBreaker>> getCircuitBreakers(URI root) {
+    public Optional<Collection<CircuitBreaker>> getCircuitBreakers(URI root) {
         try (Timer.Context timerContext = fetchCircuitBreakers.time()) {
             return Optional.of(ImmutableList.copyOf(client
                     .target(root)
@@ -76,7 +77,7 @@ public class TenacityClient {
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @SuppressWarnings("unused")
@@ -91,7 +92,7 @@ public class TenacityClient {
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @SuppressWarnings("unused")
@@ -108,7 +109,7 @@ public class TenacityClient {
         } catch (Exception err) {
             LOGGER.warn("Unable to retrieve tenacity configuration for {} and key {}", root, err);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

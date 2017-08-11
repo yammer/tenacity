@@ -1,7 +1,6 @@
 package com.yammer.tenacity.core.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.core.CircuitBreakers;
@@ -16,6 +15,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Path(TenacityCircuitBreakersResource.PATH)
 public class TenacityCircuitBreakersResource {

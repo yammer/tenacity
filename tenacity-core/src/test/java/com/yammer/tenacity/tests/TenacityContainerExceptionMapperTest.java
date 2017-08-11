@@ -1,6 +1,5 @@
 package com.yammer.tenacity.tests;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.tenacity.core.auth.TenacityAuthenticator;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
@@ -29,8 +28,9 @@ import javax.ws.rs.client.ResponseProcessingException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.security.Principal;
+import java.util.Optional;
 
-import static org.assertj.guava.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -97,7 +97,7 @@ public class TenacityContainerExceptionMapperTest {
                 @Override
                 public Optional<Principal> answer(InvocationOnMock invocation) throws Throwable {
                     Thread.sleep(100);
-                    return Optional.absent();
+                    return Optional.empty();
                 }
             });
             final Response response = resources.client()
