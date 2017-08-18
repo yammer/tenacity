@@ -14,7 +14,7 @@ public class ManagedConcurrencyStrategyTest {
     @Rule
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
-    private static enum Key implements TenacityPropertyKey {
+    private enum Key implements TenacityPropertyKey {
         KEY
     }
 

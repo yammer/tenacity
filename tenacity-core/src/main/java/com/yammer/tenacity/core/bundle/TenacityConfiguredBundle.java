@@ -99,9 +99,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
             LOGGER.warn("Failed to register YammerMetricsPublisher with HystrixPlugins. This is what MetricsPublisher is currently registered: {}",
                     HystrixPlugins.getInstance().getMetricsPublisher().getClass(), err);
         }
-        if (executionHook.isPresent()) {
-            HystrixPlugins.getInstance().registerCommandExecutionHook(executionHook.get());
-        }
+        executionHook.ifPresent(HystrixPlugins.getInstance()::registerCommandExecutionHook);
     }
 
     protected void registerTenacityProperties(Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations,
