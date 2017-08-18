@@ -53,22 +53,12 @@ public class TenacityObservableCollapserTest {
 
         @Override
         protected Func1<Long, Integer> getBatchReturnTypeKeySelector() {
-            return new Func1<Long, Integer>() {
-                @Override
-                public Integer call(Long aLong) {
-                    return aLong.intValue();
-                }
-            };
+            return Long::intValue;
         }
 
         @Override
         protected Func1<Long, Integer> getRequestArgumentKeySelector() {
-            return new Func1<Long, Integer>() {
-                @Override
-                public Integer call(Long aLong) {
-                    return aLong.intValue();
-                }
-            };
+            return Long::intValue;
         }
 
         @Override
@@ -78,12 +68,7 @@ public class TenacityObservableCollapserTest {
 
         @Override
         protected Func1<Long, Long> getBatchReturnTypeToResponseTypeMapper() {
-            return new Func1<Long, Long>() {
-                @Override
-                public Long call(Long aLong) {
-                    return aLong;
-                }
-            };
+            return (aLong) -> aLong;
         }
     }
 

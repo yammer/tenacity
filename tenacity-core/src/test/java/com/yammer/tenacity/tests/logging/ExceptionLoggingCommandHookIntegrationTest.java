@@ -1,7 +1,6 @@
 package com.yammer.tenacity.tests.logging;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
@@ -24,6 +23,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -131,8 +131,11 @@ public class ExceptionLoggingCommandHookIntegrationTest {
         try {
             new AlwaysShortCircuit().execute();
         } catch (HystrixRuntimeException err) {
-            assertFalse(Iterables.isEmpty(
-                    Iterables.filter(Throwables.getCausalChain(err), AuthenticationException.class)));
+            assertThat(Throwables.getCausalChain(err)
+                    .stream()
+                    .filter(AuthenticationException.class::isInstance)
+                    .findAny())
+                    .isNotEmpty();
         }
 
         verifyZeroInteractions(defaultExceptionLogger);

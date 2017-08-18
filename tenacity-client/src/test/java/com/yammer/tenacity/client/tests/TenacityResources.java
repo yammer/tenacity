@@ -89,12 +89,7 @@ public abstract class TenacityResources {
 
     @Test
     public void configurationDoesNotExist() {
-        final TenacityPropertyKey nonExistentKey = new TenacityPropertyKey() {
-            @Override
-            public String name() {
-                return "none";
-            }
-        };
+        final TenacityPropertyKey nonExistentKey = () -> "none";
         assertThat(CLIENT.getTenacityConfiguration(URI_ROOT, nonExistentKey)).isEmpty();
 
         response = tenacityConfiguration(nonExistentKey);

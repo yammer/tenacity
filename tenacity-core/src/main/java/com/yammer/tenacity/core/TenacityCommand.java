@@ -138,6 +138,10 @@ public abstract class TenacityCommand<R> extends HystrixCommand<R> {
         public Observable<R> observe() {
             return build().observe();
         }
+
+        public Observable<R> lazyObservable() {
+            return build().toObservable();
+        }
     }
 
     @Override
