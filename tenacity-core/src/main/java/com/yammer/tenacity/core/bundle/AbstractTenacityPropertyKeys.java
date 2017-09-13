@@ -19,7 +19,7 @@ public abstract class AbstractTenacityPropertyKeys {
 
     public AbstractTenacityPropertyKeys(TenacityPropertyKeyFactory keyFactory,
                                         Iterable<TenacityPropertyKey> keys) {
-        this(keyFactory, keys, ImmutableList.<ExceptionMapper<? extends Throwable>>of(), Optional.empty());
+        this(keyFactory, keys, ImmutableList.of(), Optional.empty());
     }
 
     public AbstractTenacityPropertyKeys(TenacityPropertyKeyFactory keyFactory,

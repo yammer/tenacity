@@ -33,7 +33,7 @@ public class ExceptionLoggingCommandHook extends HystrixCommandExecutionHook {
     }
 
     public ExceptionLoggingCommandHook(ExceptionLogger<? extends Exception> exceptionLogger) {
-        this(ImmutableList.<ExceptionLogger<? extends Exception>>of(exceptionLogger));
+        this(ImmutableList.of(exceptionLogger));
     }
 
     public ExceptionLoggingCommandHook(Iterable<ExceptionLogger<? extends Exception>> exceptionLoggers) {
