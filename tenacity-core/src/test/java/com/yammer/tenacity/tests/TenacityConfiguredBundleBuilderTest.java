@@ -1,6 +1,5 @@
 package com.yammer.tenacity.tests;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
@@ -27,6 +26,7 @@ import org.junit.Test;
 
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -75,7 +75,7 @@ public class TenacityConfiguredBundleBuilderTest {
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
-                        Optional.<HystrixCommandExecutionHook>absent(),
+                        Optional.empty(),
                         Collections.<ExceptionMapper<? extends Throwable>>emptyList()));
     }
 
@@ -97,7 +97,7 @@ public class TenacityConfiguredBundleBuilderTest {
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
-                        Optional.<HystrixCommandExecutionHook>absent(),
+                        Optional.empty(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(new TenacityExceptionMapper(429))
                 ));
     }
@@ -113,7 +113,7 @@ public class TenacityConfiguredBundleBuilderTest {
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
-                        Optional.<HystrixCommandExecutionHook>absent(),
+                        Optional.empty(),
                         ImmutableList.<ExceptionMapper<? extends Throwable>>of(
                                 new TenacityExceptionMapper(429),
                                 new TenacityContainerExceptionMapper(429))
@@ -148,7 +148,7 @@ public class TenacityConfiguredBundleBuilderTest {
         assertThat(bundle)
                 .isEqualTo(new TenacityConfiguredBundle<>(
                         CONFIGURATION_FACTORY,
-                        Optional.<HystrixCommandExecutionHook>absent(),
+                        Optional.empty(),
                         Collections.<ExceptionMapper<? extends Throwable>>emptyList(),
                         true,
                         false

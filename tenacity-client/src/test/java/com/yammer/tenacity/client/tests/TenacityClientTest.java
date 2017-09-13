@@ -1,6 +1,5 @@
 package com.yammer.tenacity.client.tests;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -27,11 +26,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.guava.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -124,7 +124,7 @@ public class TenacityClientTest {
     public void getCircuitBreakers() {
         assertThat(TENACITYCLIENT.getCircuitBreakers(ROOT)).contains(Collections.<CircuitBreaker>emptyList());
         assertThat(TENACITYCLIENT.getCircuitBreaker(ROOT, TenacityClientPropertyKey.CLIENT_KEY))
-                .isAbsent();
+                .isEmpty();
 
         assertTrue(new TenacityCommand<Boolean>(TenacityClientPropertyKey.CLIENT_KEY) {
             @Override
@@ -133,7 +133,7 @@ public class TenacityClientTest {
             }
         }.execute());
 
-        final Optional<ImmutableList<CircuitBreaker>> circuits = TENACITYCLIENT.getCircuitBreakers(ROOT);
+        final Optional<Collection<CircuitBreaker>> circuits = TENACITYCLIENT.getCircuitBreakers(ROOT);
         assertThat(circuits).isPresent();
         assertThat(circuits.get())
                 .contains(CircuitBreaker.closed(TenacityClientPropertyKey.CLIENT_KEY));
@@ -145,7 +145,7 @@ public class TenacityClientTest {
     @Test
     public void modifyCircuitBreakerForcedOpen() {
         assertThat(TENACITYCLIENT.modifyCircuitBreaker(ROOT, TenacityClientPropertyKey.CLIENT_KEY, CircuitBreaker.State.FORCED_OPEN))
-                .isAbsent();
+                .isEmpty();
 
         assertThat(TENACITYCLIENT.getCircuitBreakers(ROOT))
                 .contains(Collections.emptyList());

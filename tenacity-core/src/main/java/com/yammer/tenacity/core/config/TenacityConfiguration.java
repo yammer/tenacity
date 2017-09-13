@@ -1,6 +1,6 @@
 package com.yammer.tenacity.core.config;
 
-import com.google.common.base.Optional;
+import com.google.common.base.MoreObjects;
 import com.netflix.hystrix.HystrixCommandProperties;
 
 import javax.validation.Valid;
@@ -23,7 +23,7 @@ public class TenacityConfiguration {
     @Max(Integer.MAX_VALUE)
     private int executionIsolationThreadTimeoutInMillis = 1000;
 
-    private Optional<HystrixCommandProperties.ExecutionIsolationStrategy> executionIsolationStrategy = Optional.absent();
+    private HystrixCommandProperties.ExecutionIsolationStrategy executionIsolationStrategy = null;
 
     public TenacityConfiguration() { /* Jackson */ }
 
@@ -43,7 +43,7 @@ public class TenacityConfiguration {
         this.circuitBreaker = circuitBreaker;
         this.semaphore = semaphore;
         this.executionIsolationThreadTimeoutInMillis = executionIsolationThreadTimeoutInMillis;
-        this.executionIsolationStrategy = Optional.fromNullable(executionIsolationStrategy);
+        this.executionIsolationStrategy = executionIsolationStrategy;
     }
 
     public ThreadPoolConfiguration getThreadpool() {
@@ -79,15 +79,15 @@ public class TenacityConfiguration {
     }
 
     public boolean hasExecutionIsolationStrategy() {
-        return executionIsolationStrategy.isPresent();
+        return Objects.nonNull(executionIsolationStrategy);
     }
 
     public HystrixCommandProperties.ExecutionIsolationStrategy getExecutionIsolationStrategy() {
-        return executionIsolationStrategy.orNull();
+        return executionIsolationStrategy;
     }
 
     public void setExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy executionIsolationStrategy) {
-        this.executionIsolationStrategy = Optional.fromNullable(executionIsolationStrategy);
+        this.executionIsolationStrategy = executionIsolationStrategy;
     }
 
     @Override
@@ -113,12 +113,12 @@ public class TenacityConfiguration {
 
     @Override
     public String toString() {
-        return "TenacityConfiguration{" +
-                "threadpool=" + threadpool +
-                ", circuitBreaker=" + circuitBreaker +
-                ", semaphore=" + semaphore +
-                ", executionIsolationThreadTimeoutInMillis=" + executionIsolationThreadTimeoutInMillis +
-                ", executionIsolationStrategy=" + executionIsolationStrategy +
-                '}';
+        return MoreObjects.toStringHelper(this)
+                .add("threadpool", threadpool)
+                .add("circuitBreaker", circuitBreaker)
+                .add("semaphore", semaphore)
+                .add("executionIsolationThreadTimeoutInMillis", executionIsolationThreadTimeoutInMillis)
+                .add("executionIsolationStrategy", executionIsolationStrategy)
+                .toString();
     }
 }

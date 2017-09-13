@@ -1,6 +1,5 @@
 package com.yammer.tenacity.core.bundle;
 
-import com.google.common.base.Optional;
 import com.netflix.hystrix.contrib.metrics.eventstream.HystrixMetricsStreamServlet;
 import com.netflix.hystrix.strategy.HystrixPlugins;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
@@ -31,13 +30,14 @@ import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TenacityConfiguredBundle<T extends Configuration> implements ConfiguredBundle<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityConfiguredBundle.class);
     protected final TenacityBundleConfigurationFactory<T> tenacityBundleConfigurationFactory;
-    protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
+    protected Optional<HystrixCommandExecutionHook> executionHook = Optional.empty();
     protected final Iterable<ExceptionMapper<? extends Throwable>> exceptionMappers;
     protected final boolean usingTenacityCircuitBreakerHealthCheck;
     protected final boolean usingAdminPort;
@@ -99,9 +99,7 @@ public class TenacityConfiguredBundle<T extends Configuration> implements Config
             LOGGER.warn("Failed to register YammerMetricsPublisher with HystrixPlugins. This is what MetricsPublisher is currently registered: {}",
                     HystrixPlugins.getInstance().getMetricsPublisher().getClass(), err);
         }
-        if (executionHook.isPresent()) {
-            HystrixPlugins.getInstance().registerCommandExecutionHook(executionHook.get());
-        }
+        executionHook.ifPresent(HystrixPlugins.getInstance()::registerCommandExecutionHook);
     }
 
     protected void registerTenacityProperties(Map<TenacityPropertyKey, TenacityConfiguration> tenacityPropertyKeyConfigurations,

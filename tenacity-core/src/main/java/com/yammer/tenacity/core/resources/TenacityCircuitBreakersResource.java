@@ -1,11 +1,8 @@
 package com.yammer.tenacity.core.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.core.CircuitBreakers;
-import com.yammer.tenacity.core.core.TenacityPredicates;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyKeyFactory;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
@@ -15,16 +12,18 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collection;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Path(TenacityCircuitBreakersResource.PATH)
 public class TenacityCircuitBreakersResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(TenacityCircuitBreakersResource.class);
     public static final String PATH = "/tenacity/circuitbreakers";
-    private final Iterable<TenacityPropertyKey> keys;
+    private final Collection<TenacityPropertyKey> keys;
     private final TenacityPropertyKeyFactory keyFactory;
 
-    public TenacityCircuitBreakersResource(Iterable<TenacityPropertyKey> keys,
+    public TenacityCircuitBreakersResource(Collection<TenacityPropertyKey> keys,
                                            TenacityPropertyKeyFactory keyFactory) {
         this.keys = keys;
         this.keyFactory = keyFactory;
@@ -33,7 +32,7 @@ public class TenacityCircuitBreakersResource {
     @GET
     @Timed
     @Produces(MediaType.APPLICATION_JSON)
-    public Iterable<CircuitBreaker> circuitBreakers() {
+    public Collection<CircuitBreaker> circuitBreakers() {
         return CircuitBreakers.all(keys);
     }
 
@@ -60,7 +59,7 @@ public class TenacityCircuitBreakersResource {
     public Response modifyCircuitBreaker(@PathParam("key") String key,
                                          String body) {
         try {
-            final TenacityPropertyKey foundKey = Iterables.find(keys, TenacityPredicates.isEqualTo(keyFactory.from(key)));
+            final TenacityPropertyKey foundKey = keyFactory.from(key).validate(keys);
             final CircuitBreaker.State state = CircuitBreaker.State.valueOf(body.toUpperCase());
             switch (state) {
                 case FORCED_CLOSED:

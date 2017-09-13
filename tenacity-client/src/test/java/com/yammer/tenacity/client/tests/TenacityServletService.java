@@ -34,12 +34,7 @@ public class TenacityServletService extends Application<Configuration> {
 
                     @Override
                     public TenacityPropertyKeyFactory getTenacityPropertyKeyFactory(Configuration applicationConfiguration) {
-                        return new TenacityPropertyKeyFactory() {
-                            @Override
-                            public TenacityPropertyKey from(String value) {
-                                return ServletKeys.valueOf(value.toUpperCase());
-                            }
-                        };
+                        return (value) -> ServletKeys.valueOf(value.toUpperCase());
                     }
 
                     @Override

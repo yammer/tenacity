@@ -3,7 +3,6 @@ package com.yammer.tenacity.tests;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Resources;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
@@ -16,7 +15,6 @@ import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import com.yammer.tenacity.core.logging.DefaultExceptionLogger;
 import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
-import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.testing.TenacityTestRule;
 import io.dropwizard.Application;
@@ -34,8 +32,6 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.*;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -50,7 +46,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
@@ -118,17 +113,14 @@ public class TenacityAuthenticatorTest {
         overrideConfiguration.setExecutionIsolationThreadTimeoutInMillis(1);
 
         new TenacityPropertyRegister(
-                ImmutableMap.<TenacityPropertyKey, TenacityConfiguration>of(DependencyKey.TENACITY_AUTH_TIMEOUT, overrideConfiguration),
+                ImmutableMap.of(DependencyKey.TENACITY_AUTH_TIMEOUT, overrideConfiguration),
                 new BreakerboxConfiguration(),
                 mock(ArchaiusPropertyRegister.class))
                 .register();
 
-        when(mockAuthenticator.authenticate(any(BasicCredentials.class))).thenAnswer(new Answer<Object>() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                Thread.sleep(50);
-                return new Object();
-            }
+        when(mockAuthenticator.authenticate(any(BasicCredentials.class))).thenAnswer((invocation) -> {
+            Thread.sleep(50);
+            return new Object();
         });
 
         try {
@@ -150,8 +142,11 @@ public class TenacityAuthenticatorTest {
         try {
             tenacityAuthenticator.authenticate(new BasicCredentials("foo", "foo"));
         } catch (HystrixRuntimeException err) {
-            assertFalse(Iterables.isEmpty(
-                    Iterables.filter(Throwables.getCausalChain(err), AuthenticationException.class)));
+            assertThat(Throwables.getCausalChain(err)
+                    .stream()
+                    .filter(AuthenticationException.class::isInstance)
+                    .findAny())
+            .isNotEmpty();
         }
 
         verify(mockAuthenticator, times(1)).authenticate(any(BasicCredentials.class));

@@ -1,6 +1,5 @@
 package com.yammer.tenacity.tests;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -20,10 +19,10 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.Future;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.guava.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -69,7 +68,7 @@ public class TenacityPropertiesTest {
 
         final HystrixCommandProperties commandProperties = threadIsolationCommand.getCommandProperties();
         assertEquals(commandProperties.executionTimeoutInMilliseconds().get().intValue(), 987);
-        assertThat(commandProperties.executionTimeoutInMilliseconds().get().intValue()).isEqualTo(987);
+        assertThat(commandProperties.executionTimeoutInMilliseconds().get()).isEqualTo(987);
     }
 
     @Test
@@ -131,7 +130,7 @@ public class TenacityPropertiesTest {
 
         @Override
         protected Optional<String> getFallback() {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
@@ -236,7 +235,7 @@ public class TenacityPropertiesTest {
             if (result.isPresent()) {
                 assertThat(result).contains("sleep");
             } else {
-                assertThat(result).isAbsent();
+                assertThat(result).isEmpty();
             }
         }
     }

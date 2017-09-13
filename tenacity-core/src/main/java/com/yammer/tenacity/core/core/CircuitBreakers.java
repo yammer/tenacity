@@ -1,50 +1,43 @@
 package com.yammer.tenacity.core.core;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class CircuitBreakers {
     private CircuitBreakers() {}
+
+    private static Stream<CircuitBreaker> toCircuitBreakers(Collection<TenacityPropertyKey> keys) {
+        return keys.stream()
+                .map(CircuitBreaker::usingHystrix)
+                .filter(Optional::isPresent)
+                .map(Optional::get);
+    }
 
     public static Collection<CircuitBreaker> allOpen(TenacityPropertyKey... keys) {
         return allOpen(ImmutableList.copyOf(keys));
     }
 
-    public static Collection<CircuitBreaker> allOpen(Iterable<TenacityPropertyKey> keys) {
-        final ImmutableList.Builder<CircuitBreaker> builder = ImmutableList.builder();
-        for (TenacityPropertyKey key : keys) {
-            final Optional<CircuitBreaker> circuitBreakerOptional = CircuitBreaker.usingHystrix(key);
-            if (circuitBreakerOptional.isPresent()) {
-                final CircuitBreaker circuitBreaker = circuitBreakerOptional.get();
-                if (circuitBreaker.isOpen()) {
-                    builder.add(circuitBreaker);
-                }
-            }
-        }
-        return builder.build();
+    public static Collection<CircuitBreaker> allOpen(Collection<TenacityPropertyKey> keys) {
+        return toCircuitBreakers(keys)
+                .filter(CircuitBreaker::isOpen)
+                .collect(ImmutableList.toImmutableList());
     }
 
-    public static Collection<CircuitBreaker> all(Iterable<TenacityPropertyKey> keys) {
-        final ImmutableList.Builder<CircuitBreaker> circuitBreakerBuilder = ImmutableList.builder();
-        for (TenacityPropertyKey key : keys) {
-            final Optional<CircuitBreaker> circuitBreakerOptional = CircuitBreaker.usingHystrix(key);
-            if (circuitBreakerOptional.isPresent()) {
-                circuitBreakerBuilder.add(circuitBreakerOptional.get());
-            }
-        }
-        return circuitBreakerBuilder.build();
+    public static Collection<CircuitBreaker> all(Collection<TenacityPropertyKey> keys) {
+        return toCircuitBreakers(keys)
+                .collect(ImmutableList.toImmutableList());
     }
 
     public static Collection<CircuitBreaker> all(TenacityPropertyKey... keys) {
         return all(ImmutableList.copyOf(keys));
     }
 
-    public static Optional<CircuitBreaker> find(Iterable<TenacityPropertyKey> keys,
+    public static Optional<CircuitBreaker> find(Collection<TenacityPropertyKey> keys,
                                                 TenacityPropertyKey key) {
-        return CircuitBreaker.usingHystrix(Iterables.find(keys, TenacityPredicates.isEqualTo(key)));
+        return CircuitBreaker.usingHystrix(key.validate(keys));
     }
 }

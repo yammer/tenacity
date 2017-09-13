@@ -1,7 +1,8 @@
 Next
 ---
-* [Dropwizard 1.1.3](https://github.com/dropwizard/dropwizard/releases/tag/v1.1.4)
-* Mockito-core 2.9.0
+* [Dropwizard 1.1.4](https://github.com/dropwizard/dropwizard/releases/tag/v1.1.4)
+* Mockito-core 2.10.0
+* Merged a PR converting to a lot of [Java8](https://github.com/yammer/tenacity/pull/44) equivalents
 
 1.1.4, 1.1.4.{dw9, dw8, dw7} :: Aug. 7, 2017
 ---

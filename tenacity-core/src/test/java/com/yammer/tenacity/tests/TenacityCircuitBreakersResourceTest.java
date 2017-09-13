@@ -1,6 +1,5 @@
 package com.yammer.tenacity.tests;
 
-import com.google.common.collect.ImmutableList;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
@@ -17,7 +16,8 @@ import org.junit.Test;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import java.util.Collections;
+import java.util.Collection;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -27,7 +27,7 @@ public class TenacityCircuitBreakersResourceTest {
     public final TenacityTestRule tenacityTestRule = new TenacityTestRule();
 
     @SuppressWarnings("unchecked")
-    private static final Iterable<TenacityPropertyKey> keysMock = mock(Iterable.class);
+    private static final Collection<TenacityPropertyKey> keysMock = mock(Collection.class);
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
@@ -42,7 +42,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void healthyWithNoCircuitBreakers() {
-        when(keysMock.iterator()).thenReturn(Collections.<TenacityPropertyKey>emptyIterator());
+        when(keysMock.stream()).thenReturn(Stream.empty());
 
         assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH).request()
                 .get(CircuitBreaker[].class)).isEmpty();
@@ -50,7 +50,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test(expected = NotFoundException.class)
     public void notFoundWhenNoCircuitBreakers() {
-        when(keysMock.iterator()).thenReturn(Collections.<TenacityPropertyKey>emptyIterator());
+        when(keysMock.stream()).thenReturn(Stream.empty());
 
         resources.client().target(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.NON_EXISTENT_HEALTHCHECK.name())
@@ -60,7 +60,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void healthyWithNonExistentCircuitBreakers() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.NON_EXISTENT_HEALTHCHECK));
 
         assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH).request()
                 .get(CircuitBreaker[].class)).isEmpty();
@@ -68,7 +68,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void healthyWithClosedCircuitBreakers() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
@@ -80,7 +80,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void healthyExistentAgnostic() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK));
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
@@ -97,7 +97,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void unhealthyWithOpenCircuitBreaker() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
@@ -108,7 +108,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void mixedResults() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.NON_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK));
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
 
@@ -119,7 +119,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void multipleOpen() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK, DependencyKey.EXISTENT_HEALTHCHECK));
 
         tryToOpenCircuitBreaker(DependencyKey.EXISTENT_HEALTHCHECK);
         tryToOpenCircuitBreaker(DependencyKey.ANOTHER_EXISTENT_HEALTHCHECK);
@@ -133,7 +133,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void canFindACircuitBreaker() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute();
 
@@ -148,7 +148,7 @@ public class TenacityCircuitBreakersResourceTest {
     public void forcedCloseIsIdentifiedCorrectly() {
         TenacityPropertyRegister.registerCircuitForceClosed(DependencyKey.EXISTENT_HEALTHCHECK);
 
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
 
@@ -164,7 +164,7 @@ public class TenacityCircuitBreakersResourceTest {
     public void forcedOpenIsIdentifiedCorrectly() {
         TenacityPropertyRegister.registerCircuitForceOpen(DependencyKey.EXISTENT_HEALTHCHECK);
 
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("fallback");
 
@@ -178,7 +178,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void forcedOpenCanBeReset() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
         assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
@@ -188,7 +188,7 @@ public class TenacityCircuitBreakersResourceTest {
 
         TenacityPropertyRegister.registerCircuitForceOpen(DependencyKey.EXISTENT_HEALTHCHECK);
 
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("fallback");
         assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
@@ -200,7 +200,7 @@ public class TenacityCircuitBreakersResourceTest {
 
         TenacityPropertyRegister.registerCircuitForceReset(DependencyKey.EXISTENT_HEALTHCHECK);
 
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
         assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())
@@ -211,7 +211,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void canModifyACircuitBreakerToBeForceClosed() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
 
@@ -224,7 +224,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void canModifyACircuitBreakerToBeForceOpen() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
 
@@ -237,7 +237,7 @@ public class TenacityCircuitBreakersResourceTest {
 
     @Test
     public void canModifyACircuitBreakerToBeForceOpenBackToItsOriginalState() {
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         assertThat(new TenacitySuccessCommand(DependencyKey.EXISTENT_HEALTHCHECK).execute()).isEqualTo("value");
 
@@ -247,7 +247,7 @@ public class TenacityCircuitBreakersResourceTest {
                 .put(Entity.entity(CircuitBreaker.State.FORCED_OPEN.name(), MediaType.APPLICATION_OCTET_STREAM_TYPE), CircuitBreaker.class))
                 .isEqualTo(CircuitBreaker.forcedOpen(DependencyKey.EXISTENT_HEALTHCHECK));
 
-        when(keysMock.iterator()).thenReturn(ImmutableList.<TenacityPropertyKey>of(DependencyKey.EXISTENT_HEALTHCHECK).iterator());
+        when(keysMock.stream()).thenReturn(Stream.of(DependencyKey.EXISTENT_HEALTHCHECK));
 
         assertThat(resources.client().target(TenacityCircuitBreakersResource.PATH)
                 .path(DependencyKey.EXISTENT_HEALTHCHECK.name())

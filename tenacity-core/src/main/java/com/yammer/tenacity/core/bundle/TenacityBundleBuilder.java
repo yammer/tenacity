@@ -1,7 +1,6 @@
 package com.yammer.tenacity.core.bundle;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
@@ -9,10 +8,11 @@ import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
 import io.dropwizard.Configuration;
 
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Optional;
 
 public class TenacityBundleBuilder<T extends Configuration> {
     protected final ImmutableList.Builder<ExceptionMapper<? extends Throwable>> exceptionMapperBuilder = ImmutableList.builder();
-    protected Optional<HystrixCommandExecutionHook> executionHook = Optional.absent();
+    protected Optional<HystrixCommandExecutionHook> executionHook = Optional.empty();
     protected TenacityBundleConfigurationFactory<T> configurationFactory;
     protected final ImmutableList.Builder<HealthCheck> healthCheckBuilder = ImmutableList.builder();
     protected boolean usingTenacityCircuitBreakerHealthCheck = false;
