@@ -4,6 +4,7 @@ script:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && mvn verify deploy --settings maven_deploy_settings.xml || mvn test verify --settings maven_deploy_settings.xml'
 jdk:
   - oraclejdk8
+  - oraclejdk9
 notifications:
   email:
     recipients:

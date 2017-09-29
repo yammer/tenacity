@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="com.yammer.tenacity.core.core.CircuitBreaker$Deserializer"/>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    </Match>
+    <Match>
+        <Class name="com.yammer.tenacity.core.servlets.TenacityCircuitBreakersServlet"/>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    </Match>
+    <Match>
+        <Class name="com.yammer.tenacity.core.servlets.TenacityConfigurationServlet"/>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    </Match>
+    <Match>
+        <Class name="com.yammer.tenacity.core.servlets.TenacityPropertyKeysServlet"/>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    </Match>
+</FindBugsFilter>
