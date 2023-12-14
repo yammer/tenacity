@@ -31,8 +31,9 @@
             <artifactId>tenacity-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
+            <groupId>io.dropwizard.modules</groupId>
             <artifactId>dropwizard-jdbi</artifactId>
+            <version>2.1.10</version>
         </dependency>
     </dependencies>
 </project>

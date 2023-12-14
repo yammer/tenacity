@@ -27,16 +27,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.dropwizard.modules</groupId>
+            <artifactId>dropwizard-testing-junit4</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+        <dependency>
             <groupId>com.netflix.hystrix</groupId>
             <artifactId>hystrix-core</artifactId>
         </dependency>
         <dependency>
             <groupId>com.netflix.hystrix</groupId>
             <artifactId>hystrix-codahale-metrics-publisher</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>

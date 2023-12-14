@@ -11,10 +11,13 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.Rule;
 import org.junit.Test;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.validation.Validator;
 
-import static io.dropwizard.testing.FixtureHelpers.fixture;
+//import static io.dropwizard.testing.FixtureHelpers.fixture;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TenacityConfigurationModelTest {
@@ -40,30 +43,33 @@ public class TenacityConfigurationModelTest {
     @Test
     public void toJson() throws Exception {
         assertThat(objectMapper.writeValueAsString(defaultConfiguration))
-                .isEqualTo(fixture("tenacityConfiguration.json"));
+                .isEqualTo(readJsonFixture("tenacityConfiguration.json"));
         assertThat(objectMapper.writeValueAsString(configurationWithThread))
-                .isEqualTo(fixture("tenacityConfigurationThread.json"));
+                .isEqualTo(readJsonFixture("tenacityConfigurationThread.json"));
         assertThat(objectMapper.writeValueAsString(configurationWithSemaphore))
-                .isEqualTo(fixture("tenacityConfigurationSemaphore.json"));
+                .isEqualTo(readJsonFixture("tenacityConfigurationSemaphore.json"));
     }
 
     @Test
     public void toObject() throws Exception {
-        assertThat(objectMapper.readValue(fixture("tenacityConfiguration.json"), TenacityConfiguration.class))
+        assertThat(objectMapper.readValue(readJsonFixture("tenacityConfiguration.json"), TenacityConfiguration.class))
                 .isEqualTo(defaultConfiguration);
-        assertThat(objectMapper.readValue(fixture("tenacityConfigurationThread.json"), TenacityConfiguration.class))
+        assertThat(objectMapper.readValue(readJsonFixture("tenacityConfigurationThread.json"), TenacityConfiguration.class))
                 .isEqualTo(configurationWithThread);
-        assertThat(objectMapper.readValue(fixture("tenacityConfigurationSemaphore.json"), TenacityConfiguration.class))
+        assertThat(objectMapper.readValue(readJsonFixture("tenacityConfigurationSemaphore.json"), TenacityConfiguration.class))
                 .isEqualTo(configurationWithSemaphore);
     }
 
     @Test
     public void validates() throws Exception {
-        validator.validate(objectMapper.readValue(fixture("tenacityConfiguration.json"), TenacityConfiguration.class))
+        validator.validate(objectMapper.readValue(readJsonFixture("tenacityConfiguration.json"), TenacityConfiguration.class))
                 .isEmpty();
-        validator.validate(objectMapper.readValue(fixture("tenacityConfigurationThread.json"), TenacityConfiguration.class))
+        validator.validate(objectMapper.readValue(readJsonFixture("tenacityConfigurationThread.json"), TenacityConfiguration.class))
                 .isEmpty();
-        validator.validate(objectMapper.readValue(fixture("tenacityConfigurationSemaphore.json"), TenacityConfiguration.class))
+        validator.validate(objectMapper.readValue(readJsonFixture("tenacityConfigurationSemaphore.json"), TenacityConfiguration.class))
                 .isEmpty();
+    }
+    private String readJsonFixture(String fileName) throws Exception {
+        return new String(Files.readAllBytes(Paths.get(getClass().getClassLoader().getResource(fileName).toURI())), StandardCharsets.UTF_8);
     }
 }

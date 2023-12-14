@@ -4,7 +4,7 @@ import com.yammer.tenacity.core.http.TenacityJerseyClientBuilder;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 
 import javax.ws.rs.client.Client;
 
