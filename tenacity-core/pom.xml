@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-parent</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.1-DROPWIZARD-3-PATCH</version>
     </parent>
 
     <artifactId>tenacity-core</artifactId>

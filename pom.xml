@@ -89,7 +89,7 @@
         <wiremock.version>2.8.0</wiremock.version>
         <hamcrest.version>1.3</hamcrest.version>
         <assertj.core.version>3.8.0</assertj.core.version>
-        <mockito.version>2.10.0</mockito.version>
+        <mockito.version>4.0.0</mockito.version>
     </properties>
 
     <dependencyManagement>

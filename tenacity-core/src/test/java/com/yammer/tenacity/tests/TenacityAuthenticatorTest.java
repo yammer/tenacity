@@ -173,7 +173,7 @@ public class TenacityAuthenticatorTest {
         assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         verify(AuthenticatorApp.getMockAuthenticator(), times(1)).authenticate(any(BasicCredentials.class));
-        verifyZeroInteractions(AuthenticatorApp.getTenacityContainerExceptionMapper());
+        verifyNoInteractions(AuthenticatorApp.getTenacityContainerExceptionMapper());
         verify(AuthenticatorApp.getTenacityExceptionMapper(), times(1)).toResponse(any(HystrixRuntimeException.class));
     }
 
