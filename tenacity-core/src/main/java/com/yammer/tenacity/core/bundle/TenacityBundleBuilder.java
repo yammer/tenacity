@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
 import com.yammer.tenacity.core.errors.TenacityContainerExceptionMapper;
 import com.yammer.tenacity.core.errors.TenacityExceptionMapper;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 
 import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Optional;

@@ -3,7 +3,7 @@ package com.yammer.tenacity.core.bundle;
 import com.yammer.tenacity.core.config.BreakerboxConfiguration;
 import com.yammer.tenacity.core.config.TenacityConfiguration;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 
 import java.util.Collections;
 import java.util.Map;

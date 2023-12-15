@@ -5,6 +5,7 @@ import com.yammer.tenacity.core.properties.TenacityPropertyKey;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CircuitBreakers {
@@ -24,12 +25,12 @@ public class CircuitBreakers {
     public static Collection<CircuitBreaker> allOpen(Collection<TenacityPropertyKey> keys) {
         return toCircuitBreakers(keys)
                 .filter(CircuitBreaker::isOpen)
-                .collect(ImmutableList.toImmutableList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
     public static Collection<CircuitBreaker> all(Collection<TenacityPropertyKey> keys) {
         return toCircuitBreakers(keys)
-                .collect(ImmutableList.toImmutableList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
     }
 
     public static Collection<CircuitBreaker> all(TenacityPropertyKey... keys) {

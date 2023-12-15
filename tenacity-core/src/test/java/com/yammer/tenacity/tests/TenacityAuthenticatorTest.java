@@ -17,8 +17,8 @@ import com.yammer.tenacity.core.logging.ExceptionLoggingCommandHook;
 import com.yammer.tenacity.core.properties.ArchaiusPropertyRegister;
 import com.yammer.tenacity.core.properties.TenacityPropertyRegister;
 import com.yammer.tenacity.testing.TenacityTestRule;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Application;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthenticationException;
@@ -27,7 +27,7 @@ import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.core.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -173,7 +173,7 @@ public class TenacityAuthenticatorTest {
         assertThat(response.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
 
         verify(AuthenticatorApp.getMockAuthenticator(), times(1)).authenticate(any(BasicCredentials.class));
-        verifyZeroInteractions(AuthenticatorApp.getTenacityContainerExceptionMapper());
+        verifyNoInteractions(AuthenticatorApp.getTenacityContainerExceptionMapper());
         verify(AuthenticatorApp.getTenacityExceptionMapper(), times(1)).toResponse(any(HystrixRuntimeException.class));
     }
 

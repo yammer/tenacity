@@ -26,7 +26,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class ExceptionLoggingCommandHookIntegrationTest {
 
@@ -138,6 +138,6 @@ public class ExceptionLoggingCommandHookIntegrationTest {
                     .isNotEmpty();
         }
 
-        verifyZeroInteractions(defaultExceptionLogger);
+        verifyNoInteractions(defaultExceptionLogger);
     }
 }

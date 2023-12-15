@@ -9,8 +9,8 @@ import com.google.common.collect.Iterables;
 import com.yammer.tenacity.core.core.CircuitBreaker;
 import com.yammer.tenacity.core.core.CircuitBreakers;
 import com.yammer.tenacity.core.properties.TenacityPropertyKey;
+import io.dropwizard.logback.shaded.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class TenacityCircuitBreakerHealthCheck extends HealthCheck {

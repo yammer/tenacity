@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.yammer.tenacity</groupId>
         <artifactId>tenacity-parent</artifactId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.1-DROPWIZARD-3-PATCH</version>
     </parent>
 
     <artifactId>tenacity-core</artifactId>
@@ -27,6 +27,11 @@
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.13.0</version> <!-- Use the latest version available -->
+        </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>

@@ -2,7 +2,7 @@ package com.yammer.tenacity.client.tests;
 
 import com.google.common.io.Resources;
 import com.yammer.tenacity.client.TenacityClientBuilder;
-import io.dropwizard.Configuration;
+import io.dropwizard.core.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import org.junit.BeforeClass;
